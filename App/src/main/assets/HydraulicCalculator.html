@@ -898,6 +898,54 @@
     // Инициализация видимости инженерного блока
     updateEngineerVisibility();
 })();
+// Запрет ввода отрицательных чисел для всех полей, где min >= 0
+document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('keydown', function(e) {
+        if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+') {
+            e.preventDefault();
+        }
+    });
+
+    input.addEventListener('input', function() {
+        let val = parseFloat(this.value);
+        let min = parseFloat(this.getAttribute('min'));
+        if (!isNaN(min)) {
+            if (isNaN(val) || val < min) {
+                this.value = min;
+            }
+        } else if (this.value.startsWith('-')) {
+            this.value = this.value.replace('-', '');
+        }
+        // Дополнительно для целых чисел (повороты, клапаны) – если было введено не целое
+        if (this.id === 'bends' || this.id === 'valves') {
+            let intVal = parseInt(this.value);
+            if (!isNaN(intVal) && intVal >= 0) {
+                this.value = intVal;
+            } else if (this.value === '' || isNaN(intVal)) {
+                this.value = 0;
+            }
+        }
+    });
+
+    // При потере фокуса – окончательная проверка
+    input.addEventListener('blur', function() {
+        let val = parseFloat(this.value);
+        let min = parseFloat(this.getAttribute('min'));
+        if (!isNaN(min)) {
+            if (isNaN(val) || val < min) {
+                this.value = min;
+            }
+        }
+        if (this.id === 'bends' || this.id === 'valves') {
+            let intVal = parseInt(this.value);
+            if (!isNaN(intVal) && intVal >= 0) {
+                this.value = intVal;
+            } else {
+                this.value = 0;
+            }
+        }
+    });
+});
 </script>
 </body>
 </html>
