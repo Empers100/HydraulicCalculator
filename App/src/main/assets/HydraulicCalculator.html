@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Гидравлический калькулятор</title>
-    <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Гидравлический калькулятор</title>
+<style>
         :root {
             --bg: #f4f4f4;
             --surface: #ffffff;
@@ -151,145 +151,145 @@
         }
         .result-area span { color: var(--text); }
         .note { color: #e06c00; font-weight: 500; }
-    </style>
+</style>
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <button class="menu-btn" id="menuToggle">⋮</button>
-        <div class="menu" id="settingsMenu">
-            <div class="menu-item">
-                <span id="langLabel">Язык / Language</span>
-                <select id="langSelect">
-                    <option value="ru">Русский</option>
-                    <option value="en">English</option>
-                    <option value="zh">中文</option>
-                </select>
-            </div>
-            <div class="menu-item">
-                <span id="themeLabel">Светлая тема</span>
-                <div class="theme-toggle" id="themeToggle"></div>
-            </div>
-            <div class="menu-item">
-                <button id="shareBtn" style="width:100%;">📤 Поделиться</button>
-            </div>
-        </div>
-    </div>
+<div class="header">
+<button class="menu-btn" id="menuToggle">⋮</button>
+<div class="menu" id="settingsMenu">
+<div class="menu-item">
+<span id="langLabel">Язык / Language</span>
+<select id="langSelect">
+<option value="ru">Русский</option>
+<option value="en">English</option>
+<option value="zh">中文</option>
+</select>
+</div>
+<div class="menu-item">
+<span id="themeLabel">Светлая тема</span>
+<div class="theme-toggle" id="themeToggle"></div>
+</div>
+<div class="menu-item">
+<button id="shareBtn" style="width:100%;">📤 Поделиться</button>
+</div>
+</div>
+</div>
 
-    <div class="tab-content active">
-        <div class="display-container">
-            <div class="formula-display" id="formulaDisplay">Готов к расчёту</div>
-            <div class="main-display-row">
-                <label id="lblFlowRate">Скорость потока:</label>
-                <input type="text" class="main-display" id="mainDisplay" value="0" readonly>
-            </div>
-        </div>
+<div class="tab-content active">
+<div class="display-container">
+<div class="formula-display" id="formulaDisplay">Готов к расчёту</div>
+<div class="main-display-row">
+<label id="lblFlowRate">Скорость потока:</label>
+<input type="text" class="main-display" id="mainDisplay" value="0" readonly>
+</div>
+</div>
 
-        <div class="field-row">
-            <label id="lblBends">Поворотов 90°:</label>
-            <input type="number" id="bends" value="0" min="0" step="1">
-        </div>
-        <div class="field-row">
-            <label id="lblValves">Клапанов:</label>
-            <input type="number" id="valves" value="0" min="0" step="1">
-        </div>
-        <div class="field-row">
-            <label id="lblOuterDiam">Наружный диаметр (mm):</label>
-            <input type="number" id="outerDiam" value="57" min="0.1" step="any">
-        </div>
-        <div class="field-row">
-            <label id="lblWall">Толщина стенки (mm):</label>
-            <input type="number" id="wall" value="3.5" min="0" step="any">
-        </div>
-        <div class="field-row">
-            <label id="lblLength">Длина (m):</label>
-            <input type="number" id="length" value="100" min="0.001" step="any">
-        </div>
-        <div class="field-row">
-            <label id="lblMassFlow">Массовый расход (kg/h):</label>
-            <input type="number" id="massFlow" value="5000" min="0.001" step="any">
-        </div>
-        <div class="field-row">
-            <label>Режим:</label>
-            <select id="modeSelect">
-                <option value="simple" id="modeSimpleText">Упрощённый</option>
-                <option value="engineer" id="modeEngineerText">Инженерный</option>
-            </select>
-        </div>
-        <div class="field-row">
-            <label id="lblDensity">Плотность (kg/m³):</label>
-            <input type="number" id="density" value="1000" min="0.001" step="any">
-        </div>
+<div class="field-row">
+<label id="lblBends">Поворотов 90°:</label>
+<input type="number" id="bends" value="0" min="0" step="1">
+</div>
+<div class="field-row">
+<label id="lblValves">Клапанов:</label>
+<input type="number" id="valves" value="0" min="0" step="1">
+</div>
+<div class="field-row">
+<label id="lblOuterDiam">Наружный диаметр (mm):</label>
+<input type="number" id="outerDiam" value="57" min="0.1" step="any">
+</div>
+<div class="field-row">
+<label id="lblWall">Толщина стенки (mm):</label>
+<input type="number" id="wall" value="3.5" min="0" step="any">
+</div>
+<div class="field-row">
+<label id="lblLength">Длина (m):</label>
+<input type="number" id="length" value="100" min="0.001" step="any">
+</div>
+<div class="field-row">
+<label id="lblMassFlow">Массовый расход (kg/h):</label>
+<input type="number" id="massFlow" value="5000" min="0.001" step="any">
+</div>
+<div class="field-row">
+<label>Режим:</label>
+<select id="modeSelect">
+<option value="simple" id="modeSimpleText">Упрощённый</option>
+<option value="engineer" id="modeEngineerText">Инженерный</option>
+</select>
+</div>
+<div class="field-row">
+<label id="lblDensity">Плотность (kg/m³):</label>
+<input type="number" id="density" value="1000" min="0.001" step="any">
+</div>
 
-        <div class="engineer-block" id="engineerBlock">
-            <div class="field-row">
-                <label id="lblMedium">Тип среды:</label>
-                <select id="mediumSelect">
-                    <option value="liquid" id="mediumLiquidText">Жидкость</option>
-                    <option value="gas" id="mediumGasText">Газ</option>
-                </select>
-            </div>
-            <div class="field-row">
-                <label id="lblPreset">Типичные среды:</label>
-                <select id="presetSelect">
-                    <option value="choose" id="presetChooseText">Выберите среду...</option>
-                    <option value="water" id="presetWaterText">Вода</option>
-                    <option value="oil" id="presetOilText">Масло</option>
-                    <option value="air" id="presetAirText">Воздух</option>
-                    <option value="nitrogen" id="presetNitrogenText">Азот</option>
-                    <option value="methane" id="presetMethaneText">Метан</option>
-                    <option value="co2" id="presetCO2Text">CO₂</option>
-                    <option value="hydrogen" id="presetHydrogenText">Водород</option>
-                    <option value="helium4" id="presetHelium4Text">Гелий-4</option>
-                    <option value="helium3" id="presetHelium3Text">Гелий-3</option>
-                </select>
-            </div>
-            <div class="field-row">
-                <label id="lblViscosity">Вязкость (cSt):</label>
-                <input type="number" id="viscosity" value="1.0" min="0.001" step="any">
-            </div>
-            <div class="field-row">
-                <label id="lblRoughness">Шероховатость (mm):</label>
-                <input type="number" id="roughness" value="0.1" min="0" step="any">
-            </div>
-            <div class="field-row" id="gasPropsRow" style="display: none;">
-                <label id="lblPressure">Абс. давление (bar):</label>
-                <input type="number" id="pressure" value="1.0" min="0.001" step="any">
-            </div>
-            <div class="field-row" style="display: none;">
-                <label id="lblTemperature">Температура (°C):</label>
-                <input type="number" id="temperature" value="20.0" min="-273.15" step="any">
-            </div>
-            <div class="field-row" style="display: none;">
-                <label id="lblMolarMass">Молярная масса (g/mol):</label>
-                <input type="number" id="molarMass" value="28.97" min="0.001" step="any">
-            </div>
-        </div>
+<div class="engineer-block" id="engineerBlock">
+<div class="field-row">
+<label id="lblMedium">Тип среды:</label>
+<select id="mediumSelect">
+<option value="liquid" id="mediumLiquidText">Жидкость</option>
+<option value="gas" id="mediumGasText">Газ</option>
+</select>
+</div>
+<div class="field-row">
+<label id="lblPreset">Типичные среды:</label>
+<select id="presetSelect">
+<option value="choose" id="presetChooseText">Выберите среду...</option>
+<option value="water" id="presetWaterText">Вода</option>
+<option value="oil" id="presetOilText">Масло</option>
+<option value="air" id="presetAirText">Воздух</option>
+<option value="nitrogen" id="presetNitrogenText">Азот</option>
+<option value="methane" id="presetMethaneText">Метан</option>
+<option value="co2" id="presetCO2Text">CO₂</option>
+<option value="hydrogen" id="presetHydrogenText">Водород</option>
+<option value="helium4" id="presetHelium4Text">Гелий-4</option>
+<option value="helium3" id="presetHelium3Text">Гелий-3</option>
+</select>
+</div>
+<div class="field-row">
+<label id="lblViscosity">Вязкость (cSt):</label>
+<input type="number" id="viscosity" value="1.0" min="0.001" step="any">
+</div>
+<div class="field-row">
+<label id="lblRoughness">Шероховатость (mm):</label>
+<input type="number" id="roughness" value="0.1" min="0" step="any">
+</div>
+<div class="field-row" id="gasPropsRow" style="display: none;">
+<label id="lblPressure">Абс. давление (bar):</label>
+<input type="number" id="pressure" value="1.0" min="0.001" step="any">
+</div>
+<div class="field-row" style="display: none;">
+<label id="lblTemperature">Температура (°C):</label>
+<input type="number" id="temperature" value="20.0" min="-273.15" step="any">
+</div>
+<div class="field-row" style="display: none;">
+<label id="lblMolarMass">Молярная масса (g/mol):</label>
+<input type="number" id="molarMass" value="28.97" min="0.001" step="any">
+</div>
+</div>
 
-        <div class="field-row">
-            <label id="lblPressureUnit">Единицы давления:</label>
-            <select id="pressureUnit">
-                <option value="Pa">Pa</option>
-                <option value="kPa">kPa</option>
-                <option value="bar">bar</option>
-                <option value="kgf/cm²">kgf/cm²</option>
-                <option value="psi">psi</option>
-            </select>
-        </div>
+<div class="field-row">
+<label id="lblPressureUnit">Единицы давления:</label>
+<select id="pressureUnit">
+<option value="Pa">Pa</option>
+<option value="kPa">kPa</option>
+<option value="bar">bar</option>
+<option value="kgf/cm²">kgf/cm²</option>
+<option value="psi">psi</option>
+</select>
+</div>
 
-        <div class="btn-row">
-            <button class="calc-btn" id="calculateBtn">Рассчитать</button>
-            <button class="save-btn" id="saveBtn" disabled>Сохранить в файл</button>
-        </div>
+<div class="btn-row">
+<button class="calc-btn" id="calculateBtn">Рассчитать</button>
+<button class="save-btn" id="saveBtn" disabled>Сохранить в файл</button>
+</div>
 
-        <div class="result-area" id="resultArea">
-            <span id="velocityResult">Скорость: ---</span>
-            <span id="pressureDropResult">Потеря давления: ---</span>
-            <span id="reynoldsResult">Число Рейнольдса: ---</span>
-            <span id="lambdaResult">Коэффициент трения λ: ---</span>
-            <span id="compressNote" class="note"></span>
-        </div>
-    </div>
+<div class="result-area" id="resultArea">
+<span id="velocityResult">Скорость: ---</span>
+<span id="pressureDropResult">Потеря давления: ---</span>
+<span id="reynoldsResult">Число Рейнольдса: ---</span>
+<span id="lambdaResult">Коэффициент трения λ: ---</span>
+<span id="compressNote" class="note"></span>
+</div>
+</div>
 </div>
 
 <script>
@@ -602,15 +602,11 @@
         resetResults();
     });
 
-    // При ручном изменении типа среды проверяем пресет
     mediumSelect.addEventListener('change', () => {
         const preset = presetSelect.value;
-        // Если выбрана вода или масло, а пользователь переключил на газ — сбрасываем пресет
         if ((preset === 'water' || preset === 'oil') && mediumSelect.value === 'gas') {
             presetSelect.value = 'choose';
-            // Свойства не обновляем, оставляем текущие значения (пользователь может ввести сам)
         } else if (preset !== 'choose') {
-            // Для других пресетов обновляем свойства в соответствии с новым состоянием
             updatePropertiesForState(preset);
         }
         updateGasPropsVisibility();
@@ -636,7 +632,6 @@
         document.getElementById('lblMolarMass').parentElement.style.display = isGas ? 'flex' : 'none';
     }
 
-    // ===== Обновление свойств в зависимости от пресета и состояния жидкость/газ =====
     function updatePropertiesForState(preset) {
         const density = document.getElementById('density');
         const viscosity = document.getElementById('viscosity');
@@ -683,14 +678,12 @@
                     if (isLiquid) { density.value = 59; viscosity.value = 0.034; }
                     else { density.value = 0.134; viscosity.value = 130.0; molarMass.value = 3.016; }
                     break;
-                default:
-                    return;
+                default: return;
             }
         }
     }
 
     function applyPreset(preset) {
-        // Принудительно устанавливаем тип среды для воды и масла
         if (preset === 'water' || preset === 'oil') {
             mediumSelect.value = 'liquid';
         } else {
@@ -701,7 +694,6 @@
         resetResults();
     }
 
-    // ===== Сброс результатов =====
     function resetResults() {
         lastResult = { velocity: 0, deltaP: 0, re: 0, lambda: 0, mode: '', mediumType: '', preset: '', pressureUnit: 'Pa' };
         updateResultLabels();
@@ -711,7 +703,6 @@
         mainDisplay.value = '0';
     }
 
-    // ===== Отображение на дисплее =====
     function updateDisplayWithResult() {
         const unit = lastResult.pressureUnit;
         const pressureFormatted = formatPressure(lastResult.deltaP, unit);
@@ -744,7 +735,7 @@
                 alert(t('errorPos')); return;
             }
 
-            const innerD = outerD - 2*wall; // mm
+            const innerD = outerD - 2*wall;
             const area = Math.PI * Math.pow(innerD/1000, 2) / 4;
             const velocity = massFlow / 3600 / area / density;
             let deltaP, lambda = 0, re = 0, compressMsg = '';
@@ -828,14 +819,18 @@
     // ===== Сохранение в файл =====
     saveBtn.addEventListener('click', () => {
         const report = buildReport();
-        const blob = new Blob([report], {type: 'text/plain'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'hydraulic_report_' + new Date().toISOString().slice(0,19).replace(/:/g,'-') + '.txt';
-        a.click();
-        URL.revokeObjectURL(url);
-        alert(t('fileSaved'));
+        if (typeof AndroidSave !== 'undefined' && AndroidSave.saveReport) {
+            AndroidSave.saveReport(report);
+        } else {
+            const blob = new Blob([report], {type: 'text/plain'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'hydraulic_report_' + new Date().toISOString().slice(0,19).replace(/:/g,'-') + '.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert(t('fileSaved'));
+        }
     });
 
     function buildReport() {
@@ -875,7 +870,6 @@
     shareBtn.addEventListener('click', () => {
         const shareUrl = 'https://github.com/Empers100/HydraulicCalculator';
         const title = t('title');
-
         let text;
         if (lastResult.velocity > 0) {
             text = buildReport() + '\n\n' + shareUrl;
@@ -883,7 +877,9 @@
             text = t('shareText') + ' ' + shareUrl;
         }
 
-        if (navigator.share) {
+        if (typeof AndroidShare !== 'undefined' && AndroidShare.shareText) {
+            AndroidShare.shareText(title, text, shareUrl);
+        } else if (navigator.share) {
             navigator.share({ title, text, url: shareUrl }).catch(() => {});
         } else {
             navigator.clipboard.writeText(text).then(() => {
@@ -895,57 +891,43 @@
         settingsMenu.classList.remove('show');
     });
 
-    // Инициализация видимости инженерного блока
+    // ===== Запрет отрицательных чисел, кроме температуры =====
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+        // Для поля температуры разрешаем минус
+        if (input.id === 'temperature') return;
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+                e.preventDefault();
+            }
+        });
+
+        function fixValue() {
+            let val = parseFloat(this.value);
+            let min = parseFloat(this.getAttribute('min'));
+            if (!isNaN(min)) {
+                if (isNaN(val) || val < min) {
+                    this.value = min;
+                }
+            } else if (this.value.startsWith('-')) {
+                this.value = this.value.replace('-', '');
+            }
+            if (this.id === 'bends' || this.id === 'valves') {
+                let intVal = parseInt(this.value);
+                if (!isNaN(intVal) && intVal >= 0) {
+                    this.value = intVal;
+                } else {
+                    this.value = 0;
+                }
+            }
+        }
+
+        input.addEventListener('input', fixValue);
+        input.addEventListener('blur', fixValue);
+    });
+
     updateEngineerVisibility();
 })();
-// Запрет ввода отрицательных чисел для всех полей, где min >= 0
-document.querySelectorAll('input[type="number"]').forEach(input => {
-    input.addEventListener('keydown', function(e) {
-        if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+') {
-            e.preventDefault();
-        }
-    });
-
-    input.addEventListener('input', function() {
-        let val = parseFloat(this.value);
-        let min = parseFloat(this.getAttribute('min'));
-        if (!isNaN(min)) {
-            if (isNaN(val) || val < min) {
-                this.value = min;
-            }
-        } else if (this.value.startsWith('-')) {
-            this.value = this.value.replace('-', '');
-        }
-        // Дополнительно для целых чисел (повороты, клапаны) – если было введено не целое
-        if (this.id === 'bends' || this.id === 'valves') {
-            let intVal = parseInt(this.value);
-            if (!isNaN(intVal) && intVal >= 0) {
-                this.value = intVal;
-            } else if (this.value === '' || isNaN(intVal)) {
-                this.value = 0;
-            }
-        }
-    });
-
-    // При потере фокуса – окончательная проверка
-    input.addEventListener('blur', function() {
-        let val = parseFloat(this.value);
-        let min = parseFloat(this.getAttribute('min'));
-        if (!isNaN(min)) {
-            if (isNaN(val) || val < min) {
-                this.value = min;
-            }
-        }
-        if (this.id === 'bends' || this.id === 'valves') {
-            let intVal = parseInt(this.value);
-            if (!isNaN(intVal) && intVal >= 0) {
-                this.value = intVal;
-            } else {
-                this.value = 0;
-            }
-        }
-    });
-});
 </script>
 </body>
 </html>
