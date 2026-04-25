@@ -172,14 +172,20 @@
 <option value="oil" id="presetOilText">Масло</option>
 <option value="air" id="presetAirText">Воздух</option>
 <option value="nitrogen" id="presetNitrogenText">Азот</option>
+<option value="oxygen" id="presetOxygenText">Кислород</option>
 <option value="methane" id="presetMethaneText">Метан</option>
 <option value="co2" id="presetCO2Text">CO₂</option>
-<option value="hydrogen" id="presetHydrogenText">Водород</option>
+<option value="parahydrogen" id="presetParahydrogenText">Водород (пара)</option>
+<option value="normalhydrogen" id="presetNormalhydrogenText">Водород (норм.)</option>
 <option value="helium4" id="presetHelium4Text">Гелий-4</option>
-<option value="ammonia" id="presetAmmoniaText">Аммиак</option>
+<option value="neon" id="presetNeonText">Неон</option>
 <option value="argon" id="presetArgonText">Аргон</option>
-<option value="propane" id="presetPropaneText">Пропан</option>
+<option value="krypton" id="presetKryptonText">Криптон</option>
+<option value="xenon" id="presetXenonText">Ксенон</option>
+<option value="ammonia" id="presetAmmoniaText">Аммиак</option>
 <option value="ethane" id="presetEthaneText">Этан</option>
+<option value="ethylene" id="presetEthyleneText">Этилен</option>
+<option value="propane" id="presetPropaneText">Пропан</option>
 <option value="freon22" id="presetFreon22Text">Фреон-22</option>
 </select></div>
 <div class="field-row"><label id="lblViscosity">Вязкость (cSt):</label><input type="number" id="viscosity" value="1.0" min="0.001" step="any"></div>
@@ -210,7 +216,7 @@
 (function() {
     'use strict';
 
-    // ====== Локализации ======
+    // ====== Локализации (дополнены новыми веществами) ======
     const locales = {
         ru: {
             title:'Гидравлический калькулятор', langLabel:'Язык / Language', themeDark:'Тёмная тема', themeLight:'Светлая тема',
@@ -220,8 +226,10 @@
             modeSimple:'Упрощённый', modeEngineer:'Инженерный', medium:'Тип среды:', liquid:'Жидкость', gas:'Газ',
             presetLabel:'Типичные среды:', presetChoose:'Выберите среду...',
             presetWater:'Вода', presetOil:'Масло', presetAir:'Воздух', presetNitrogen:'Азот',
-            presetMethane:'Метан', presetCO2:'CO₂', presetHydrogen:'Водород', presetHelium4:'Гелий-4',
-            presetAmmonia:'Аммиак', presetArgon:'Аргон', presetPropane:'Пропан', presetEthane:'Этан', presetFreon22:'Фреон-22',
+            presetOxygen:'Кислород', presetMethane:'Метан', presetCO2:'CO₂',
+            presetParahydrogen:'Водород (пара)', presetNormalhydrogen:'Водород (норм.)', presetHelium4:'Гелий-4',
+            presetNeon:'Неон', presetArgon:'Аргон', presetKrypton:'Криптон', presetXenon:'Ксенон',
+            presetAmmonia:'Аммиак', presetEthane:'Этан', presetEthylene:'Этилен', presetPropane:'Пропан', presetFreon22:'Фреон-22',
             viscosity:'Вязкость (cSt):', roughness:'Шероховатость (mm):',
             pressure:'Абс. давление (bar):', temperature:'Температура (°C):', molarMass:'Молярная масса (g/mol):',
             pressureUnit:'Единицы давления:', calculate:'Рассчитать', save:'Сохранить в файл',
@@ -235,7 +243,7 @@
             warningIdealGas:'⚠ Для этого газа при данных условиях уравнение идеального газа неприменимо.',
             warningLiquidDensity:'⚠ Плотность жидкости выходит за реалистичный диапазон.',
             warningLiquidViscosity:'⚠ Вязкость жидкости выходит за реалистичный диапазон.',
-            infoPanelGas:'⚠ Для газов плотность рассчитывается по уравнению состояния реального газа (Z). Вязкость учитывает давление.',
+            infoPanelGas:'⚠ Для газов плотность рассчитывается по уравнению состояния реального газа (Z). Вязкость включает поправку на давление.',
             infoPanelLiquid:'⚠ Для жидкостей проверяются реалистичные пределы плотности и вязкости.',
             limitInfo: 'Допустимый диапазон: T {tmin}…{tmax} °C, P {pmin}…{pmax} bar',
             noLimitInfo: 'Справочные пределы не заданы. Модель идеального газа может быть неточной.',
@@ -250,8 +258,10 @@
             modeSimple:'Simplified', modeEngineer:'Engineering', medium:'Medium:', liquid:'Liquid', gas:'Gas',
             presetLabel:'Presets:', presetChoose:'Select...',
             presetWater:'Water', presetOil:'Oil', presetAir:'Air', presetNitrogen:'Nitrogen',
-            presetMethane:'Methane', presetCO2:'CO₂', presetHydrogen:'Hydrogen', presetHelium4:'Helium-4',
-            presetAmmonia:'Ammonia', presetArgon:'Argon', presetPropane:'Propane', presetEthane:'Ethane', presetFreon22:'Freon-22',
+            presetOxygen:'Oxygen', presetMethane:'Methane', presetCO2:'CO₂',
+            presetParahydrogen:'Hydrogen (para)', presetNormalhydrogen:'Hydrogen (normal)', presetHelium4:'Helium-4',
+            presetNeon:'Neon', presetArgon:'Argon', presetKrypton:'Krypton', presetXenon:'Xenon',
+            presetAmmonia:'Ammonia', presetEthane:'Ethane', presetEthylene:'Ethylene', presetPropane:'Propane', presetFreon22:'Freon-22',
             viscosity:'Viscosity (cSt):', roughness:'Roughness (mm):',
             pressure:'Abs. Pressure (bar):', temperature:'Temperature (°C):', molarMass:'Molar Mass (g/mol):',
             pressureUnit:'Pressure Units:', calculate:'Calculate', save:'Save to File',
@@ -280,8 +290,10 @@
             modeSimple:'简化模式', modeEngineer:'工程模式', medium:'介质类型：', liquid:'液体', gas:'气体',
             presetLabel:'常见介质：', presetChoose:'选择介质...',
             presetWater:'水', presetOil:'工业油', presetAir:'空气', presetNitrogen:'氮气',
-            presetMethane:'甲烷', presetCO2:'二氧化碳', presetHydrogen:'氢气', presetHelium4:'氦-4',
-            presetAmmonia:'氨', presetArgon:'氩', presetPropane:'丙烷', presetEthane:'乙烷', presetFreon22:'氟利昂-22',
+            presetOxygen:'氧气', presetMethane:'甲烷', presetCO2:'二氧化碳',
+            presetParahydrogen:'氢 (仲氢)', presetNormalhydrogen:'氢 (正氢)', presetHelium4:'氦-4',
+            presetNeon:'氖', presetArgon:'氩', presetKrypton:'氪', presetXenon:'氙',
+            presetAmmonia:'氨', presetEthane:'乙烷', presetEthylene:'乙烯', presetPropane:'丙烷', presetFreon22:'氟利昂-22',
             viscosity:'运动粘度 (cSt)：', roughness:'粗糙度 (mm)：',
             pressure:'绝对压力 (bar)：', temperature:'温度 (°C)：', molarMass:'摩尔质量 (g/mol)：',
             pressureUnit:'压力单位：', calculate:'计算', save:'保存',
@@ -307,19 +319,25 @@
     let currentLang = localStorage.getItem('calc_hyd_lang') || 'ru';
     function t(key) { return locales[currentLang]?.[key] || key; }
 
-    // ===== Справочные данные =====
+    // ===== Справочные данные – критические параметры (Tc[K], Pc[bar], ω) =====
     const gasCritical = {
-        air:       { Tc: 132.5, Pc: 37.7,  w: 0.0 },
-        nitrogen:  { Tc: 126.2, Pc: 33.9,  w: 0.039 },
-        methane:   { Tc: 190.6, Pc: 45.99, w: 0.011 },
-        co2:       { Tc: 304.2, Pc: 73.83, w: 0.225 },
-        hydrogen:  { Tc: 33.19, Pc: 13.13, w: -0.216 },
-        helium4:   { Tc: 5.195, Pc: 2.275, w: -0.387 },
-        ammonia:   { Tc: 405.5, Pc: 112.8, w: 0.253 },
-        argon:     { Tc: 150.8, Pc: 48.98, w: 0.0 },
-        propane:   { Tc: 369.8, Pc: 42.48, w: 0.152 },
-        ethane:    { Tc: 305.4, Pc: 48.84, w: 0.099 },
-        freon22:   { Tc: 369.3, Pc: 49.86, w: 0.221 }
+        air:            { Tc: 132.5,  Pc: 37.7,   w: 0.0 },
+        nitrogen:       { Tc: 126.2,  Pc: 33.9,   w: 0.039 },
+        oxygen:         { Tc: 154.58, Pc: 50.43,  w: 0.022 },
+        methane:        { Tc: 190.6,  Pc: 45.99,  w: 0.011 },
+        co2:            { Tc: 304.2,  Pc: 73.83,  w: 0.225 },
+        parahydrogen:   { Tc: 32.98,  Pc: 12.84,  w: -0.219 },
+        normalhydrogen: { Tc: 33.19,  Pc: 13.13,  w: -0.216 },
+        helium4:        { Tc: 5.195,  Pc: 2.275,  w: -0.387 },
+        neon:           { Tc: 44.4,   Pc: 27.56,  w: -0.04 },
+        argon:          { Tc: 150.8,  Pc: 48.98,  w: 0.0 },
+        krypton:        { Tc: 209.4,  Pc: 55.0,   w: 0.0 },
+        xenon:          { Tc: 289.7,  Pc: 58.4,   w: 0.0 },
+        ammonia:        { Tc: 405.5,  Pc: 112.8,  w: 0.253 },
+        ethane:         { Tc: 305.4,  Pc: 48.84,  w: 0.099 },
+        ethylene:       { Tc: 282.35, Pc: 50.42,  w: 0.087 },
+        propane:        { Tc: 369.8,  Pc: 42.48,  w: 0.152 },
+        freon22:        { Tc: 369.3,  Pc: 49.86,  w: 0.221 }
     };
 
     // ===== Коэффициент сжимаемости Z (Ли-Кеслер) =====
@@ -357,55 +375,62 @@
         return rho;
     }
 
-function calcRealGasViscosity(T_C, P_bar, gas) {
-    const crit = gasCritical[gas];
-    if (!crit) return null;
+    // ===== Вязкость реального газа (исправлено) =====
+    function calcRealGasViscosity(T_C, P_bar, gas) {
+        const crit = gasCritical[gas];
+        if (!crit) return null;
 
-    const M = parseFloat(document.getElementById('molarMass').value) || 28.97; // г/моль !
-    const T_K = T_C + 273.15;
-    const Tc = crit.Tc;
-    const Pc = crit.Pc; // бар
+        const M = parseFloat(document.getElementById('molarMass').value) || 28.97; // г/моль !
+        const T_K = T_C + 273.15;
+        const Tc = crit.Tc;
+        const Pc = crit.Pc; // бар
 
-    //  Разреженная вязкость μ₀ (правильный диаметр столкновений)
-    const sigma = 2.44 * Math.pow(Tc / Pc, 1/3); // Å
-    const Tstar = T_K / (Tc * 0.77);
-    const Omega = 1.16145 * Math.pow(Tstar, -0.14874) +
-                  0.52487 * Math.exp(-0.77320 * Tstar) +
-                  2.16178 * Math.exp(-2.43787 * Tstar);
-    const mu0 = 2.6693e-6 * Math.sqrt(M * T_K) / (sigma * sigma * Omega); // Па•с
+        // 1. Разреженная вязкость μ₀
+        const sigma = 2.44 * Math.pow(Tc / Pc, 1/3); // Å
+        const Tstar = T_K / (Tc * 0.77);
+        const Omega = 1.16145 * Math.pow(Tstar, -0.14874) +
+                      0.52487 * Math.exp(-0.77320 * Tstar) +
+                      2.16178 * Math.exp(-2.43787 * Tstar);
+        const mu0 = 2.6693e-6 * Math.sqrt(M * T_K) / (sigma * sigma * Omega); // Па•с
 
-    //  Поправка на давление (Jossi–Stiel–Thodos) с правильной размерностью ξ
-    const Zc = 0.27;
-    const Vc = Zc * 8.314 * Tc / (Pc * 1e5); // м³/моль
-    // ξ (xi) – стандартное определение: [Tc(K)]^(1/6) / ( M[г/моль]^(1/2) * Pc[бар]^(2/3) )
-    const xi = Math.pow(Tc, 1/6) / (Math.pow(M, 0.5) * Math.pow(Pc, 2/3));
-    const rho = calcRealGasDensity(T_C, P_bar, gas); // кг/м³
-    const rho_molar = rho / (M / 1000); // моль/м³
-    const rho_r = rho_molar * Vc; // приведённая плотность
+        // 2. Поправка на давление (Jossi–Stiel–Thodos)
+        const Zc = 0.27;
+        const Vc = Zc * 8.314 * Tc / (Pc * 1e5); // м³/моль
+        const xi = Math.pow(Tc, 1/6) / (Math.pow(M, 0.5) * Math.pow(Pc, 2/3));
+        const rho = calcRealGasDensity(T_C, P_bar, gas);
+        const rho_molar = rho / (M / 1000); // моль/м³
+        const rho_r = rho_molar * Vc;
 
-    if (rho_r <= 0.001) return mu0; // почти идеальный газ
+        if (rho_r <= 0.001) return mu0;
 
-    const poly = [1.023, 0.23364, 0.58533, -0.40758, 0.093324];
-    let sum = 0;
-    for (let i = 0; i < poly.length; i++) sum += poly[i] * Math.pow(rho_r, i);
-    const mu0_uPas = mu0 * 1e6;          // перевод в мкПа•с
-    const psi = mu0_uPas * xi;           // безразмерный комплекс
-    const mu_mu0 = 1 + (Math.pow(sum, 4) - 1) / psi;
-    return mu0 * Math.max(mu_mu0, 0.5);
-}
+        const poly = [1.023, 0.23364, 0.58533, -0.40758, 0.093324];
+        let sum = 0;
+        for (let i = 0; i < poly.length; i++) sum += poly[i] * Math.pow(rho_r, i);
+        const mu0_uPas = mu0 * 1e6;          // мкПа•с
+        const psi = mu0_uPas * xi;
+        const mu_mu0 = 1 + (Math.pow(sum, 4) - 1) / psi;
+        return mu0 * Math.max(mu_mu0, 0.5);
+    }
 
+    // ===== Границы применимости для газов (по таблице) =====
     const gasLimits = {
-        air:       { Tmin: 70,   Tmax: 1300, Pmin: 0.03401, Pmax: 100 },
-        nitrogen:  { Tmin: 65.9, Tmax: 1300, Pmin: 0.02,    Pmax: 100 },
-        methane:   { Tmin: 91,   Tmax: 600,  Pmin: 0.0122,  Pmax: 100 },
-        co2:       { Tmin: 219,  Tmax: 600,  Pmin: 0.5,     Pmax: 100 },
-        hydrogen:  { Tmin: 14,   Tmax: 500,  Pmin: 0.0074,  Pmax: 50 },
-        helium4:   { Tmin: 2,    Tmax: 600,  Pmin: 0.0005,  Pmax: 50 },
-        ammonia:   { Tmin: 200,  Tmax: 750,  Pmin: 0.008,   Pmax: 100 },
-        argon:     { Tmin: 84,   Tmax: 1300, Pmin: 0.071,   Pmax: 100 },
-        propane:   { Tmin: 100,  Tmax: 600,  Pmin: 0.01,    Pmax: 100 },
-        ethane:    { Tmin: 93,   Tmax: 600,  Pmin: 0.00017, Pmax: 100 },
-        freon22:   { Tmin: 273,  Tmax: 553,  Pmin: 0.1,     Pmax: 35 },
+        air:            { Tmin: 70,    Tmax: 1300,  Pmin: 0.03401, Pmax: 100 },
+        nitrogen:       { Tmin: 65.9,  Tmax: 1300,  Pmin: 0.02,    Pmax: 100 },
+        oxygen:         { Tmin: 55,    Tmax: 1300,  Pmin: 0.0018,  Pmax: 1000 },
+        methane:        { Tmin: 91,    Tmax: 600,   Pmin: 0.0122,  Pmax: 100 },
+        co2:            { Tmin: 219,   Tmax: 600,   Pmin: 0.5,     Pmax: 100 },
+        parahydrogen:   { Tmin: 14,    Tmax: 500,   Pmin: 0.1,     Pmax: 500 },
+        normalhydrogen: { Tmin: 14,    Tmax: 500,   Pmin: 0.1,     Pmax: 500 },
+        helium4:        { Tmin: 2,     Tmax: 600,   Pmin: 0.0005,  Pmax: 50 },
+        neon:           { Tmin: 24.56, Tmax: 600,   Pmin: 0.5,     Pmax: 1000 },
+        argon:          { Tmin: 84,    Tmax: 1300,  Pmin: 0.071,   Pmax: 100 },
+        krypton:        { Tmin: 115.76,Tmax: 600,   Pmin: 0.725,   Pmax: 1000 },
+        xenon:          { Tmin: 161.41,Tmax: 600,   Pmin: 0.82,    Pmax: 1000 },
+        ammonia:        { Tmin: 200,   Tmax: 750,   Pmin: 0.008,   Pmax: 100 },
+        ethane:         { Tmin: 93,    Tmax: 600,   Pmin: 0.0017,  Pmax: 1000 },
+        ethylene:       { Tmin: 110,   Tmax: 600,   Pmin: 0.0012,  Pmax: 1000 },
+        propane:        { Tmin: 100,   Tmax: 600,   Pmin: 0.01,    Pmax: 100 },
+        freon22:        { Tmin: 273,   Tmax: 553,   Pmin: 0.1,     Pmax: 35 },
         water: null,
         oil: null
     };
@@ -415,9 +440,9 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
         oil:       { densityMin: 800,  densityMax: 950,  viscosityMin: 20,   viscosityMax: 200 },
         air:       { densityMin: 800,  densityMax: 950,  viscosityMin: 0.1,  viscosityMax: 0.3 },
         nitrogen:  { densityMin: 700,  densityMax: 900,  viscosityMin: 0.1,  viscosityMax: 0.3 },
+        oxygen:    { densityMin: 900,  densityMax: 1100, viscosityMin: 0.1,  viscosityMax: 0.5 },
         methane:   { densityMin: 350,  densityMax: 500,  viscosityMin: 0.05, viscosityMax: 0.2 },
         co2:       { densityMin: 900,  densityMax: 1200, viscosityMin: 0.05, viscosityMax: 0.2 },
-        hydrogen:  { densityMin: 50,   densityMax: 80,   viscosityMin: 0.05, viscosityMax: 0.2 },
         helium4:   { densityMin: 100,  densityMax: 150,  viscosityMin: 0.01, viscosityMax: 0.05 },
         ammonia:   { densityMin: 600,  densityMax: 750,  viscosityMin: 0.15, viscosityMax: 0.5 },
         argon:     { densityMin: 1200, densityMax: 1500, viscosityMin: 0.2,  viscosityMax: 0.5 },
@@ -428,8 +453,10 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
 
     const baseViscosity = {
         water: 1.0, oil: 50.0,
-        air: 15.0, nitrogen: 15.1, methane: 11.0, co2: 8.0, hydrogen: 105.0, helium4: 120.0,
-        ammonia: 13.5, argon: 13.6, propane: 4.4, ethane: 7.5, freon22: 0.3
+        air: 15.0, nitrogen: 15.1, oxygen: 15.7, methane: 11.0, co2: 8.0,
+        parahydrogen: 105.0, normalhydrogen: 105.0, helium4: 120.0,
+        neon: 37.8, argon: 13.6, krypton: 7.3, xenon: 4.45,
+        ammonia: 13.5, ethane: 7.5, ethylene: 9.5, propane: 4.4, freon22: 0.3
     };
 
     // ===== DOM =====
@@ -486,7 +513,9 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
         document.getElementById('mediumGasText').textContent = t('gas');
         document.getElementById('lblPreset').textContent = t('presetLabel');
         document.getElementById('presetChooseText').textContent = t('presetChoose');
-        ['Water','Oil','Air','Nitrogen','Methane','CO2','Hydrogen','Helium4','Ammonia','Argon','Propane','Ethane','Freon22'].forEach(k => {
+        // Обновляем названия всех пресетов
+        ['Water','Oil','Air','Nitrogen','Oxygen','Methane','CO2','Parahydrogen','Normalhydrogen',
+         'Helium4','Neon','Argon','Krypton','Xenon','Ammonia','Ethane','Ethylene','Propane','Freon22'].forEach(k => {
             const el = document.getElementById('preset'+k+'Text');
             if (el) el.textContent = t('preset'+k);
         });
@@ -688,35 +717,37 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
     document.getElementById('density').addEventListener('change', checkConditions);
     document.getElementById('viscosity').addEventListener('change', checkConditions);
 
-    // ===== Свойства веществ =====
+    // ===== Свойства веществ (пресеты) =====
     function updatePropertiesForState(preset) {
         const density = document.getElementById('density');
         const viscosity = document.getElementById('viscosity');
         const roughness = document.getElementById('roughness');
         const molarMass = document.getElementById('molarMass');
         const isLiquid = mediumSelect.value==='liquid';
-        if (preset==='water') { density.value=1000; viscosity.value=1.0; roughness.value=0.1; }
-        else if (preset==='oil') { density.value=900; viscosity.value=50.0; roughness.value=0.1; }
-        else {
-            roughness.value=0.05;
-            switch(preset) {
-                case'air': if(isLiquid){density.value=870;viscosity.value=0.17;} else{density.value=1.20;viscosity.value=15.0;molarMass.value=28.97;}break;
-                case'nitrogen': if(isLiquid){density.value=808;viscosity.value=0.16;} else{density.value=1.165;viscosity.value=15.1;molarMass.value=28.01;}break;
-                case'methane': if(isLiquid){density.value=422;viscosity.value=0.12;} else{density.value=0.66;viscosity.value=11.0;molarMass.value=16.04;}break;
-                case'co2': if(isLiquid){density.value=1100;viscosity.value=0.08;} else{density.value=1.84;viscosity.value=8.0;molarMass.value=44.01;}break;
-                case'hydrogen': if(isLiquid){density.value=70.8;viscosity.value=0.13;} else{density.value=0.084;viscosity.value=105.0;molarMass.value=2.016;}break;
-                case'helium4': if(isLiquid){density.value=125;viscosity.value=0.028;} else{density.value=0.166;viscosity.value=120.0;molarMass.value=4.0026;}break;
-                case'ammonia': if(isLiquid){density.value=682;viscosity.value=0.25;} else{density.value=0.73;viscosity.value=13.5;molarMass.value=17.03;}break;
-                case'argon': if(isLiquid){density.value=1394;viscosity.value=0.27;} else{density.value=1.66;viscosity.value=13.6;molarMass.value=39.95;}break;
-                case'propane': if(isLiquid){density.value=493;viscosity.value=0.2;} else{density.value=1.88;viscosity.value=4.4;molarMass.value=44.1;}break;
-                case'ethane': if(isLiquid){density.value=546;viscosity.value=0.3;} else{density.value=1.26;viscosity.value=7.5;molarMass.value=30.07;}break;
-                case'freon22': if(isLiquid){density.value=1194;viscosity.value=0.2;} else{density.value=3.5;viscosity.value=0.3;molarMass.value=86.47;}break;
-            }
-        }
+        roughness.value=0.05;
+        if (preset=='water') { density.value=1000; viscosity.value=1.0; roughness.value=0.1; }
+        else if (preset=='oil') { density.value=900; viscosity.value=50.0; roughness.value=0.1; }
+        else if (preset=='air') { if(isLiquid){density.value=870;viscosity.value=0.17;} else{density.value=1.20;viscosity.value=15.0;molarMass.value=28.97;} }
+        else if (preset=='nitrogen') { if(isLiquid){density.value=808;viscosity.value=0.16;} else{density.value=1.165;viscosity.value=15.1;molarMass.value=28.01;} }
+        else if (preset=='oxygen') { if(isLiquid){density.value=1140;viscosity.value=0.19;} else{density.value=1.33;viscosity.value=15.7;molarMass.value=32.00;} }
+        else if (preset=='methane') { if(isLiquid){density.value=422;viscosity.value=0.12;} else{density.value=0.66;viscosity.value=11.0;molarMass.value=16.04;} }
+        else if (preset=='co2') { if(isLiquid){density.value=1100;viscosity.value=0.08;} else{density.value=1.84;viscosity.value=8.0;molarMass.value=44.01;} }
+        else if (preset=='parahydrogen') { if(isLiquid){density.value=70.8;viscosity.value=0.13;} else{density.value=0.084;viscosity.value=105.0;molarMass.value=2.016;} }
+        else if (preset=='normalhydrogen') { if(isLiquid){density.value=70.8;viscosity.value=0.13;} else{density.value=0.084;viscosity.value=105.0;molarMass.value=2.016;} }
+        else if (preset=='helium4') { if(isLiquid){density.value=125;viscosity.value=0.028;} else{density.value=0.166;viscosity.value=120.0;molarMass.value=4.0026;} }
+        else if (preset=='neon') { if(isLiquid){density.value=1206;viscosity.value=0.12;} else{density.value=0.84;viscosity.value=37.8;molarMass.value=20.18;} }
+        else if (preset=='argon') { if(isLiquid){density.value=1394;viscosity.value=0.27;} else{density.value=1.66;viscosity.value=13.6;molarMass.value=39.95;} }
+        else if (preset=='krypton') { if(isLiquid){density.value=2413;viscosity.value=0.22;} else{density.value=3.5;viscosity.value=7.3;molarMass.value=83.80;} }
+        else if (preset=='xenon') { if(isLiquid){density.value=3057;viscosity.value=0.22;} else{density.value=5.5;viscosity.value=4.45;molarMass.value=131.29;} }
+        else if (preset=='ammonia') { if(isLiquid){density.value=682;viscosity.value=0.25;} else{density.value=0.73;viscosity.value=13.5;molarMass.value=17.03;} }
+        else if (preset=='ethane') { if(isLiquid){density.value=546;viscosity.value=0.3;} else{density.value=1.26;viscosity.value=7.5;molarMass.value=30.07;} }
+        else if (preset=='ethylene') { if(isLiquid){density.value=567;viscosity.value=0.2;} else{density.value=1.18;viscosity.value=9.5;molarMass.value=28.05;} }
+        else if (preset=='propane') { if(isLiquid){density.value=493;viscosity.value=0.2;} else{density.value=1.88;viscosity.value=4.4;molarMass.value=44.1;} }
+        else if (preset=='freon22') { if(isLiquid){density.value=1194;viscosity.value=0.2;} else{density.value=3.5;viscosity.value=0.3;molarMass.value=86.47;} }
     }
 
     function applyPreset(preset) {
-        if (preset==='water'||preset==='oil') mediumSelect.value='liquid';
+        if (preset=='water'||preset=='oil') mediumSelect.value='liquid';
         else mediumSelect.value='gas';
         updatePropertiesForState(preset);
         applyGasLimits();
@@ -734,14 +765,12 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
         formulaDisplay.textContent=t('ready');
         mainDisplay.value='0';
     }
-
     function updateResultLabels() {
         velocityResult.textContent = t('velocity')+': '+(lastResult.velocity>0?lastResult.velocity.toFixed(3)+' m/s':'---');
         pressureDropResult.textContent = t('pressureDrop')+': '+(lastResult.deltaP>0?formatPressure(lastResult.deltaP,lastResult.pressureUnit):'---');
         reynoldsResult.textContent = t('reynolds')+': '+(lastResult.re>0?lastResult.re.toFixed(0):'---');
         lambdaResult.textContent = t('lambda')+': '+(lastResult.lambda>0?lastResult.lambda.toFixed(4):'---');
     }
-
     function updateDisplayWithResult() {
         const unit = lastResult.pressureUnit;
         const pf = formatPressure(lastResult.deltaP, unit);
@@ -765,7 +794,7 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
             const area = Math.PI*Math.pow(innerD/1000,2)/4;
             const velocity = massFlow/3600/area/density;
             let deltaP, lambda=0, re=0, compressMsg='';
-            if (modeSelect.value==='simple') {
+            if (modeSelect.value=='simple') {
                 deltaP = density*Math.pow(velocity,2)/2*(41*length/innerD+5*valves+0.17*bends);
                 lastResult.mode='simple';
             } else {
@@ -774,7 +803,7 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
                 const kinVisc = viscosity*1e-6;
                 const medium = mediumSelect.value;
                 lastResult.mediumType=medium; lastResult.preset=presetSelect.value;
-                if (medium==='gas') {
+                if (medium=='gas') {
                     const pressure = parseFloat(document.getElementById('pressure').value)*1e5;
                     const temperature = parseFloat(document.getElementById('temperature').value)+273.15;
                     const molarMass = parseFloat(document.getElementById('molarMass').value)/1000;
@@ -805,7 +834,12 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
     });
 
     function getGamma(p){
-        const m={air:1.4,nitrogen:1.4,methane:1.31,co2:1.3,hydrogen:1.41,helium4:1.67,ammonia:1.33,argon:1.67,propane:1.13,ethane:1.2,freon22:1.19};
+        const m={
+            air:1.4, nitrogen:1.4, oxygen:1.4, methane:1.31, co2:1.3,
+            parahydrogen:1.41, normalhydrogen:1.41, helium4:1.67, neon:1.67,
+            argon:1.67, krypton:1.67, xenon:1.67, ammonia:1.33,
+            ethane:1.2, ethylene:1.24, propane:1.13, freon22:1.19
+        };
         return m[p]||1.4;
     }
     function formatPressure(pa,unit) {
@@ -829,7 +863,7 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
     function buildReport() {
         const loc = locales[currentLang];
         let r = `=== ${loc.title} ===\n${new Date().toLocaleString()}\n`;
-        if (lastResult.mode==='engineer') r += `${loc.medium} ${loc[lastResult.mediumType]||lastResult.mediumType}\n${loc.presetLabel} ${loc['preset'+(lastResult.preset.charAt(0).toUpperCase()+lastResult.preset.slice(1))]||lastResult.preset}\n`;
+        if (lastResult.mode=='engineer') r += `${loc.medium} ${loc[lastResult.mediumType]||lastResult.mediumType}\n${loc.presetLabel} ${loc['preset'+(lastResult.preset.charAt(0).toUpperCase()+lastResult.preset.slice(1))]||lastResult.preset}\n`;
         r += `\n--- ${loc.calculate} ---\n`;
         r += `${loc.bends} ${document.getElementById('bends').value}\n`;
         r += `${loc.valves} ${document.getElementById('valves').value}\n`;
@@ -838,10 +872,10 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
         r += `${loc.length} ${document.getElementById('length').value} m\n`;
         r += `${loc.massFlow} ${document.getElementById('massFlow').value} kg/h\n`;
         r += `${loc.density} ${document.getElementById('density').value} kg/m³\n`;
-        if (lastResult.mode==='engineer') {
+        if (lastResult.mode=='engineer') {
             r += `${loc.viscosity} ${document.getElementById('viscosity').value} cSt\n`;
             r += `${loc.roughness} ${document.getElementById('roughness').value} mm\n`;
-            if (lastResult.mediumType==='gas') {
+            if (lastResult.mediumType=='gas') {
                 r += `${loc.pressure} ${document.getElementById('pressure').value} bar\n`;
                 r += `${loc.temperature} ${document.getElementById('temperature').value} °C\n`;
                 r += `${loc.molarMass} ${document.getElementById('molarMass').value} g/mol\n`;
