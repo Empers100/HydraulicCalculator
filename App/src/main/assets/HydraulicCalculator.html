@@ -33,48 +33,30 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            display: flex;
-            justify-content: center;
-            padding: 12px;
-            min-height: 100vh;
+            background: var(--bg); color: var(--text);
+            display: flex; justify-content: center; padding: 12px; min-height: 100vh;
             transition: background 0.3s;
         }
         .container {
-            width: 100%;
-            max-width: 580px;
-            background: var(--surface);
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            position: relative;
+            width: 100%; max-width: 580px; background: var(--surface);
+            border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            padding: 16px; display: flex; flex-direction: column; gap: 12px; position: relative;
         }
-        .header {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
+        .header { display: flex; justify-content: flex-end; align-items: center; }
         .menu-btn {
-            width: 40px; height: 40px; border: none;
-            background: var(--btn-bg); color: var(--text); font-size: 24px;
-            font-weight: bold; border-radius: 12px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; border: none; background: var(--btn-bg);
+            color: var(--text); font-size: 24px; font-weight: bold; border-radius: 12px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
         .menu {
             position: absolute; top: 60px; right: 16px; background: var(--surface);
             border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-            padding: 12px; z-index: 100; min-width: 230px; display: none;
-            border: 1px solid var(--border);
+            padding: 12px; z-index: 100; min-width: 230px; display: none; border: 1px solid var(--border);
         }
         .menu.show { display: block; }
         .menu-item {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 8px; border-bottom: 1px solid var(--border);
-            color: var(--text); font-size: 16px;
+            padding: 10px 8px; border-bottom: 1px solid var(--border); color: var(--text); font-size: 16px;
         }
         .menu-item:last-child { border-bottom: none; }
         .menu-item select, .menu-item button {
@@ -91,9 +73,7 @@
         }
         body.dark .theme-toggle::after { transform: translateX(24px); }
         .tab-content { display: flex; flex-direction: column; gap: 12px; }
-        .display-container {
-            display: flex; flex-direction: column;
-        }
+        .display-container { display: flex; flex-direction: column; }
         .formula-display {
             padding: 8px 16px; font-size: 14px; text-align: right;
             background: var(--display-bg); border-radius: 16px 16px 0 0;
@@ -101,36 +81,19 @@
             border-bottom: 1px solid var(--border);
         }
         .main-display-row {
-            display: flex;
-            align-items: center;
-            background: var(--display-bg);
-            border-radius: 0 0 16px 16px;
-            padding: 0 16px;
+            display: flex; align-items: center; background: var(--display-bg);
+            border-radius: 0 0 16px 16px; padding: 0 16px;
         }
         .main-display-row label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-right: 8px;
-            white-space: nowrap;
+            font-size: 14px; color: var(--text-secondary); margin-right: 8px; white-space: nowrap;
         }
         .main-display {
-            flex: 1;
-            padding: 16px 0;
-            font-size: 28px;
-            text-align: right;
-            background: transparent;
-            border: none;
-            font-weight: 500;
-            color: var(--text);
-            outline: none;
-            width: 100%;
+            flex: 1; padding: 16px 0; font-size: 28px; text-align: right;
+            background: transparent; border: none; font-weight: 500; color: var(--text);
+            outline: none; width: 100%;
         }
-        .field-row {
-            display: flex; align-items: center; justify-content: space-between; gap: 8px;
-        }
-        .field-row label {
-            flex: 1; font-size: 14px; color: var(--text-secondary);
-        }
+        .field-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .field-row label { flex: 1; font-size: 14px; color: var(--text-secondary); }
         .field-row input, .field-row select {
             flex: 1; padding: 10px 8px; border: 1px solid var(--border);
             border-radius: 10px; background: var(--btn-bg); color: var(--text);
@@ -138,11 +101,18 @@
         }
         .engineer-block { display: none; flex-direction: column; gap: 6px; }
         .engineer-block.show { display: flex; }
+        .info-panel {
+            font-size: 12px; color: var(--text-secondary); font-style: italic;
+            background: var(--display-bg); padding: 8px; border-radius: 12px;
+            margin-top: 4px; display: none;
+        }
+        .info-panel.show { display: block; }
+        .warning-text { color: #e06c00; font-weight: 500; font-size: 13px; margin-top: 4px; display: none; }
+        .warning-text.show { display: block; }
         .btn-row { display: flex; gap: 8px; margin-top: 12px; }
         .calc-btn, .save-btn {
             flex: 1; padding: 14px; font-size: 16px; font-weight: bold;
-            background: var(--btn-active); color: white; border: none;
-            border-radius: 14px; cursor: pointer;
+            background: var(--btn-active); color: white; border: none; border-radius: 14px; cursor: pointer;
         }
         .save-btn:disabled { opacity: 0.5; cursor: default; }
         .result-area {
@@ -185,53 +155,18 @@
 </div>
 </div>
 
-<div class="field-row">
-<label id="lblBends">Поворотов 90°:</label>
-<input type="number" id="bends" value="0" min="0" step="1">
-</div>
-<div class="field-row">
-<label id="lblValves">Клапанов:</label>
-<input type="number" id="valves" value="0" min="0" step="1">
-</div>
-<div class="field-row">
-<label id="lblOuterDiam">Наружный диаметр (mm):</label>
-<input type="number" id="outerDiam" value="57" min="0.1" step="any">
-</div>
-<div class="field-row">
-<label id="lblWall">Толщина стенки (mm):</label>
-<input type="number" id="wall" value="3.5" min="0" step="any">
-</div>
-<div class="field-row">
-<label id="lblLength">Длина (m):</label>
-<input type="number" id="length" value="100" min="0.001" step="any">
-</div>
-<div class="field-row">
-<label id="lblMassFlow">Массовый расход (kg/h):</label>
-<input type="number" id="massFlow" value="5000" min="0.001" step="any">
-</div>
-<div class="field-row">
-<label>Режим:</label>
-<select id="modeSelect">
-<option value="simple" id="modeSimpleText">Упрощённый</option>
-<option value="engineer" id="modeEngineerText">Инженерный</option>
-</select>
-</div>
-<div class="field-row">
-<label id="lblDensity">Плотность (kg/m³):</label>
-<input type="number" id="density" value="1000" min="0.001" step="any">
-</div>
+<div class="field-row"><label id="lblBends">Поворотов 90°:</label><input type="number" id="bends" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblValves">Клапанов:</label><input type="number" id="valves" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblOuterDiam">Наружный диаметр (mm):</label><input type="number" id="outerDiam" value="57" min="0.1" step="any"></div>
+<div class="field-row"><label id="lblWall">Толщина стенки (mm):</label><input type="number" id="wall" value="3.5" min="0" step="any"></div>
+<div class="field-row"><label id="lblLength">Длина (m):</label><input type="number" id="length" value="100" min="0.001" step="any"></div>
+<div class="field-row"><label id="lblMassFlow">Массовый расход (kg/h):</label><input type="number" id="massFlow" value="5000" min="0.001" step="any"></div>
+<div class="field-row"><label>Режим:</label><select id="modeSelect"><option value="simple" id="modeSimpleText">Упрощённый</option><option value="engineer" id="modeEngineerText">Инженерный</option></select></div>
+<div class="field-row"><label id="lblDensity">Плотность (kg/m³):</label><input type="number" id="density" value="1000" min="0.001" step="any"></div>
 
 <div class="engineer-block" id="engineerBlock">
-<div class="field-row">
-<label id="lblMedium">Тип среды:</label>
-<select id="mediumSelect">
-<option value="liquid" id="mediumLiquidText">Жидкость</option>
-<option value="gas" id="mediumGasText">Газ</option>
-</select>
-</div>
-<div class="field-row">
-<label id="lblPreset">Типичные среды:</label>
-<select id="presetSelect">
+<div class="field-row"><label id="lblMedium">Тип среды:</label><select id="mediumSelect"><option value="liquid" id="mediumLiquidText">Жидкость</option><option value="gas" id="mediumGasText">Газ</option></select></div>
+<div class="field-row"><label id="lblPreset">Типичные среды:</label><select id="presetSelect">
 <option value="choose" id="presetChooseText">Выберите среду...</option>
 <option value="water" id="presetWaterText">Вода</option>
 <option value="oil" id="presetOilText">Масло</option>
@@ -241,47 +176,26 @@
 <option value="co2" id="presetCO2Text">CO₂</option>
 <option value="hydrogen" id="presetHydrogenText">Водород</option>
 <option value="helium4" id="presetHelium4Text">Гелий-4</option>
-<option value="helium3" id="presetHelium3Text">Гелий-3</option>
-</select>
-</div>
-<div class="field-row">
-<label id="lblViscosity">Вязкость (cSt):</label>
-<input type="number" id="viscosity" value="1.0" min="0.001" step="any">
-</div>
-<div class="field-row">
-<label id="lblRoughness">Шероховатость (mm):</label>
-<input type="number" id="roughness" value="0.1" min="0" step="any">
-</div>
-<div class="field-row" id="gasPropsRow" style="display: none;">
-<label id="lblPressure">Абс. давление (bar):</label>
-<input type="number" id="pressure" value="1.0" min="0.001" step="any">
-</div>
-<div class="field-row" style="display: none;">
-<label id="lblTemperature">Температура (°C):</label>
-<input type="number" id="temperature" value="20.0" min="-273.15" step="any">
-</div>
-<div class="field-row" style="display: none;">
-<label id="lblMolarMass">Молярная масса (g/mol):</label>
-<input type="number" id="molarMass" value="28.97" min="0.001" step="any">
-</div>
+<option value="ammonia" id="presetAmmoniaText">Аммиак</option>
+<option value="argon" id="presetArgonText">Аргон</option>
+<option value="propane" id="presetPropaneText">Пропан</option>
+<option value="ethane" id="presetEthaneText">Этан</option>
+<option value="freon22" id="presetFreon22Text">Фреон-22</option>
+</select></div>
+<div class="field-row"><label id="lblViscosity">Вязкость (cSt):</label><input type="number" id="viscosity" value="1.0" min="0.001" step="any"></div>
+<div class="field-row"><label id="lblRoughness">Шероховатость (mm):</label><input type="number" id="roughness" value="0.1" min="0" step="any"></div>
+<div class="field-row" id="gasPropsRow" style="display:none;"><label id="lblPressure">Абс. давление (bar):</label><input type="number" id="pressure" value="1.0" min="0.001" step="any"></div>
+<div class="field-row" style="display:none;"><label id="lblTemperature">Температура (°C):</label><input type="number" id="temperature" value="20.0" min="-273.15" step="any"></div>
+<div class="field-row" style="display:none;"><label id="lblMolarMass">Молярная масса (g/mol):</label><input type="number" id="molarMass" value="28.97" min="0.001" step="any"></div>
+<div class="info-panel" id="infoPanel"></div>
+<div class="warning-text" id="warningExtreme"></div>
 </div>
 
-<div class="field-row">
-<label id="lblPressureUnit">Единицы давления:</label>
-<select id="pressureUnit">
-<option value="Pa">Pa</option>
-<option value="kPa">kPa</option>
-<option value="bar">bar</option>
-<option value="kgf/cm²">kgf/cm²</option>
-<option value="psi">psi</option>
-</select>
-</div>
-
+<div class="field-row"><label id="lblPressureUnit">Единицы давления:</label><select id="pressureUnit"><option value="Pa">Pa</option><option value="kPa">kPa</option><option value="bar">bar</option><option value="kgf/cm²">kgf/cm²</option><option value="psi">psi</option></select></div>
 <div class="btn-row">
 <button class="calc-btn" id="calculateBtn">Рассчитать</button>
 <button class="save-btn" id="saveBtn" disabled>Сохранить в файл</button>
 </div>
-
 <div class="result-area" id="resultArea">
 <span id="velocityResult">Скорость: ---</span>
 <span id="pressureDropResult">Потеря давления: ---</span>
@@ -296,175 +210,143 @@
 (function() {
     'use strict';
 
-    // ===== Локализации =====
     const locales = {
         ru: {
-            title: 'Гидравлический калькулятор',
-            langLabel: 'Язык / Language',
-            themeDark: 'Тёмная тема',
-            themeLight: 'Светлая тема',
-            share: 'Поделиться',
-            shareText: 'Гидравлический калькулятор — попробуй:',
-            shareFallback: 'Ссылка скопирована! Расскажи друзьям.',
-            bends: 'Поворотов 90°:',
-            valves: 'Клапанов:',
-            outerDiam: 'Наружный диаметр (mm):',
-            wall: 'Толщина стенки (mm):',
-            length: 'Длина (m):',
-            massFlow: 'Массовый расход (kg/h):',
-            density: 'Плотность (kg/m³):',
-            modeSimple: 'Упрощённый',
-            modeEngineer: 'Инженерный',
-            medium: 'Тип среды:',
-            liquid: 'Жидкость',
-            gas: 'Газ',
-            presetLabel: 'Типичные среды:',
-            presetChoose: 'Выберите среду...',
-            presetWater: 'Вода',
-            presetOil: 'Масло',
-            presetAir: 'Воздух',
-            presetNitrogen: 'Азот',
-            presetMethane: 'Метан',
-            presetCO2: 'CO₂',
-            presetHydrogen: 'Водород',
-            presetHelium4: 'Гелий-4',
-            presetHelium3: 'Гелий-3',
-            viscosity: 'Вязкость (cSt):',
-            roughness: 'Шероховатость (mm):',
-            pressure: 'Абс. давление (bar):',
-            temperature: 'Температура (°C):',
-            molarMass: 'Молярная масса (g/mol):',
-            pressureUnit: 'Единицы давления:',
-            calculate: 'Рассчитать',
-            save: 'Сохранить в файл',
-            velocity: 'Скорость',
-            pressureDrop: 'Потеря давления',
-            reynolds: 'Число Рейнольдса',
-            lambda: 'Коэффициент трения λ',
-            errorNum: 'Проверьте правильность ввода чисел',
-            errorDiam: 'Некорректный диаметр или толщина стенки',
-            errorPos: 'Плотность, длина и расход должны быть > 0',
-            fileSaved: 'Файл сохранён',
-            compressNote: '⚠ Плотность отличается от идеального газа на %.1f%%',
-            compressMach: '⚠ Скорость > 0.3 Маха — необходим учёт сжимаемости!',
-            ready: 'Готов к расчёту',
-            resultSummary: 'v = {velocity} m/s, ΔP = {pressure} {unit}',
-            flowRate: 'Скорость потока:'
+            title:'Гидравлический калькулятор', langLabel:'Язык / Language', themeDark:'Тёмная тема', themeLight:'Светлая тема',
+            share:'Поделиться', shareText:'Гидравлический калькулятор — попробуй:', shareFallback:'Ссылка скопирована!',
+            bends:'Поворотов 90°:', valves:'Клапанов:', outerDiam:'Наружный диаметр (mm):', wall:'Толщина стенки (mm):',
+            length:'Длина (m):', massFlow:'Массовый расход (kg/h):', density:'Плотность (kg/m³):',
+            modeSimple:'Упрощённый', modeEngineer:'Инженерный', medium:'Тип среды:', liquid:'Жидкость', gas:'Газ',
+            presetLabel:'Типичные среды:', presetChoose:'Выберите среду...',
+            presetWater:'Вода', presetOil:'Масло', presetAir:'Воздух', presetNitrogen:'Азот',
+            presetMethane:'Метан', presetCO2:'CO₂', presetHydrogen:'Водород', presetHelium4:'Гелий-4',
+            presetAmmonia:'Аммиак', presetArgon:'Аргон', presetPropane:'Пропан', presetEthane:'Этан', presetFreon22:'Фреон-22',
+            viscosity:'Вязкость (cSt):', roughness:'Шероховатость (mm):',
+            pressure:'Абс. давление (bar):', temperature:'Температура (°C):', molarMass:'Молярная масса (g/mol):',
+            pressureUnit:'Единицы давления:', calculate:'Рассчитать', save:'Сохранить в файл',
+            velocity:'Скорость', pressureDrop:'Потеря давления', reynolds:'Число Рейнольдса', lambda:'Коэффициент трения λ',
+            errorNum:'Проверьте правильность ввода чисел', errorDiam:'Некорректный диаметр или толщина стенки',
+            errorPos:'Плотность, длина и расход должны быть > 0', fileSaved:'Файл сохранён',
+            compressNote:'⚠ Плотность отличается от идеального газа на %.1f%%', compressMach:'⚠ Скорость > 0.3 Маха — необходим учёт сжимаемости!',
+            ready:'Готов к расчёту', resultSummary:'v = {velocity} m/s, ΔP = {pressure} {unit}', flowRate:'Скорость потока:',
+            warningExtremeTemp:'⚠ Температура вне допустимого диапазона для данного газа.',
+            warningExtremePressure:'⚠ Давление вне допустимого диапазона для данного газа.',
+            warningIdealGas:'⚠ Для этого газа при данных условиях уравнение идеального газа неприменимо. Плотность задана вручную.',
+            warningLiquidDensity:'⚠ Плотность жидкости выходит за реалистичный диапазон.',
+            warningLiquidViscosity:'⚠ Вязкость жидкости выходит за реалистичный диапазон.',
+            infoPanelGas:'⚠ Для газов плотность автоматически рассчитывается по уравнению идеального газа (T, P, M). При выходе за справочные пределы модель неточна.',
+            infoPanelLiquid:'⚠ Для жидкостей проверяются реалистичные пределы плотности и вязкости.',
+            limitInfo: 'Допустимый диапазон: T {tmin}…{tmax} °C, P {pmin}…{pmax} bar',
+            noLimitInfo: 'Справочные пределы не заданы. Модель идеального газа может быть неточной.',
+            liquidDensityRange:'Плотность: {min}…{max} кг/м³',
+            liquidViscosityRange:'Вязкость: {min}…{max} сСт'
         },
         en: {
-            title: 'Hydraulic Calculator',
-            langLabel: 'Language',
-            themeDark: 'Dark theme',
-            themeLight: 'Light theme',
-            share: 'Share',
-            shareText: 'Hydraulic Calculator — try it:',
-            shareFallback: 'Link copied! Tell your friends.',
-            bends: '90° Bends:',
-            valves: 'Valves:',
-            outerDiam: 'Outer Diameter (mm):',
-            wall: 'Wall Thickness (mm):',
-            length: 'Length (m):',
-            massFlow: 'Mass Flow (kg/h):',
-            density: 'Density (kg/m³):',
-            modeSimple: 'Simplified',
-            modeEngineer: 'Engineering',
-            medium: 'Medium:',
-            liquid: 'Liquid',
-            gas: 'Gas',
-            presetLabel: 'Presets:',
-            presetChoose: 'Select...',
-            presetWater: 'Water',
-            presetOil: 'Oil',
-            presetAir: 'Air',
-            presetNitrogen: 'Nitrogen',
-            presetMethane: 'Methane',
-            presetCO2: 'CO₂',
-            presetHydrogen: 'Hydrogen',
-            presetHelium4: 'Helium-4',
-            presetHelium3: 'Helium-3',
-            viscosity: 'Viscosity (cSt):',
-            roughness: 'Roughness (mm):',
-            pressure: 'Abs. Pressure (bar):',
-            temperature: 'Temperature (°C):',
-            molarMass: 'Molar Mass (g/mol):',
-            pressureUnit: 'Pressure Units:',
-            calculate: 'Calculate',
-            save: 'Save to File',
-            velocity: 'Velocity',
-            pressureDrop: 'Pressure Drop',
-            reynolds: 'Reynolds Number',
-            lambda: 'Friction Factor λ',
-            errorNum: 'Check number input',
-            errorDiam: 'Invalid diameter or wall thickness',
-            errorPos: 'Density, length and flow must be > 0',
-            fileSaved: 'File saved',
-            compressNote: '⚠ Density differs from ideal gas by %.1f%%',
-            compressMach: '⚠ Velocity > Mach 0.3 — compressibility effects significant!',
-            ready: 'Ready',
-            resultSummary: 'v = {velocity} m/s, ΔP = {pressure} {unit}',
-            flowRate: 'Flow Rate:'
+            title:'Hydraulic Calculator', langLabel:'Language', themeDark:'Dark theme', themeLight:'Light theme',
+            share:'Share', shareText:'Hydraulic Calculator — try it:', shareFallback:'Link copied!',
+            bends:'90° Bends:', valves:'Valves:', outerDiam:'Outer Diameter (mm):', wall:'Wall Thickness (mm):',
+            length:'Length (m):', massFlow:'Mass Flow (kg/h):', density:'Density (kg/m³):',
+            modeSimple:'Simplified', modeEngineer:'Engineering', medium:'Medium:', liquid:'Liquid', gas:'Gas',
+            presetLabel:'Presets:', presetChoose:'Select...',
+            presetWater:'Water', presetOil:'Oil', presetAir:'Air', presetNitrogen:'Nitrogen',
+            presetMethane:'Methane', presetCO2:'CO₂', presetHydrogen:'Hydrogen', presetHelium4:'Helium-4',
+            presetAmmonia:'Ammonia', presetArgon:'Argon', presetPropane:'Propane', presetEthane:'Ethane', presetFreon22:'Freon-22',
+            viscosity:'Viscosity (cSt):', roughness:'Roughness (mm):',
+            pressure:'Abs. Pressure (bar):', temperature:'Temperature (°C):', molarMass:'Molar Mass (g/mol):',
+            pressureUnit:'Pressure Units:', calculate:'Calculate', save:'Save to File',
+            velocity:'Velocity', pressureDrop:'Pressure Drop', reynolds:'Reynolds Number', lambda:'Friction Factor λ',
+            errorNum:'Check number input', errorDiam:'Invalid diameter or wall thickness',
+            errorPos:'Density, length and flow must be > 0', fileSaved:'File saved',
+            compressNote:'⚠ Density differs from ideal gas by %.1f%%', compressMach:'⚠ Velocity > Mach 0.3 — compressibility!',
+            ready:'Ready', resultSummary:'v = {velocity} m/s, ΔP = {pressure} {unit}', flowRate:'Flow Rate:',
+            warningExtremeTemp:'⚠ Temperature outside valid range for this gas.',
+            warningExtremePressure:'⚠ Pressure outside valid range for this gas.',
+            warningIdealGas:'⚠ Ideal gas law inaccurate for this gas under these conditions. Density entered manually.',
+            warningLiquidDensity:'⚠ Liquid density outside realistic range.',
+            warningLiquidViscosity:'⚠ Liquid viscosity outside realistic range.',
+            infoPanelGas:'⚠ Gas density calculated from ideal gas law (T, P, M). Outside reference limits, model is inaccurate.',
+            infoPanelLiquid:'⚠ Realistic limits for liquid density and viscosity are checked.',
+            limitInfo:'Valid range: T {tmin}…{tmax} °C, P {pmin}…{pmax} bar',
+            noLimitInfo:'No reference limits. Ideal gas model may be inaccurate.',
+            liquidDensityRange:'Density: {min}…{max} kg/m³',
+            liquidViscosityRange:'Viscosity: {min}…{max} cSt'
         },
         zh: {
-            title: '液压管道计算器',
-            langLabel: '语言',
-            themeDark: '深色主题',
-            themeLight: '浅色主题',
-            share: '分享',
-            shareText: '液压管道计算器 — 试试看：',
-            shareFallback: '链接已复制！分享给朋友吧。',
-            bends: '90°弯头：',
-            valves: '阀门：',
-            outerDiam: '外径 (mm)：',
-            wall: '壁厚 (mm)：',
-            length: '长度 (m)：',
-            massFlow: '质量流量 (kg/h)：',
-            density: '密度 (kg/m³)：',
-            modeSimple: '简化模式',
-            modeEngineer: '工程模式',
-            medium: '介质类型：',
-            liquid: '液体',
-            gas: '气体',
-            presetLabel: '常见介质：',
-            presetChoose: '选择介质...',
-            presetWater: '水',
-            presetOil: '工业油',
-            presetAir: '空气',
-            presetNitrogen: '氮气',
-            presetMethane: '甲烷',
-            presetCO2: '二氧化碳',
-            presetHydrogen: '氢气',
-            presetHelium4: '氦-4',
-            presetHelium3: '氦-3',
-            viscosity: '运动粘度 (cSt)：',
-            roughness: '粗糙度 (mm)：',
-            pressure: '绝对压力 (bar)：',
-            temperature: '温度 (°C)：',
-            molarMass: '摩尔质量 (g/mol)：',
-            pressureUnit: '压力单位：',
-            calculate: '计算',
-            save: '保存',
-            velocity: '流速',
-            pressureDrop: '压力损失',
-            reynolds: '雷诺数',
-            lambda: '摩擦系数 λ',
-            errorNum: '请检查数字输入',
-            errorDiam: '无效的直径或壁厚',
-            errorPos: '密度、长度和流量必须 > 0',
-            fileSaved: '文件已保存',
-            compressNote: '⚠ 密度与理想气体偏差 %.1f%%',
-            compressMach: '⚠ 速度 > 马赫0.3 — 压缩性影响显著！',
-            ready: '准备就绪',
-            resultSummary: 'v = {velocity} m/s, ΔP = {pressure} {unit}',
-            flowRate: '流速：'
+            title:'液压管道计算器', langLabel:'语言', themeDark:'深色主题', themeLight:'浅色主题',
+            share:'分享', shareText:'液压管道计算器 — 试试看：', shareFallback:'链接已复制！',
+            bends:'90°弯头：', valves:'阀门：', outerDiam:'外径 (mm)：', wall:'壁厚 (mm)：',
+            length:'长度 (m)：', massFlow:'质量流量 (kg/h)：', density:'密度 (kg/m³)：',
+            modeSimple:'简化模式', modeEngineer:'工程模式', medium:'介质类型：', liquid:'液体', gas:'气体',
+            presetLabel:'常见介质：', presetChoose:'选择介质...',
+            presetWater:'水', presetOil:'工业油', presetAir:'空气', presetNitrogen:'氮气',
+            presetMethane:'甲烷', presetCO2:'二氧化碳', presetHydrogen:'氢气', presetHelium4:'氦-4',
+            presetAmmonia:'氨', presetArgon:'氩', presetPropane:'丙烷', presetEthane:'乙烷', presetFreon22:'氟利昂-22',
+            viscosity:'运动粘度 (cSt)：', roughness:'粗糙度 (mm)：',
+            pressure:'绝对压力 (bar)：', temperature:'温度 (°C)：', molarMass:'摩尔质量 (g/mol)：',
+            pressureUnit:'压力单位：', calculate:'计算', save:'保存',
+            velocity:'流速', pressureDrop:'压力损失', reynolds:'雷诺数', lambda:'摩擦系数 λ',
+            errorNum:'请检查数字输入', errorDiam:'无效的直径或壁厚',
+            errorPos:'密度、长度和流量必须 > 0', fileSaved:'文件已保存',
+            compressNote:'⚠ 密度与理想气体偏差 %.1f%%', compressMach:'⚠ 速度 > 马赫0.3 — 压缩性影响显著！',
+            ready:'准备就绪', resultSummary:'v = {velocity} m/s, ΔP = {pressure} {unit}', flowRate:'流速：',
+            warningExtremeTemp:'⚠ 温度超出该气体的有效范围。',
+            warningExtremePressure:'⚠ 压力超出该气体的有效范围。',
+            warningIdealGas:'⚠ 在此条件下理想气体方程不适用，已手动输入密度。',
+            warningLiquidDensity:'⚠ 液体密度超出实际范围。',
+            warningLiquidViscosity:'⚠ 液体粘度超出实际范围。',
+            infoPanelGas:'⚠ 气体密度根据理想气体方程（T, P, M）自动计算。超出参考范围时模型不准确。',
+            infoPanelLiquid:'⚠ 检查液体密度和粘度的实际范围。',
+            limitInfo:'有效范围：T {tmin}…{tmax} °C, P {pmin}…{pmax} bar',
+            noLimitInfo:'无参考限制。理想气体模型可能不准确。',
+            liquidDensityRange:'密度：{min}…{max} kg/m³',
+            liquidViscosityRange:'粘度：{min}…{max} cSt'
         }
     };
 
     let currentLang = localStorage.getItem('calc_hyd_lang') || 'ru';
-    function t(key) {
-        return locales[currentLang]?.[key] || key;
-    }
+    function t(key) { return locales[currentLang]?.[key] || key; }
 
-    // DOM элементы
+    const gasLimits = {
+        air:       { Tmin: 70,   Tmax: 1300, Pmin: 0.03401, Pmax: 100 },
+        nitrogen:  { Tmin: 65.9, Tmax: 1300, Pmin: 0.02,    Pmax: 100 },
+        methane:   { Tmin: 91,   Tmax: 600,  Pmin: 0.0122,  Pmax: 100 },
+        co2:       { Tmin: 219,  Tmax: 600,  Pmin: 0.5,     Pmax: 100 },
+        hydrogen:  { Tmin: 14,   Tmax: 500,  Pmin: 0.0074,  Pmax: 50 },
+        helium4:   { Tmin: 2,    Tmax: 600,  Pmin: 0.0005,  Pmax: 50 },
+        ammonia:   { Tmin: 200,  Tmax: 750,  Pmin: 0.008,   Pmax: 100 },
+        argon:     { Tmin: 84,   Tmax: 1300, Pmin: 0.071,   Pmax: 100 },
+        propane:   { Tmin: 100,  Tmax: 600,  Pmin: 0.01,    Pmax: 100 },
+        ethane:    { Tmin: 93,   Tmax: 600,  Pmin: 0.00017, Pmax: 100 },
+        freon22:   { Tmin: 273,  Tmax: 553,  Pmin: 0.1,     Pmax: 35 },
+        water: null,
+        oil: null
+    };
+
+    const liquidLimits = {
+        water:     { densityMin: 900,  densityMax: 1050, viscosityMin: 0.5,  viscosityMax: 1.5 },
+        oil:       { densityMin: 800,  densityMax: 950,  viscosityMin: 20,   viscosityMax: 200 },
+        air:       { densityMin: 800,  densityMax: 950,  viscosityMin: 0.1,  viscosityMax: 0.3 },
+        nitrogen:  { densityMin: 700,  densityMax: 900,  viscosityMin: 0.1,  viscosityMax: 0.3 },
+        methane:   { densityMin: 350,  densityMax: 500,  viscosityMin: 0.05, viscosityMax: 0.2 },
+        co2:       { densityMin: 900,  densityMax: 1200, viscosityMin: 0.05, viscosityMax: 0.2 },
+        hydrogen:  { densityMin: 50,   densityMax: 80,   viscosityMin: 0.05, viscosityMax: 0.2 },
+        helium4:   { densityMin: 100,  densityMax: 150,  viscosityMin: 0.01, viscosityMax: 0.05 },
+        ammonia:   { densityMin: 600,  densityMax: 750,  viscosityMin: 0.15, viscosityMax: 0.5 },
+        argon:     { densityMin: 1200, densityMax: 1500, viscosityMin: 0.2,  viscosityMax: 0.5 },
+        propane:   { densityMin: 400,  densityMax: 550,  viscosityMin: 0.1,  viscosityMax: 0.3 },
+        ethane:    { densityMin: 450,  densityMax: 600,  viscosityMin: 0.2,  viscosityMax: 0.5 },
+        freon22:   { densityMin: 1100, densityMax: 1300, viscosityMin: 0.15, viscosityMax: 0.4 }
+    };
+
+    const baseViscosity = {
+        water: 1.0, oil: 50.0,
+        air: 15.0, nitrogen: 15.1, methane: 11.0, co2: 8.0, hydrogen: 105.0, helium4: 120.0,
+        ammonia: 13.5, argon: 13.6, propane: 4.4, ethane: 7.5, freon22: 0.3
+    };
+
+    function limitsForPreset(preset) { return gasLimits[preset] || null; }
+
+    // DOM
     const menuToggle = document.getElementById('menuToggle');
     const settingsMenu = document.getElementById('settingsMenu');
     const langSelect = document.getElementById('langSelect');
@@ -485,55 +367,24 @@
     const compressNote = document.getElementById('compressNote');
     const saveBtn = document.getElementById('saveBtn');
     const calculateBtn = document.getElementById('calculateBtn');
+    const infoPanel = document.getElementById('infoPanel');
+    const warningExtreme = document.getElementById('warningExtreme');
 
-    let lastResult = {
-        velocity: 0,
-        deltaP: 0,
-        re: 0,
-        lambda: 0,
-        mode: '',
-        mediumType: '',
-        preset: '',
-        pressureUnit: 'Pa'
-    };
+    let lastResult = { velocity:0, deltaP:0, re:0, lambda:0, mode:'', mediumType:'', preset:'', pressureUnit:'Pa' };
+    let updating = false;   // флаг программного изменения полей
 
-    // ===== Темы =====
-    function updateThemeLabel() {
-        const dark = document.body.classList.contains('dark');
-        themeLabel.textContent = dark ? t('themeDark') : t('themeLight');
-    }
+    // Тема
+    function updateThemeLabel() { themeLabel.textContent = document.body.classList.contains('dark') ? t('themeDark') : t('themeLight'); }
+    function applyTheme(dark) { document.body.classList.toggle('dark', dark); localStorage.setItem('calc_hyd_theme', dark?'dark':'light'); updateThemeLabel(); }
+    if (localStorage.getItem('calc_hyd_theme')==='dark') applyTheme(true); else applyTheme(false);
+    themeToggle.addEventListener('click', ()=>applyTheme(!document.body.classList.contains('dark')));
 
-    function applyTheme(dark) {
-        document.body.classList.toggle('dark', dark);
-        localStorage.setItem('calc_hyd_theme', dark ? 'dark' : 'light');
-        updateThemeLabel();
-    }
+    // Меню
+    menuToggle.addEventListener('click', e=>{e.stopPropagation(); settingsMenu.classList.toggle('show');});
+    document.addEventListener('click', e=>{ if(!settingsMenu.contains(e.target)&&e.target!==menuToggle) settingsMenu.classList.remove('show'); });
 
-    if (localStorage.getItem('calc_hyd_theme') === 'dark') {
-        applyTheme(true);
-    } else {
-        applyTheme(false);
-    }
-
-    themeToggle.addEventListener('click', () => {
-        const isDark = !document.body.classList.contains('dark');
-        applyTheme(isDark);
-    });
-
-    // ===== Меню =====
-    menuToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        settingsMenu.classList.toggle('show');
-    });
-    document.addEventListener('click', (e) => {
-        if (!settingsMenu.contains(e.target) && e.target !== menuToggle) {
-            settingsMenu.classList.remove('show');
-        }
-    });
-
-    // ===== Язык =====
+    // Язык
     langSelect.value = currentLang;
-
     function applyLanguage() {
         document.title = t('title');
         document.getElementById('langLabel').textContent = t('langLabel');
@@ -551,15 +402,10 @@
         document.getElementById('mediumGasText').textContent = t('gas');
         document.getElementById('lblPreset').textContent = t('presetLabel');
         document.getElementById('presetChooseText').textContent = t('presetChoose');
-        document.getElementById('presetWaterText').textContent = t('presetWater');
-        document.getElementById('presetOilText').textContent = t('presetOil');
-        document.getElementById('presetAirText').textContent = t('presetAir');
-        document.getElementById('presetNitrogenText').textContent = t('presetNitrogen');
-        document.getElementById('presetMethaneText').textContent = t('presetMethane');
-        document.getElementById('presetCO2Text').textContent = t('presetCO2');
-        document.getElementById('presetHydrogenText').textContent = t('presetHydrogen');
-        document.getElementById('presetHelium4Text').textContent = t('presetHelium4');
-        document.getElementById('presetHelium3Text').textContent = t('presetHelium3');
+        ['Water','Oil','Air','Nitrogen','Methane','CO2','Hydrogen','Helium4','Ammonia','Argon','Propane','Ethane','Freon22'].forEach(k => {
+            const el = document.getElementById('preset'+k+'Text');
+            if (el) el.textContent = t('preset'+k);
+        });
         document.getElementById('lblViscosity').textContent = t('viscosity');
         document.getElementById('lblRoughness').textContent = t('roughness');
         document.getElementById('lblPressure').textContent = t('pressure');
@@ -570,360 +416,356 @@
         saveBtn.textContent = t('save');
         document.getElementById('shareBtn').textContent = '📤 ' + t('share');
         lblFlowRate.textContent = t('flowRate');
-
         updateResultLabels();
         updateThemeLabel();
         updateEngineerVisibility();
-        if (lastResult.velocity > 0) {
-            updateDisplayWithResult();
-        } else {
-            formulaDisplay.textContent = t('ready');
-            mainDisplay.value = '0';
-        }
+        if (lastResult.velocity>0) updateDisplayWithResult();
+        else { formulaDisplay.textContent = t('ready'); mainDisplay.value='0'; }
     }
-
-    function updateResultLabels() {
-        velocityResult.textContent = t('velocity') + ': ' + (lastResult.velocity > 0 ? lastResult.velocity.toFixed(3) + ' m/s' : '---');
-        pressureDropResult.textContent = t('pressureDrop') + ': ' + (lastResult.deltaP > 0 ? formatPressure(lastResult.deltaP, lastResult.pressureUnit) : '---');
-        reynoldsResult.textContent = t('reynolds') + ': ' + (lastResult.re > 0 ? lastResult.re.toFixed(0) : '---');
-        lambdaResult.textContent = t('lambda') + ': ' + (lastResult.lambda > 0 ? lastResult.lambda.toFixed(4) : '---');
-    }
-
-    langSelect.addEventListener('change', () => {
+    langSelect.addEventListener('change', ()=>{
         currentLang = langSelect.value;
         localStorage.setItem('calc_hyd_lang', currentLang);
         applyLanguage();
     });
     applyLanguage();
 
-    // ===== Режим и инженерные поля =====
-    modeSelect.addEventListener('change', () => {
-        updateEngineerVisibility();
-        resetResults();
-    });
-
-    mediumSelect.addEventListener('change', () => {
-        const preset = presetSelect.value;
-        if ((preset === 'water' || preset === 'oil') && mediumSelect.value === 'gas') {
-            presetSelect.value = 'choose';
-        } else if (preset !== 'choose') {
-            updatePropertiesForState(preset);
-        }
+    // Режим
+    modeSelect.addEventListener('change', ()=>{ updateEngineerVisibility(); resetResults(); });
+    mediumSelect.addEventListener('change', ()=>{
+        const p = presetSelect.value;
+        if ((p==='water'||p==='oil') && mediumSelect.value==='gas') presetSelect.value='choose';
+        else if (p!=='choose') updatePropertiesForState(p);
         updateGasPropsVisibility();
+        applyGasLimits();
+        checkConditions();
         resetResults();
     });
-
-    presetSelect.addEventListener('change', () => {
-        const preset = presetSelect.value;
-        if (preset !== 'choose') applyPreset(preset);
-        else resetResults();
+    presetSelect.addEventListener('change', ()=>{
+        const p = presetSelect.value;
+        if (p!=='choose') applyPreset(p); else resetResults();
     });
 
     function updateEngineerVisibility() {
-        const eng = modeSelect.value === 'engineer';
+        const eng = modeSelect.value==='engineer';
         engineerBlock.classList.toggle('show', eng);
+        if (eng) { infoPanel.classList.add('show'); updateInfoPanel(); }
+        else { infoPanel.classList.remove('show'); warningExtreme.classList.remove('show'); }
         updateGasPropsVisibility();
     }
-
     function updateGasPropsVisibility() {
-        const isGas = mediumSelect.value === 'gas';
-        document.getElementById('gasPropsRow').style.display = isGas ? 'flex' : 'none';
-        document.getElementById('lblTemperature').parentElement.style.display = isGas ? 'flex' : 'none';
-        document.getElementById('lblMolarMass').parentElement.style.display = isGas ? 'flex' : 'none';
+        const isGas = mediumSelect.value==='gas';
+        document.getElementById('gasPropsRow').style.display = isGas?'flex':'none';
+        document.getElementById('lblTemperature').parentElement.style.display = isGas?'flex':'none';
+        document.getElementById('lblMolarMass').parentElement.style.display = isGas?'flex':'none';
     }
+
+    function applyGasLimits() {
+        const tempInput = document.getElementById('temperature');
+        const pressInput = document.getElementById('pressure');
+        const limits = limitsForPreset(presetSelect.value);
+        if (limits) {
+            tempInput.min = (limits.Tmin - 273.15).toFixed(2);
+            tempInput.max = (limits.Tmax - 273.15).toFixed(2);
+            pressInput.min = (limits.Pmin * 10).toFixed(4);
+            pressInput.max = (limits.Pmax * 10).toFixed(1);
+        } else {
+            tempInput.min = -273.15;
+            tempInput.max = 2000;
+            pressInput.min = 0.0001;
+            pressInput.max = 1000;
+        }
+    }
+
+    function updateInfoPanel() {
+        if (mediumSelect.value === 'gas') {
+            let text = t('infoPanelGas');
+            const limits = limitsForPreset(presetSelect.value);
+            if (limits) text += ' ' + t('limitInfo').replace('{tmin}', (limits.Tmin-273.15).toFixed(1)).replace('{tmax}', (limits.Tmax-273.15).toFixed(1)).replace('{pmin}', (limits.Pmin*10).toFixed(4)).replace('{pmax}', (limits.Pmax*10).toFixed(1));
+            else text += ' ' + t('noLimitInfo');
+            infoPanel.textContent = text;
+        } else {
+            let text = t('infoPanelLiquid');
+            const liq = liquidLimits[presetSelect.value];
+            if (liq) text += ' ' + t('liquidDensityRange').replace('{min}', liq.densityMin).replace('{max}', liq.densityMax) + ' ' + t('liquidViscosityRange').replace('{min}', liq.viscosityMin).replace('{max}', liq.viscosityMax);
+            infoPanel.textContent = text;
+        }
+    }
+
+    function recalcViscosity(T) {
+        if (isNaN(T)) return;
+        const preset = presetSelect.value;
+        const base = baseViscosity[preset];
+        if (!base) return;
+        const T0 = 20 + 273.15;
+        const Tk = T + 273.15;
+        if (Tk <= 0) return;
+        const mu = base * Math.pow(Tk / T0, 0.7);
+        document.getElementById('viscosity').value = mu.toFixed(3);
+    }
+
+    function syncFromTemperatureAndPressure() {
+        if (updating) return;
+        if (modeSelect.value!=='engineer' || mediumSelect.value!=='gas') return;
+        updating = true;
+        const T = parseFloat(document.getElementById('temperature').value);
+        const P = parseFloat(document.getElementById('pressure').value);
+        const M = parseFloat(document.getElementById('molarMass').value) || 28.97;
+        if (!isNaN(T) && !isNaN(P) && P>0 && T>-273.14 && M>0) {
+            document.getElementById('density').value = (P*1e5*(M/1000)/(8.314*(T+273.15))).toFixed(4);
+            recalcViscosity(T);
+        }
+        updating = false;
+    }
+
+    function syncFromDensity() {
+        if (updating) return;
+        if (modeSelect.value!=='engineer' || mediumSelect.value!=='gas') return;
+        updating = true;
+        const P = parseFloat(document.getElementById('pressure').value);
+        const M = parseFloat(document.getElementById('molarMass').value) || 28.97;
+        const rho = parseFloat(document.getElementById('density').value);
+        if (!isNaN(P) && P>0 && !isNaN(rho) && rho>0 && M>0) {
+            const T = (P*1e5*(M/1000))/(8.314*rho) - 273.15;
+            document.getElementById('temperature').value = T.toFixed(2);
+            recalcViscosity(T);
+        }
+        updating = false;
+    }
+
+    function checkConditions() {
+        warningExtreme.classList.remove('show');
+        warningExtreme.textContent = '';
+        if (modeSelect.value!=='engineer') return;
+        const preset = presetSelect.value;
+        if (mediumSelect.value === 'gas') {
+            const T = parseFloat(document.getElementById('temperature').value);
+            const P = parseFloat(document.getElementById('pressure').value);
+            const limits = limitsForPreset(preset);
+            let msgs = [];
+            if (limits) {
+                const tmin = limits.Tmin - 273.15;
+                const tmax = limits.Tmax - 273.15;
+                const pmin = limits.Pmin * 10;
+                const pmax = limits.Pmax * 10;
+                if (!isNaN(T) && (T < tmin || T > tmax)) msgs.push(t('warningExtremeTemp'));
+                if (!isNaN(P) && (P < pmin || P > pmax)) msgs.push(t('warningExtremePressure'));
+            }
+            if (msgs.length) {
+                warningExtreme.textContent = msgs.join(' ') + ' ' + t('warningIdealGas');
+                warningExtreme.classList.add('show');
+            }
+        } else {
+            const density = parseFloat(document.getElementById('density').value);
+            const viscosity = parseFloat(document.getElementById('viscosity').value);
+            const liq = liquidLimits[preset];
+            if (liq) {
+                let msgs = [];
+                if (!isNaN(density) && (density < liq.densityMin || density > liq.densityMax)) msgs.push(t('warningLiquidDensity'));
+                if (!isNaN(viscosity) && (viscosity < liq.viscosityMin || viscosity > liq.viscosityMax)) msgs.push(t('warningLiquidViscosity'));
+                if (msgs.length) { warningExtreme.textContent = msgs.join(' '); warningExtreme.classList.add('show'); }
+            }
+        }
+    }
+
+    // Обработчики полей: просто запускаем соответствующий синхронизатор
+    document.getElementById('temperature').addEventListener('input', syncFromTemperatureAndPressure);
+    document.getElementById('pressure').addEventListener('input', syncFromTemperatureAndPressure);
+    document.getElementById('density').addEventListener('input', syncFromDensity);
+    document.getElementById('molarMass').addEventListener('input', ()=>{
+        if (mediumSelect.value==='gas') {
+            if (parseFloat(document.getElementById('density').value) !== (document.getElementById('density').value)) {
+                syncFromTemperatureAndPressure();
+            } else {
+                syncFromTemperatureAndPressure();
+            }
+        }
+    });
+
+    // Проверка условий при любом изменении
+    document.getElementById('temperature').addEventListener('change', checkConditions);
+    document.getElementById('pressure').addEventListener('change', checkConditions);
+    document.getElementById('density').addEventListener('change', checkConditions);
+    document.getElementById('viscosity').addEventListener('change', checkConditions);
 
     function updatePropertiesForState(preset) {
         const density = document.getElementById('density');
         const viscosity = document.getElementById('viscosity');
         const roughness = document.getElementById('roughness');
         const molarMass = document.getElementById('molarMass');
-        const isLiquid = mediumSelect.value === 'liquid';
-
-        if (preset === 'water') {
-            density.value = 1000;
-            viscosity.value = 1.0;
-            roughness.value = 0.1;
-        } else if (preset === 'oil') {
-            density.value = 900;
-            viscosity.value = 50.0;
-            roughness.value = 0.1;
-        } else {
-            roughness.value = 0.05;
-            switch (preset) {
-                case 'air':
-                    if (isLiquid) { density.value = 870; viscosity.value = 0.17; }
-                    else { density.value = 1.20; viscosity.value = 15.0; molarMass.value = 28.97; }
-                    break;
-                case 'nitrogen':
-                    if (isLiquid) { density.value = 808; viscosity.value = 0.16; }
-                    else { density.value = 1.165; viscosity.value = 15.1; molarMass.value = 28.01; }
-                    break;
-                case 'methane':
-                    if (isLiquid) { density.value = 422; viscosity.value = 0.12; }
-                    else { density.value = 0.66; viscosity.value = 11.0; molarMass.value = 16.04; }
-                    break;
-                case 'co2':
-                    if (isLiquid) { density.value = 1100; viscosity.value = 0.08; }
-                    else { density.value = 1.84; viscosity.value = 8.0; molarMass.value = 44.01; }
-                    break;
-                case 'hydrogen':
-                    if (isLiquid) { density.value = 70.8; viscosity.value = 0.13; }
-                    else { density.value = 0.084; viscosity.value = 105.0; molarMass.value = 2.016; }
-                    break;
-                case 'helium4':
-                    if (isLiquid) { density.value = 125; viscosity.value = 0.028; }
-                    else { density.value = 0.166; viscosity.value = 120.0; molarMass.value = 4.0026; }
-                    break;
-                case 'helium3':
-                    if (isLiquid) { density.value = 59; viscosity.value = 0.034; }
-                    else { density.value = 0.134; viscosity.value = 130.0; molarMass.value = 3.016; }
-                    break;
-                default: return;
+        const isLiquid = mediumSelect.value==='liquid';
+        if (preset==='water') { density.value=1000; viscosity.value=1.0; roughness.value=0.1; }
+        else if (preset==='oil') { density.value=900; viscosity.value=50.0; roughness.value=0.1; }
+        else {
+            roughness.value=0.05;
+            switch(preset) {
+                case'air': if(isLiquid){density.value=870;viscosity.value=0.17;} else{density.value=1.20;viscosity.value=15.0;molarMass.value=28.97;}break;
+                case'nitrogen': if(isLiquid){density.value=808;viscosity.value=0.16;} else{density.value=1.165;viscosity.value=15.1;molarMass.value=28.01;}break;
+                case'methane': if(isLiquid){density.value=422;viscosity.value=0.12;} else{density.value=0.66;viscosity.value=11.0;molarMass.value=16.04;}break;
+                case'co2': if(isLiquid){density.value=1100;viscosity.value=0.08;} else{density.value=1.84;viscosity.value=8.0;molarMass.value=44.01;}break;
+                case'hydrogen': if(isLiquid){density.value=70.8;viscosity.value=0.13;} else{density.value=0.084;viscosity.value=105.0;molarMass.value=2.016;}break;
+                case'helium4': if(isLiquid){density.value=125;viscosity.value=0.028;} else{density.value=0.166;viscosity.value=120.0;molarMass.value=4.0026;}break;
+                case'ammonia': if(isLiquid){density.value=682;viscosity.value=0.25;} else{density.value=0.73;viscosity.value=13.5;molarMass.value=17.03;}break;
+                case'argon': if(isLiquid){density.value=1394;viscosity.value=0.27;} else{density.value=1.66;viscosity.value=13.6;molarMass.value=39.95;}break;
+                case'propane': if(isLiquid){density.value=493;viscosity.value=0.2;} else{density.value=1.88;viscosity.value=4.4;molarMass.value=44.1;}break;
+                case'ethane': if(isLiquid){density.value=546;viscosity.value=0.3;} else{density.value=1.26;viscosity.value=7.5;molarMass.value=30.07;}break;
+                case'freon22': if(isLiquid){density.value=1194;viscosity.value=0.2;} else{density.value=3.5;viscosity.value=0.3;molarMass.value=86.47;}break;
             }
         }
     }
 
     function applyPreset(preset) {
-        if (preset === 'water' || preset === 'oil') {
-            mediumSelect.value = 'liquid';
-        } else {
-            mediumSelect.value = 'gas';
-        }
+        if (preset==='water'||preset==='oil') mediumSelect.value='liquid';
+        else mediumSelect.value='gas';
         updatePropertiesForState(preset);
+        applyGasLimits();
         updateEngineerVisibility();
+        checkConditions();
         resetResults();
     }
 
     function resetResults() {
-        lastResult = { velocity: 0, deltaP: 0, re: 0, lambda: 0, mode: '', mediumType: '', preset: '', pressureUnit: 'Pa' };
-        updateResultLabels();
-        compressNote.textContent = '';
-        saveBtn.disabled = true;
-        formulaDisplay.textContent = t('ready');
-        mainDisplay.value = '0';
+        lastResult = { velocity:0, deltaP:0, re:0, lambda:0, mode:'', mediumType:'', preset:'', pressureUnit:'Pa' };
+        updateResultLabels(); compressNote.textContent=''; saveBtn.disabled=true;
+        formulaDisplay.textContent=t('ready'); mainDisplay.value='0';
     }
-
+    function updateResultLabels() {
+        velocityResult.textContent = t('velocity')+': '+(lastResult.velocity>0?lastResult.velocity.toFixed(3)+' m/s':'---');
+        pressureDropResult.textContent = t('pressureDrop')+': '+(lastResult.deltaP>0?formatPressure(lastResult.deltaP,lastResult.pressureUnit):'---');
+        reynoldsResult.textContent = t('reynolds')+': '+(lastResult.re>0?lastResult.re.toFixed(0):'---');
+        lambdaResult.textContent = t('lambda')+': '+(lastResult.lambda>0?lastResult.lambda.toFixed(4):'---');
+    }
     function updateDisplayWithResult() {
         const unit = lastResult.pressureUnit;
-        const pressureFormatted = formatPressure(lastResult.deltaP, unit);
-        const parts = pressureFormatted.split(' ');
-        const pressureValue = parts[0];
-        const summary = t('resultSummary')
-            .replace('{velocity}', lastResult.velocity.toFixed(3))
-            .replace('{pressure}', pressureValue)
-            .replace('{unit}', unit);
-        formulaDisplay.textContent = summary;
+        const pf = formatPressure(lastResult.deltaP, unit);
+        formulaDisplay.textContent = t('resultSummary').replace('{velocity}',lastResult.velocity.toFixed(3)).replace('{pressure}',pf.split(' ')[0]).replace('{unit}',unit);
         mainDisplay.value = lastResult.velocity.toFixed(3);
     }
 
-    // ===== Расчет =====
-    calculateBtn.addEventListener('click', () => {
+    // Расчёт
+    calculateBtn.addEventListener('click', ()=>{
         try {
-            const bends = parseInt(document.getElementById('bends').value) || 0;
-            const valves = parseInt(document.getElementById('valves').value) || 0;
+            const bends = parseInt(document.getElementById('bends').value)||0;
+            const valves = parseInt(document.getElementById('valves').value)||0;
             const outerD = parseFloat(document.getElementById('outerDiam').value);
             const wall = parseFloat(document.getElementById('wall').value);
             const density = parseFloat(document.getElementById('density').value);
             const length = parseFloat(document.getElementById('length').value);
             const massFlow = parseFloat(document.getElementById('massFlow').value);
-            const mode = document.getElementById('modeSelect').value;
-
-            if (outerD <= 0 || wall < 0 || outerD - 2*wall <= 0) {
-                alert(t('errorDiam')); return;
-            }
-            if (density <= 0 || length <= 0 || massFlow <= 0) {
-                alert(t('errorPos')); return;
-            }
-
-            const innerD = outerD - 2*wall;
-            const area = Math.PI * Math.pow(innerD/1000, 2) / 4;
-            const velocity = massFlow / 3600 / area / density;
-            let deltaP, lambda = 0, re = 0, compressMsg = '';
-
-            if (mode === 'simple') {
-                deltaP = density * Math.pow(velocity,2)/2 * (41*length/innerD + 5*valves + 0.17*bends);
-                lastResult.mode = 'simple';
+            if (outerD<=0||wall<0||outerD-2*wall<=0) { alert(t('errorDiam')); return; }
+            if (density<=0||length<=0||massFlow<=0) { alert(t('errorPos')); return; }
+            const innerD = outerD-2*wall;
+            const area = Math.PI*Math.pow(innerD/1000,2)/4;
+            const velocity = massFlow/3600/area/density;
+            let deltaP, lambda=0, re=0, compressMsg='';
+            if (modeSelect.value==='simple') {
+                deltaP = density*Math.pow(velocity,2)/2*(41*length/innerD+5*valves+0.17*bends);
+                lastResult.mode='simple';
             } else {
                 const viscosity = parseFloat(document.getElementById('viscosity').value);
                 const roughness = parseFloat(document.getElementById('roughness').value);
-                const kinVisc = viscosity * 1e-6;
-                const medium = document.getElementById('mediumSelect').value;
-                lastResult.mediumType = medium;
-                lastResult.preset = presetSelect.value;
-
-                if (medium === 'gas') {
-                    const pressure = parseFloat(document.getElementById('pressure').value) * 1e5;
-                    const temperature = parseFloat(document.getElementById('temperature').value) + 273.15;
-                    const molarMass = parseFloat(document.getElementById('molarMass').value) / 1000;
-                    const R = 8.314;
-                    const densityCalc = pressure * molarMass / (R * temperature);
-                    const diff = Math.abs(density - densityCalc) / densityCalc * 100;
-                    if (diff > 10) {
-                        compressMsg = t('compressNote').replace('%.1f', diff.toFixed(1));
-                    }
+                const kinVisc = viscosity*1e-6;
+                const medium = mediumSelect.value;
+                lastResult.mediumType=medium; lastResult.preset=presetSelect.value;
+                if (medium==='gas') {
+                    const pressure = parseFloat(document.getElementById('pressure').value)*1e5;
+                    const temperature = parseFloat(document.getElementById('temperature').value)+273.15;
+                    const molarMass = parseFloat(document.getElementById('molarMass').value)/1000;
+                    const R=8.314;
+                    const densityCalc = pressure*molarMass/(R*temperature);
+                    const diff = Math.abs(density-densityCalc)/densityCalc*100;
+                    if (diff>10) compressMsg = t('compressNote').replace('%.1f', diff.toFixed(1));
                     const gamma = getGamma(presetSelect.value);
-                    const soundSpeed = Math.sqrt(gamma * R * temperature / molarMass);
-                    if (velocity / soundSpeed > 0.3) {
-                        compressMsg += (compressMsg ? '\n' : '') + t('compressMach');
-                    }
+                    const soundSpeed = Math.sqrt(gamma*R*temperature/molarMass);
+                    if (velocity/soundSpeed>0.3) compressMsg += (compressMsg?'\n':'') + t('compressMach');
                 }
-
-                re = velocity * (innerD/1000) / kinVisc;
-                if (re < 2300) {
-                    lambda = 64 / re;
-                } else {
-                    const relRough = roughness / innerD;
-                    lambda = 0.25 / Math.pow(Math.log10(relRough / 3.7 + 5.74 / Math.pow(re, 0.9)), 2);
-                }
-                const zetaBend = 0.3, zetaValve = 3.0;
-                const totalZeta = lambda * length * 1000 / innerD + bends*zetaBend + valves*zetaValve;
-                deltaP = totalZeta * density * velocity * velocity / 2;
-                lastResult.mode = 'engineer';
-                lastResult.re = re;
-                lastResult.lambda = lambda;
-                reynoldsResult.textContent = t('reynolds') + ': ' + re.toFixed(0);
-                lambdaResult.textContent = t('lambda') + ': ' + lambda.toFixed(4);
+                re = velocity*(innerD/1000)/kinVisc;
+                lambda = (re<2300)?64/re:0.25/Math.pow(Math.log10(roughness/innerD/3.7+5.74/Math.pow(re,0.9)),2);
+                const totalZeta = lambda*length*1000/innerD + bends*0.3 + valves*3.0;
+                deltaP = totalZeta*density*velocity*velocity/2;
+                lastResult.re=re; lastResult.lambda=lambda;
+                reynoldsResult.textContent = t('reynolds')+': '+re.toFixed(0);
+                lambdaResult.textContent = t('lambda')+': '+lambda.toFixed(4);
                 compressNote.textContent = compressMsg;
             }
-
-            lastResult.velocity = velocity;
-            lastResult.deltaP = deltaP;
+            lastResult.velocity=velocity; lastResult.deltaP=deltaP;
             lastResult.pressureUnit = document.getElementById('pressureUnit').value;
-            velocityResult.textContent = t('velocity') + ': ' + velocity.toFixed(3) + ' m/s';
-            pressureDropResult.textContent = t('pressureDrop') + ': ' + formatPressure(deltaP, lastResult.pressureUnit);
-            saveBtn.disabled = false;
+            velocityResult.textContent = t('velocity')+': '+velocity.toFixed(3)+' m/s';
+            pressureDropResult.textContent = t('pressureDrop')+': '+formatPressure(deltaP,lastResult.pressureUnit);
+            saveBtn.disabled=false;
             updateDisplayWithResult();
-        } catch (e) {
-            alert(t('errorNum'));
-        }
+        } catch (e) { alert(t('errorNum')); }
     });
 
-    function getGamma(preset) {
-        const map = { air:1.4, nitrogen:1.4, methane:1.31, co2:1.3, hydrogen:1.41, helium4:1.67, helium3:1.67 };
-        return map[preset] || 1.4;
+    function getGamma(p){
+        const m={air:1.4,nitrogen:1.4,methane:1.31,co2:1.3,hydrogen:1.41,helium4:1.67,ammonia:1.33,argon:1.67,propane:1.13,ethane:1.2,freon22:1.19};
+        return m[p]||1.4;
+    }
+    function formatPressure(pa,unit) {
+        let v; switch(unit){ case'Pa':v=pa;break; case'kPa':v=pa/1e3;break; case'bar':v=pa/1e5;break; case'kgf/cm²':v=pa/98066.5;break; case'psi':v=pa/6894.76;break; default:v=pa; }
+        return v.toFixed(3)+' '+unit;
     }
 
-    function formatPressure(pa, unit) {
-        let value;
-        switch (unit) {
-            case 'Pa': value = pa; break;
-            case 'kPa': value = pa/1e3; break;
-            case 'bar': value = pa/1e5; break;
-            case 'kgf/cm²': value = pa/98066.5; break;
-            case 'psi': value = pa/6894.76; break;
-            default: value = pa;
-        }
-        return value.toFixed(3) + ' ' + unit;
-    }
-
-    // ===== Сохранение в файл =====
-    saveBtn.addEventListener('click', () => {
+    saveBtn.addEventListener('click', ()=>{
         const report = buildReport();
-        if (typeof AndroidSave !== 'undefined' && AndroidSave.saveReport) {
-            AndroidSave.saveReport(report);
-        } else {
-            const blob = new Blob([report], {type: 'text/plain'});
+        if (typeof AndroidSave!=='undefined' && AndroidSave.saveReport) AndroidSave.saveReport(report);
+        else {
+            const blob = new Blob([report],{type:'text/plain'});
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'hydraulic_report_' + new Date().toISOString().slice(0,19).replace(/:/g,'-') + '.txt';
-            a.click();
-            URL.revokeObjectURL(url);
+            const a = document.createElement('a'); a.href=url;
+            a.download = 'hydraulic_report_'+new Date().toISOString().slice(0,19).replace(/:/g,'-')+'.txt';
+            a.click(); URL.revokeObjectURL(url);
             alert(t('fileSaved'));
         }
     });
 
     function buildReport() {
         const loc = locales[currentLang];
-        const now = new Date().toLocaleString();
-        let report = `=== ${loc.title} ===\n${now}\n`;
-        if (lastResult.mode === 'engineer') {
-            report += `${loc.medium} ${loc[lastResult.mediumType] || lastResult.mediumType}\n`;
-            report += `${loc.presetLabel} ${loc['preset' + lastResult.preset.charAt(0).toUpperCase() + lastResult.preset.slice(1)] || lastResult.preset}\n`;
-        }
-        report += `\n--- ${loc.calculate} ---\n`;
-        report += `${loc.bends} ${document.getElementById('bends').value}\n`;
-        report += `${loc.valves} ${document.getElementById('valves').value}\n`;
-        report += `${loc.outerDiam} ${document.getElementById('outerDiam').value} mm\n`;
-        report += `${loc.wall} ${document.getElementById('wall').value} mm\n`;
-        report += `${loc.length} ${document.getElementById('length').value} m\n`;
-        report += `${loc.massFlow} ${document.getElementById('massFlow').value} kg/h\n`;
-        report += `${loc.density} ${document.getElementById('density').value} kg/m³\n`;
-        if (lastResult.mode === 'engineer') {
-            report += `${loc.viscosity} ${document.getElementById('viscosity').value} cSt\n`;
-            report += `${loc.roughness} ${document.getElementById('roughness').value} mm\n`;
-            if (lastResult.mediumType === 'gas') {
-                report += `${loc.pressure} ${document.getElementById('pressure').value} bar\n`;
-                report += `${loc.temperature} ${document.getElementById('temperature').value} °C\n`;
-                report += `${loc.molarMass} ${document.getElementById('molarMass').value} g/mol\n`;
+        let r = `=== ${loc.title} ===\n${new Date().toLocaleString()}\n`;
+        if (lastResult.mode==='engineer') r += `${loc.medium} ${loc[lastResult.mediumType]||lastResult.mediumType}\n${loc.presetLabel} ${loc['preset'+(lastResult.preset.charAt(0).toUpperCase()+lastResult.preset.slice(1))]||lastResult.preset}\n`;
+        r += `\n--- ${loc.calculate} ---\n`;
+        r += `${loc.bends} ${document.getElementById('bends').value}\n`;
+        r += `${loc.valves} ${document.getElementById('valves').value}\n`;
+        r += `${loc.outerDiam} ${document.getElementById('outerDiam').value} mm\n`;
+        r += `${loc.wall} ${document.getElementById('wall').value} mm\n`;
+        r += `${loc.length} ${document.getElementById('length').value} m\n`;
+        r += `${loc.massFlow} ${document.getElementById('massFlow').value} kg/h\n`;
+        r += `${loc.density} ${document.getElementById('density').value} kg/m³\n`;
+        if (lastResult.mode==='engineer') {
+            r += `${loc.viscosity} ${document.getElementById('viscosity').value} cSt\n`;
+            r += `${loc.roughness} ${document.getElementById('roughness').value} mm\n`;
+            if (lastResult.mediumType==='gas') {
+                r += `${loc.pressure} ${document.getElementById('pressure').value} bar\n`;
+                r += `${loc.temperature} ${document.getElementById('temperature').value} °C\n`;
+                r += `${loc.molarMass} ${document.getElementById('molarMass').value} g/mol\n`;
             }
         }
-        report += `\n--- ${loc.save} ---\n`;
-        report += `${loc.velocity}: ${lastResult.velocity.toFixed(3)} m/s\n`;
-        report += `${loc.pressureDrop}: ${formatPressure(lastResult.deltaP, lastResult.pressureUnit)}\n`;
-        if (lastResult.re > 0) report += `${loc.reynolds}: ${lastResult.re.toFixed(0)}\n`;
-        if (lastResult.lambda > 0) report += `${loc.lambda}: ${lastResult.lambda.toFixed(4)}\n`;
-        return report;
+        r += `\n--- ${loc.save} ---\n`;
+        r += `${loc.velocity}: ${lastResult.velocity.toFixed(3)} m/s\n`;
+        r += `${loc.pressureDrop}: ${formatPressure(lastResult.deltaP,lastResult.pressureUnit)}\n`;
+        if (lastResult.re>0) r += `${loc.reynolds}: ${lastResult.re.toFixed(0)}\n`;
+        if (lastResult.lambda>0) r += `${loc.lambda}: ${lastResult.lambda.toFixed(4)}\n`;
+        return r;
     }
 
-    // ===== Поделиться =====
-    shareBtn.addEventListener('click', () => {
+    shareBtn.addEventListener('click', ()=>{
         const shareUrl = 'https://github.com/Empers100/HydraulicCalculator';
-        const title = t('title');
-        let text;
-        if (lastResult.velocity > 0) {
-            text = buildReport() + '\n\n' + shareUrl;
-        } else {
-            text = t('shareText') + ' ' + shareUrl;
-        }
-
-        if (typeof AndroidShare !== 'undefined' && AndroidShare.shareText) {
-            AndroidShare.shareText(title, text, shareUrl);
-        } else if (navigator.share) {
-            navigator.share({ title, text, url: shareUrl }).catch(() => {});
-        } else {
-            navigator.clipboard.writeText(text).then(() => {
-                alert(t('shareFallback'));
-            }).catch(() => {
-                prompt(t('shareFallback'), text);
-            });
-        }
+        const text = (lastResult.velocity>0) ? buildReport()+'\n\n'+shareUrl : t('shareText')+' '+shareUrl;
+        if (typeof AndroidShare!=='undefined' && AndroidShare.shareText) AndroidShare.shareText(t('title'), text, shareUrl);
+        else if (navigator.share) navigator.share({title:t('title'), text, url:shareUrl}).catch(()=>{});
+        else { navigator.clipboard.writeText(text).then(()=>alert(t('shareFallback'))).catch(()=>prompt(t('shareFallback'),text)); }
         settingsMenu.classList.remove('show');
     });
 
-    // ===== Запрет отрицательных чисел, кроме температуры =====
     document.querySelectorAll('input[type="number"]').forEach(input => {
-        // Для поля температуры разрешаем минус
-        if (input.id === 'temperature') return;
-
-        input.addEventListener('keydown', function(e) {
-            if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
-                e.preventDefault();
-            }
-        });
-
-        function fixValue() {
-            let val = parseFloat(this.value);
-            let min = parseFloat(this.getAttribute('min'));
-            if (!isNaN(min)) {
-                if (isNaN(val) || val < min) {
-                    this.value = min;
-                }
-            } else if (this.value.startsWith('-')) {
-                this.value = this.value.replace('-', '');
-            }
-            if (this.id === 'bends' || this.id === 'valves') {
-                let intVal = parseInt(this.value);
-                if (!isNaN(intVal) && intVal >= 0) {
-                    this.value = intVal;
-                } else {
-                    this.value = 0;
-                }
-            }
+        if (input.id==='temperature') return;
+        input.addEventListener('keydown', e=>{ if(e.key==='-'||e.key==='+'||e.key==='e'||e.key==='E') e.preventDefault(); });
+        function fix() {
+            let v=parseFloat(this.value), min=parseFloat(this.getAttribute('min'));
+            if (!isNaN(min)&&(isNaN(v)||v<min)) this.value=min;
+            if (this.id==='bends'||this.id==='valves') { let i=parseInt(this.value); if (!isNaN(i)&&i>=0) this.value=i; else this.value=0; }
         }
-
-        input.addEventListener('input', fixValue);
-        input.addEventListener('blur', fixValue);
+        input.addEventListener('input', fix);
+        input.addEventListener('blur', fix);
     });
 
     updateEngineerVisibility();
