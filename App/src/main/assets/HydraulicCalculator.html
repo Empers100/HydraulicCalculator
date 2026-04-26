@@ -235,7 +235,7 @@
             velocity:'Скорость', pressureDrop:'Потеря давления', reynolds:'Число Рейнольдса', lambda:'Коэффициент трения λ',
             errorNum:'Проверьте правильность ввода чисел', errorDiam:'Некорректный диаметр или толщина стенки',
             errorPos:'Плотность, длина и расход должны быть > 0', fileSaved:'Файл сохранён',
-            compressNote:'⚠ Плотность отличается от идеального газа на %.1f%%', compressMach:'⚠ Скорость > 0.3 Маха — необходим учёт сжимаемости!',
+            compressNote:'⚠ Плотность отличается от идеального газа на %.1f%', compressMach:'⚠ Скорость > 0.3 Маха — необходим учёт сжимаемости!',
             ready:'Готов к расчёту', resultSummary:'v = {velocity} m/s, ΔP = {pressure} {unit}', flowRate:'Скорость потока:',
             warningExtremeTemp:'⚠ Температура вне допустимого диапазона для данного газа.',
             warningExtremePressure:'⚠ Давление вне допустимого диапазона для данного газа.',
@@ -269,7 +269,7 @@
             velocity:'Velocity', pressureDrop:'Pressure Drop', reynolds:'Reynolds Number', lambda:'Friction Factor λ',
             errorNum:'Check number input', errorDiam:'Invalid diameter or wall thickness',
             errorPos:'Density, length and flow must be > 0', fileSaved:'File saved',
-            compressNote:'⚠ Density differs from ideal gas by %.1f%%', compressMach:'⚠ Velocity > Mach 0.3 — compressibility!',
+            compressNote:'⚠ Density differs from ideal gas by %.1f%', compressMach:'⚠ Velocity > Mach 0.3 — compressibility!',
             ready:'Ready', resultSummary:'v = {velocity} m/s, ΔP = {pressure} {unit}', flowRate:'Flow Rate:',
             warningExtremeTemp:'⚠ Temperature outside valid range for this gas.',
             warningExtremePressure:'⚠ Pressure outside valid range for this gas.',
@@ -303,7 +303,7 @@
             velocity:'流速', pressureDrop:'压力损失', reynolds:'雷诺数', lambda:'摩擦系数 λ',
             errorNum:'请检查数字输入', errorDiam:'无效的直径或壁厚',
             errorPos:'密度、长度和流量必须 > 0', fileSaved:'文件已保存',
-            compressNote:'⚠ 密度与理想气体偏差 %.1f%%', compressMach:'⚠ 速度 > 马赫0.3 — 压缩性影响显著！',
+            compressNote:'⚠ 密度与理想气体偏差 %.1f%', compressMach:'⚠ 速度 > 马赫0.3 — 压缩性影响显著！',
             ready:'准备就绪', resultSummary:'v = {velocity} m/s, ΔP = {pressure} {unit}', flowRate:'流速：',
             warningExtremeTemp:'⚠ 温度超出该气体的有效范围。',
             warningExtremePressure:'⚠ 压力超出该气体的有效范围。',
@@ -900,13 +900,24 @@ mediumSelect.addEventListener('change', ()=>{
     }
 
     shareBtn.addEventListener('click', ()=>{
-        const shareUrl = 'https://github.com/Empers100/HydraulicCalculator';
-        const text = (lastResult.velocity>0) ? buildReport()+'\n\n'+shareUrl : t('shareText')+' '+shareUrl;
-        if (typeof AndroidShare!=='undefined' && AndroidShare.shareText) AndroidShare.shareText(t('title'), text, shareUrl);
-        else if (navigator.share) navigator.share({title:t('title'), text, url:shareUrl}).catch(()=>{});
-        else { navigator.clipboard.writeText(text).then(()=>alert(t('shareFallback'))).catch(()=>prompt(t('shareFallback'),text)); }
-        settingsMenu.classList.remove('show');
-    });
+    const shareUrl = 'https://github.com/Empers100/HydraulicCalculator';
+    const textOnly = (lastResult.velocity>0) ? buildReport() : t('shareText');
+    if (typeof AndroidShare!=='undefined' && AndroidShare.shareText) {
+        AndroidShare.shareText(t('title'), textOnly, shareUrl);
+    } else if (navigator.share) {
+        navigator.share({
+            title: t('title'),
+            text: textOnly,
+            url: shareUrl
+        }).catch(()=>{});
+    } else {
+        const fullText = textOnly + '\n' + shareUrl;
+        navigator.clipboard.writeText(fullText)
+            .then(()=>alert(t('shareFallback')))
+            .catch(()=>prompt(t('shareFallback'), fullText));
+    }
+    settingsMenu.classList.remove('show');
+});
 
     document.querySelectorAll('input[type="number"]').forEach(input => {
         if (input.id==='temperature') return;
