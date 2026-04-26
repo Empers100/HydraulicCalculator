@@ -345,22 +345,60 @@
         freon22:        { Tc: 369.3,  Pc: 49.86,  w: 0.221 }
     };
 
-    function calcZ(T, P_bar, Tc, Pc, w) {
-        const Tr = T / Tc;
-        const Pr = P_bar / Pc;
-        if (Tr <= 0 || Pc <= 0) return 1.0;
-        const b1 = 0.1181193, b2 = 0.265728, b3 = 0.154790, b4 = 0.030323;
-        const c1 = 0.0236744, c2 = 0.0186984, c3 = 0.0, c4 = 0.042724;
-        const d1 = 0.155488e-4, d2 = 0.623689e-4;
-        const beta = 0.65392;
-        const B = b1 - b2/Tr - b3/(Tr*Tr) - b4/(Tr*Tr*Tr);
-        const C = c1 - c2/Tr + c3/(Tr*Tr*Tr);
-        const D = d1 + d2/Tr;
-        const Z0 = 1 + B*Pr + C*Pr*Pr + D*Math.pow(Pr,5);
-        const Z1 = 1 + B*Pr*beta + C*Pr*Pr*beta + D*Math.pow(Pr,5)*beta;
-        const Z = Z0 + w * (Z1 - Z0) / 0.3978;
-        return Math.max(Z, 0.2);
+    // === Уравнение состояния Пенга–Робинсона (кубическое) ===
+    function calcZ_PengRobinson(T, P_bar, Tc, Pc, w) {
+    const R = 8.314462618; // Дж/(моль•К)
+    const Tr = T / Tc;
+    if (Tr <= 0 || Pc <= 0) return 1.0;
+
+    // Параметры PR
+    const kappa = 0.37464 + 1.54226 * w - 0.26992 * w * w;
+    const alpha = Math.pow(1 + kappa * (1 - Math.sqrt(Tr)), 2);
+    const a = 0.45724 * R * R * Tc * Tc / (Pc * 1e5) * alpha; // Па•м⁶/моль²
+    const b = 0.07780 * R * Tc / (Pc * 1e5);                 // м³/моль
+
+    const A = a * (P_bar * 1e5) / (R * R * T * T);
+    const B = b * (P_bar * 1e5) / (R * T);
+
+    // Кубическое уравнение: Z³ - (1-B)Z² + (A-2B-3B²)Z - (AB-B²-B³) = 0
+    const a2 = -(1 - B);
+    const a1 = A - 2*B - 3*B*B;
+    const a0 = -(A*B - B*B - B*B*B);
+
+    // Находим корни кубического уравнения
+    const Q = (3*a1 - a2*a2) / 9;
+    const R_ = (9*a2*a1 - 27*a0 - 2*a2*a2*a2) / 54;
+    const D = Q*Q*Q + R_*R_;
+
+    let Z;
+    if (D >= 0) {
+        // Один действительный корень
+        const sqrtD = Math.sqrt(D);
+        const S = Math.cbrt(R_ + sqrtD);
+        const T_ = Math.cbrt(R_ - sqrtD);
+        Z = S + T_ - a2/3;
+    } else {
+        // Три действительных корня, берём наибольший (газовая фаза) или наименьший (жидкость)
+        const theta = Math.acos(R_ / Math.sqrt(-Q*Q*Q));
+        const sqrtQ = Math.sqrt(-Q);
+        const z1 = 2 * sqrtQ * Math.cos(theta/3) - a2/3;
+        const z2 = 2 * sqrtQ * Math.cos((theta + 2*Math.PI)/3) - a2/3;
+        const z3 = 2 * sqrtQ * Math.cos((theta + 4*Math.PI)/3) - a2/3;
+        // Выбираем корень с наименьшей свободной энергией Гиббса, но для простоты
+        // берём корень, соответствующий минимальному давлению (обычно наименьший Z для жидкости)
+        // В сомнительных случаях лучше взять корень, при котором плотность будет больше.
+        Z = Math.min(z1, z2, z3); // жидкоподобный корень (при высоких давлениях)
+        // Проверка: если Z близко к B (что невозможно), то берём другой
+        if (Z <= B) Z = Math.max(z1, z2, z3);
     }
+    // Ограничиваем Z разумными пределами
+    return Math.max(Z, 0.05);
+}
+
+// Замена для функции calcZ во всех вызовах (переопределим)
+function calcZ(T, P_bar, Tc, Pc, w) {
+    return calcZ_PengRobinson(T, P_bar, Tc, Pc, w);
+}
 
     function calcRealGasDensity(T_C, P_bar, gas) {
         const M = parseFloat(document.getElementById('molarMass').value) || 28.97;
