@@ -317,7 +317,6 @@
             liquidDensityRange:'密度：{min}…{max} kg/m³',
             liquidViscosityRange:'粘度：{min}…{max} cSt',
             liquidPressureNote:'⚠液化气体属性为固定值。当压力高于大气压时，请使用专业数据库（NIST REFPROP）或手动输入精确数值。',
-
             liquidLimitInfo: '有效范围（液体）：T {tmin}…{tmax} °C, P {pmin}…{pmax} bar'
         }
     };
@@ -378,18 +377,14 @@
         const T_ = Math.cbrt(R_ - sqrtD);
         Z = S + T_ - a2/3;
     } else {
-        // Три действительных корня, берём наибольший (газовая фаза) или наименьший (жидкость)
+        // Три действительных корня, для газа всегда берём наибольший Z
         const theta = Math.acos(R_ / Math.sqrt(-Q*Q*Q));
         const sqrtQ = Math.sqrt(-Q);
         const z1 = 2 * sqrtQ * Math.cos(theta/3) - a2/3;
         const z2 = 2 * sqrtQ * Math.cos((theta + 2*Math.PI)/3) - a2/3;
         const z3 = 2 * sqrtQ * Math.cos((theta + 4*Math.PI)/3) - a2/3;
-        // Выбираем корень с наименьшей свободной энергией Гиббса, но для простоты
-        // берём корень, соответствующий минимальному давлению (обычно наименьший Z для жидкости)
-        // В сомнительных случаях лучше взять корень, при котором плотность будет больше.
-        Z = Math.min(z1, z2, z3); // жидкоподобный корень (при высоких давлениях)
-        // Проверка: если Z близко к B (что невозможно), то берём другой
-        if (Z <= B) Z = Math.max(z1, z2, z3);
+        // Газовая фаза – корень с наибольшим Z
+        Z = Math.max(z1, z2, z3);
     }
     // Ограничиваем Z разумными пределами
     return Math.max(Z, 0.05);
@@ -412,47 +407,62 @@ function calcZ(T, P_bar, Tc, Pc, w) {
     function calcRealGasViscosity(T_C, P_bar, gas) {
         const crit = gasCritical[gas];
         if (!crit) return null;
-        const M = parseFloat(document.getElementById('molarMass').value) || 28.97;
+        const M = parseFloat(document.getElementById('molarMass').value) || 28.97; // г/моль
         const T_K = T_C + 273.15;
-        const Tc = crit.Tc, Pc = crit.Pc;
+        const Tc = crit.Tc, Pc = crit.Pc; // Pc в bar
+
+        // Параметр длины (Å)
         const sigma = 2.44 * Math.pow(Tc / Pc, 1/3);
         const Tstar = T_K / (Tc * 0.77);
         const Omega = 1.16145 * Math.pow(Tstar, -0.14874) + 0.52487 * Math.exp(-0.77320 * Tstar) + 2.16178 * Math.exp(-2.43787 * Tstar);
+
+        // Вязкость разреженного газа (Па·с)
         const mu0 = 2.6693e-6 * Math.sqrt(M * T_K) / (sigma * sigma * Omega);
+
+        // Jossi–Stiel–Thodos: параметр ξ (в (μP)⁻¹)
+        const xi_muP = Math.pow(Tc, 1/6) / (Math.pow(M, 0.5) * Math.pow(Pc, 2/3));
+        // Переводим mu0 в μP (1 Па·с = 10⁷ μP)
+        const mu0_muP = mu0 * 1e7;
+        const psi = mu0_muP * xi_muP; // безразмерный параметр
+
+        // Плотность газа в моль/м³
+        const rho = calcRealGasDensity(T_C, P_bar, gas); // кг/м³
+        const rho_molar = rho / (M / 1000); // моль/м³
+
         const Zc = 0.27;
-        const Vc = Zc * 8.314 * Tc / (Pc * 1e5);
-        const xi = Math.pow(Tc, 1/6) / (Math.pow(M, 0.5) * Math.pow(Pc, 2/3));
-        const rho = calcRealGasDensity(T_C, P_bar, gas);
-        const rho_molar = rho / (M / 1000);
+        const Vc = Zc * 8.314 * Tc / (Pc * 1e5); // м³/моль
         const rho_r = rho_molar * Vc;
+
         if (rho_r <= 0.001) return mu0;
+
+        // Полином JST
         const poly = [1.023, 0.23364, 0.58533, -0.40758, 0.093324];
         let sum = 0;
         for (let i = 0; i < poly.length; i++) sum += poly[i] * Math.pow(rho_r, i);
-        const mu0_uPas = mu0 * 1e6;
-        const psi = mu0_uPas * xi;
+
+        // ( (μ-μ0)ξ + 1 )^(1/4) = sum  =>  μ = μ0 + (sum^4 - 1)/ξ
         const mu_mu0 = 1 + (Math.pow(sum, 4) - 1) / psi;
-        return mu0 * Math.max(mu_mu0, 0.5);
+        return Math.max(mu0 * mu_mu0, 0.5 * mu0); // запас от нефизичных значений
     }
 
     const gasLimits = {
-        air:            { Tmin: 70,    Tmax: 1300,  Pmin: 0.03401, Pmax: 100 },
-        nitrogen:       { Tmin: 65.9,  Tmax: 1300,  Pmin: 0.02,    Pmax: 100 },
-        oxygen:         { Tmin: 55,    Tmax: 1300,  Pmin: 0.00018, Pmax: 100 },
-        methane:        { Tmin: 91,    Tmax: 600,   Pmin: 0.0122,  Pmax: 100 },
-        co2:            { Tmin: 219,   Tmax: 600,   Pmin: 0.05,    Pmax: 100 },
-        parahydrogen:   { Tmin: 14,    Tmax: 500,   Pmin: 0.01,    Pmax: 50 },
-        normalhydrogen: { Tmin: 14,    Tmax: 500,   Pmin: 0.01,    Pmax: 50 },
-        helium4:        { Tmin: 2,     Tmax: 600,   Pmin: 0.0005,  Pmax: 50 },
-        neon:           { Tmin: 24.56, Tmax: 600,   Pmin: 0.05,    Pmax: 100 },
-        argon:          { Tmin: 84,    Tmax: 1300,  Pmin: 0.071,   Pmax: 100 },
-        krypton:        { Tmin: 115.76,Tmax: 600,   Pmin: 0.072498,Pmax: 100 },
-        xenon:          { Tmin: 161.41,Tmax: 600,   Pmin: 0.082,   Pmax: 100 },
-        ammonia:        { Tmin: 200,   Tmax: 750,   Pmin: 0.008,   Pmax: 100 },
-        ethane:         { Tmin: 93,    Tmax: 600,   Pmin: 0.00017, Pmax: 100 },
-        ethylene:       { Tmin: 110,   Tmax: 600,   Pmin: 0.00012, Pmax: 100 },
-        propane:        { Tmin: 100,   Tmax: 600,   Pmin: 0.01,    Pmax: 100 },
-        freon22:        { Tmin: 273,   Tmax: 553,   Pmin: 0.1,     Pmax: 35 },
+        air:            { Tmin: 70,    Tmax: 1300,  Pmin: 0.3401, Pmax: 1000 },
+        nitrogen:       { Tmin: 65.9,  Tmax: 1300,  Pmin: 0.2,    Pmax: 1000 },
+        oxygen:         { Tmin: 55,    Tmax: 1300,  Pmin: 0.0018, Pmax: 1000 },
+        methane:        { Tmin: 91,    Tmax: 600,   Pmin: 0.122,  Pmax: 1000 },
+        co2:            { Tmin: 219,   Tmax: 600,   Pmin: 0.5,    Pmax: 1000 },
+        parahydrogen:   { Tmin: 14,    Tmax: 500,   Pmin: 0.1,    Pmax: 500 },
+        normalhydrogen: { Tmin: 14,    Tmax: 500,   Pmin: 0.1,    Pmax: 500 },
+        helium4:        { Tmin: 2,     Tmax: 600,   Pmin: 0.005,  Pmax: 500 },
+        neon:           { Tmin: 24.56, Tmax: 600,   Pmin: 0.5,    Pmax: 1000 },
+        argon:          { Tmin: 84,    Tmax: 1300,  Pmin: 0.71,   Pmax: 1000 },
+        krypton:        { Tmin: 115.76,Tmax: 600,   Pmin: 0.72498, Pmax: 1000 },
+        xenon:          { Tmin: 161.41,Tmax: 600,   Pmin: 0.82,   Pmax: 1000 },
+        ammonia:        { Tmin: 200,   Tmax: 750,   Pmin: 0.08,   Pmax: 1000 },
+        ethane:         { Tmin: 93,    Tmax: 600,   Pmin: 0.0017, Pmax: 1000 },
+        ethylene:       { Tmin: 110,   Tmax: 600,   Pmin: 0.0012, Pmax: 1000 },
+        propane:        { Tmin: 100,   Tmax: 600,   Pmin: 0.1,    Pmax: 1000 },
+        freon22:        { Tmin: 273,   Tmax: 553,   Pmin: 1,     Pmax: 350 },
         water: null,
         oil: null
     };
@@ -608,7 +618,7 @@ mediumSelect.addEventListener('change', ()=>{
     else if (p!=='choose') updatePropertiesForState(p);
     updateGasPropsVisibility();
     applyGasLimits();
-    updateInfoPanel();          // ← добавлено обновление информационной панели
+    updateInfoPanel();
     checkConditions();
     resetResults();
     if (mediumSelect.value === 'gas') syncFromTemperatureAndPressure();
@@ -627,8 +637,9 @@ mediumSelect.addEventListener('change', ()=>{
         if (limits) {
             tempInput.min = (limits.Tmin - 273.15).toFixed(2);
             tempInput.max = (limits.Tmax - 273.15).toFixed(2);
-            pressInput.min = (limits.Pmin * 10).toFixed(4);
-            pressInput.max = (limits.Pmax * 10).toFixed(1);
+            // Давление в bar, без умножения на 10
+            pressInput.min = limits.Pmin.toFixed(4);
+            pressInput.max = limits.Pmax.toFixed(1);
         } else {
             tempInput.min = -273.15;
             tempInput.max = 2000;
@@ -646,7 +657,7 @@ mediumSelect.addEventListener('change', ()=>{
         if (mediumSelect.value === 'gas') {
             let text = t('infoPanelGas');
             const limits = limitsForPreset(preset);
-            if (limits) text += ' ' + t('limitInfo').replace('{tmin}', (limits.Tmin-273.15).toFixed(1)).replace('{tmax}', (limits.Tmax-273.15).toFixed(1)).replace('{pmin}', (limits.Pmin*10).toFixed(4)).replace('{pmax}', (limits.Pmax*10).toFixed(1));
+            if (limits) text += ' ' + t('limitInfo').replace('{tmin}', (limits.Tmin-273.15).toFixed(1)).replace('{tmax}', (limits.Tmax-273.15).toFixed(1)).replace('{pmin}', limits.Pmin.toFixed(4)).replace('{pmax}', limits.Pmax.toFixed(1));
             else text += ' ' + t('noLimitInfo');
             infoPanel.textContent = text;
         } else {
@@ -658,8 +669,8 @@ mediumSelect.addEventListener('change', ()=>{
                 text += ' ' + t('liquidLimitInfo')
                     .replace('{tmin}', (satLimits.Tmin - 273.15).toFixed(2))
                     .replace('{tmax}', (satLimits.Tmax - 273.15).toFixed(2))
-                    .replace('{pmin}', (satLimits.Pmin * 10).toFixed(4))
-                    .replace('{pmax}', (satLimits.Pmax * 10).toFixed(2));
+                    .replace('{pmin}', satLimits.Pmin.toFixed(4))
+                    .replace('{pmax}', satLimits.Pmax.toFixed(2));
             }
             if (preset !== 'water' && preset !== 'oil') {
                 text += ' ' + t('liquidPressureNote');
@@ -725,8 +736,9 @@ mediumSelect.addEventListener('change', ()=>{
             if (limits) {
                 const tmin = limits.Tmin - 273.15;
                 const tmax = limits.Tmax - 273.15;
-                const pmin = limits.Pmin * 10;
-                const pmax = limits.Pmax * 10;
+                // Давление в bar, прямое сравнение
+                const pmin = limits.Pmin;
+                const pmax = limits.Pmax;
                 if (!isNaN(T) && (T < tmin || T > tmax)) msgs.push(t('warningExtremeTemp'));
                 if (!isNaN(P) && (P < pmin || P > pmax)) msgs.push(t('warningExtremePressure'));
             }
@@ -958,7 +970,7 @@ mediumSelect.addEventListener('change', ()=>{
 });
 
     document.querySelectorAll('input[type="number"]').forEach(input => {
-        if (input.id==='temperature') return;
+        if (input.id==='temperature') return; // разрешаем минус для температуры
         input.addEventListener('keydown', e=>{ if(e.key==='-'||e.key==='+'||e.key==='e'||e.key==='E') e.preventDefault(); });
         input.addEventListener('input', function() {
             this.value = this.value.replace(/[^\d.,]/g, '').replace(',', '.');
