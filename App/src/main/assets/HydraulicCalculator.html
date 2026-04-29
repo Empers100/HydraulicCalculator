@@ -92,12 +92,13 @@
             background: transparent; border: none; font-weight: 500; color: var(--text);
             outline: none; width: 100%;
         }
-        .field-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-        .field-row label { flex: 1; font-size: 14px; color: var(--text-secondary); }
+        .field-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .field-row label { flex: 1; font-size: 14px; color: var(--text-secondary);  margin-right: 2px;}
         .field-row input, .field-row select {
             flex: 1; padding: 10px 8px; border: 1px solid var(--border);
             border-radius: 10px; background: var(--btn-bg); color: var(--text);
             font-size: 16px; text-align: right;
+            min-width: 0; /* разрешить сжиматься */
         }
         .engineer-block { display: none; flex-direction: column; gap: 6px; }
         .engineer-block.show { display: flex; }
@@ -416,12 +417,12 @@ function calcZ(T, P_bar, Tc, Pc, w) {
         const Tstar = T_K / (Tc * 0.77);
         const Omega = 1.16145 * Math.pow(Tstar, -0.14874) + 0.52487 * Math.exp(-0.77320 * Tstar) + 2.16178 * Math.exp(-2.43787 * Tstar);
 
-        // Вязкость разреженного газа (Па·с)
+        // Вязкость разреженного газа (Па•с)
         const mu0 = 2.6693e-6 * Math.sqrt(M * T_K) / (sigma * sigma * Omega);
 
         // Jossi–Stiel–Thodos: параметр ξ (в (μP)⁻¹)
         const xi_muP = Math.pow(Tc, 1/6) / (Math.pow(M, 0.5) * Math.pow(Pc, 2/3));
-        // Переводим mu0 в μP (1 Па·с = 10⁷ μP)
+        // Переводим mu0 в μP (1 Па•с = 10⁷ μP)
         const mu0_muP = mu0 * 1e7;
         const psi = mu0_muP * xi_muP; // безразмерный параметр
 
