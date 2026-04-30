@@ -162,7 +162,7 @@
 <div class="field-row"><label id="lblOuterDiam">Наружный диаметр (мм):</label><input type="number" id="outerDiam" value="57" min="0.1" step="any"></div>
 <div class="field-row"><label id="lblWall">Толщина стенки (мм):</label><input type="number" id="wall" value="3.5" min="0" step="any"></div>
 <div class="field-row"><label id="lblLength">Длина (м):</label><input type="number" id="length" value="100" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblMassFlow">Массовый расход (кг/ч):</label><input type="number" id="massFlow" value="5000" min="0.001" step="any"></div>
+<div class="field-row"><label id="lblMassFlow">Массовый расход<br> (кг/ч):</label><input type="number" id="massFlow" value="5000" min="0.001" step="any"></div>
 <div class="field-row"><label id="lblMode">Режим:</label><select id="modeSelect"><option value="simple" id="modeSimpleText">Упрощённый</option><option value="engineer" id="modeEngineerText">Инженерный</option></select></div>
 <div class="field-row"><label id="lblDensity">Плотность (кг/м³):</label><input type="number" id="density" value="1000" min="0.001" step="any"></div>
 
@@ -235,7 +235,7 @@
             title:'Гидравлический калькулятор', langLabel:'Язык / Language', themeDark:'Тёмная тема', themeLight:'Светлая тема',
             share:'Поделиться', shareText:'Гидравлический калькулятор — попробуй:', shareFallback:'Ссылка скопирована!',
             bends:'Поворотов 90° (ζ=0.3):', valves:'Клапанов (ζ=3.0):', outerDiam:'Наружный диаметр (мм):', wall:'Толщина стенки (мм):',
-            length:'Длина (м):', massFlow:'Массовый расход (кг/ч):', density:'Плотность (кг/м³):',
+            length:'Длина (м):', massFlow:'Массовый расход<br> (кг/ч):', density:'Плотность (кг/м³):',
             modeSimple:'Упрощённый', modeEngineer:'Инженерный', modeLabel:'Режим:',
             medium:'Тип среды:', liquid:'Жидкость', gas:'Газ',
             presetLabel:'Типичные среды:', presetChoose:'Выберите среду...',
@@ -664,7 +664,7 @@
         document.getElementById('lblOuterDiam').textContent = t('outerDiam');
         document.getElementById('lblWall').textContent = t('wall');
         document.getElementById('lblLength').textContent = t('length');
-        document.getElementById('lblMassFlow').textContent = t('massFlow');
+        document.getElementById('lblMassFlow').innerHTML = t('massFlow');
         document.getElementById('lblDensity').textContent = t('density');
         document.getElementById('modeSimpleText').textContent = t('modeSimple');
         document.getElementById('modeEngineerText').textContent = t('modeEngineer');
