@@ -723,6 +723,7 @@
         updateEngineerVisibility();
         if (lastResult.velocity>0) updateDisplayWithResult();
         else { formulaDisplay.textContent = t('ready'); mainDisplay.value='0'; }
+        checkConditions();
     }
     langSelect.addEventListener('change', ()=>{
         currentLang = langSelect.value;
