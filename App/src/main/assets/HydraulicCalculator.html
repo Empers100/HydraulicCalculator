@@ -162,7 +162,7 @@
 <div class="field-row"><label id="lblOuterDiam">Наружный диаметр (мм):</label><input type="number" id="outerDiam" value="57" min="0.1" step="any"></div>
 <div class="field-row"><label id="lblWall">Толщина стенки (мм):</label><input type="number" id="wall" value="3.5" min="0" step="any"></div>
 <div class="field-row"><label id="lblLength">Длина (м):</label><input type="number" id="length" value="100" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblMassFlow">Массовый расход<br> (кг/ч):</label><input type="number" id="massFlow" value="5000" min="0.001" step="any"></div>
+<div class="field-row"><label id="lblMassFlow">Массовый расход<br>(кг/ч):</label><input type="number" id="massFlow" value="5000" min="0.001" step="any"></div>
 <div class="field-row"><label id="lblMode">Режим:</label><select id="modeSelect"><option value="simple" id="modeSimpleText">Упрощённый</option><option value="engineer" id="modeEngineerText">Инженерный</option></select></div>
 <div class="field-row"><label id="lblDensity">Плотность (кг/м³):</label><input type="number" id="density" value="1000" min="0.001" step="any"></div>
 
@@ -235,7 +235,7 @@
             title:'Гидравлический калькулятор', langLabel:'Язык / Language', themeDark:'Тёмная тема', themeLight:'Светлая тема',
             share:'Поделиться', shareText:'Гидравлический калькулятор — попробуй:', shareFallback:'Ссылка скопирована!',
             bends:'Поворотов 90° (ζ=0.3):', valves:'Клапанов (ζ=3.0):', outerDiam:'Наружный диаметр (мм):', wall:'Толщина стенки (мм):',
-            length:'Длина (м):', massFlow:'Массовый расход<br> (кг/ч):', density:'Плотность (кг/м³):',
+            length:'Длина (м):', massFlow:'Массовый расход<br>(кг/ч):', density:'Плотность (кг/м³):',
             modeSimple:'Упрощённый', modeEngineer:'Инженерный', modeLabel:'Режим:',
             medium:'Тип среды:', liquid:'Жидкость', gas:'Газ',
             presetLabel:'Типичные среды:', presetChoose:'Выберите среду...',
@@ -266,6 +266,9 @@
             liquidPressureNote:'⚠ Для сжиженных газов свойства фиксированы. При давлении выше атмосферного, воспользуйтесь специализированными базами данных (NIST REFPROP), или введите точные значения в поля вручную.',
             liquidLimitInfo: 'Допустимый диапазон (жидкость): T {tmin}…{tmax} °C, P {pmin}…{pmax} бар',
             contractions: 'Сужений (ζ=0.5):', expansions: 'Расширений (ζ=1.0):', orifices: 'Дросселей/диафрагм (ζ=2.0):',
+            warningSaturationAbove: '⚠ Давление выше давления насыщения — расчёт сжиженного газа. Для точности выберите режим «Жидкость».',
+            warningNearSaturation: '⚠ Близко к линии насыщения — возможна конденсация.',
+            infoPanelSaturatedLiquid: ' ⚠ Давление выше давления насыщения — расчёт как для сжиженного газа.',
             units: {
                 mm: 'мм', m: 'м', kgm3: 'кг/м³', kgh: 'кг/ч', cSt: 'сСт', gmol: 'г/моль',
                 Pa: 'Па', kPa: 'кПа', bar: 'бар', 'kgf/cm²': 'кгс/см²', psi: 'psi',
@@ -307,6 +310,9 @@
             liquidPressureNote:'⚠ For liquefied gases, properties are fixed. At pressures above atmospheric, use specialized databases (NIST REFPROP) or enter accurate values manually.',
             liquidLimitInfo: 'Valid range (liquid): T {tmin}…{tmax} °C, P {pmin}…{pmax} bar',
             contractions: 'Contractions (ζ=0.5):', expansions: 'Expansions (ζ=1.0):', orifices: 'Orifices/diaphragms (ζ=2.0):',
+            warningSaturationAbove: '⚠ Pressure above saturation — liquefied gas calculation. For accuracy, select Liquid mode.',
+            warningNearSaturation: '⚠ Near saturation line — condensation possible.',
+            infoPanelSaturatedLiquid: ' ⚠ Pressure above saturation — calculated as liquefied gas.',
             units: {
                 mm: 'mm', m: 'm', kgm3: 'kg/m³', kgh: 'kg/h', cSt: 'cSt', gmol: 'g/mol',
                 Pa: 'Pa', kPa: 'kPa', bar: 'bar', 'kgf/cm²': 'kgf/cm²', psi: 'psi',
@@ -348,6 +354,9 @@
             liquidPressureNote:'⚠液化气体属性为固定值。当压力高于大气压时，请使用专业数据库（NIST REFPROP）或手动输入精确数值。',
             liquidLimitInfo: '有效范围（液体）：T {tmin}…{tmax} °C, P {pmin}…{pmax} 巴',
             contractions: '收缩 (ζ=0.5)：', expansions: '扩张 (ζ=1.0)：', orifices: '孔板/节流阀 (ζ=2.0)：',
+            warningSaturationAbove: '⚠ 压力高于饱和压力——按液化气体计算。为获得更高精度，请切换至液体模式。',
+            warningNearSaturation: '⚠ 接近饱和压力——可能发生冷凝。',
+            infoPanelSaturatedLiquid: ' ⚠ 压力高于饱和压力——按液化气体计算。',
             units: {
                 mm: '毫米', m: '米', kgm3: '千克/立方米', kgh: '千克/小时', cSt: '厘斯', gmol: '克/摩尔',
                 Pa: '帕', kPa: '千帕', bar: '巴', 'kgf/cm²': '千克力/平方厘米', psi: 'psi',
@@ -379,7 +388,6 @@
         freon22: { Tc: 369.3, Pc: 49.86, w: 0.221 }
     };
 
-    // Блок 1: данные Антуана и Ракетта
     const antoineCoeffs = {
         air:        { A: 3.98582,  B: 559.475,  C: -67.152,  Tmin: 60,   Tmax: 132 },
         nitrogen:   { A: 3.7362,   B: 264.651,  C: -6.788,   Tmin: 54,   Tmax: 126 },
@@ -420,7 +428,6 @@
         freon22:    { Zra: 0.267,  Vc: 0.0001640 }
     };
 
-    // Блок 2: вспомогательные функции
     function getSaturationPressure(T_K, gas) {
         const coeffs = antoineCoeffs[gas];
         if (!coeffs) return null;
@@ -447,7 +454,6 @@
         return alpha0 + w * (alpha1 - alpha0);
     }
 
-    // Блок 3: calcZ с phase
     function calcZ_PengRobinson(T, P_bar, Tc, Pc, w, phase) {
         const R = 8.314462618;
         const Tr = T / Tc;
@@ -795,7 +801,7 @@
             else text += ' ' + t('noLimitInfo');
             const phaseInfo = window._lastPhaseInfo;
             if (phaseInfo && phaseInfo.phase === 'liquid') {
-                text += ' ⚠ ' + (currentLang === 'ru' ? 'Давление выше давления насыщения — расчёт как для сжиженного газа.' : 'Pressure above saturation — calculating as liquefied gas.');
+                text += t('infoPanelSaturatedLiquid');
             }
             infoPanel.textContent = text;
         } else {
@@ -885,9 +891,9 @@
             }
             if (P_sat !== null && !isNaN(P)) {
                 if (P >= P_sat * (1 - 0.001)) {
-                    msgs.push('⚠ ' + (currentLang === 'ru' ? 'Давление выше давления насыщения – расчёт сжиженного газа. Для точности выберите режим «Жидкость».' : 'Pressure above saturation – liquefied gas calculation. For accuracy select Liquid mode.'));
+                    msgs.push(t('warningSaturationAbove'));
                 } else if (P >= P_sat * 0.9) {
-                    msgs.push('⚠ ' + (currentLang === 'ru' ? 'Близко к линии насыщения — возможна конденсация.' : 'Near saturation – condensation possible.'));
+                    msgs.push(t('warningNearSaturation'));
                 }
             }
             const phaseInfo = window._lastPhaseInfo;
@@ -1090,7 +1096,7 @@
         r += `${loc.outerDiam.split(' ')[0]} ${document.getElementById('outerDiam').value} ${loc.units.mm}\n`;
         r += `${loc.wall.split(' ')[0]} ${document.getElementById('wall').value} ${loc.units.mm}\n`;
         r += `${loc.length.split(' ')[0]} ${document.getElementById('length').value} ${loc.units.m}\n`;
-        r += `${loc.massFlow.split(' ')[0]} ${document.getElementById('massFlow').value} ${loc.units.kgh}\n`;
+        r += `${loc.massFlow.split('<br>')[0].replace(/:/g,'')} ${document.getElementById('massFlow').value} ${loc.units.kgh}\n`;
         r += `${loc.density.split(' ')[0]} ${document.getElementById('density').value} ${loc.units.kgm3}\n`;
         if (lastResult.mode=='engineer') {
             r += `${loc.viscosity.split(' ')[0]} ${document.getElementById('viscosity').value} ${loc.units.cSt}\n`;
