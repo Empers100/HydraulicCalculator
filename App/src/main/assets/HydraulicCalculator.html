@@ -73,7 +73,7 @@
             border-radius: 50%; position: absolute; top: 1px; left: 2px; transition: 0.2s;
         }
         body.dark .theme-toggle::after { transform: translateX(24px); }
-        .tab-content { display: flex; flex-direction: column; gap: 12px; }
+        .tab-content { display: flex; flex-direction: column; gap: 4px; }
         .display-container { display: flex; flex-direction: column; }
         .formula-display {
             padding: 8px 16px; font-size: 14px; text-align: right;
@@ -93,16 +93,31 @@
             background: transparent; border: none; font-weight: 500; color: var(--text);
             outline: none; width: 100%;
         }
-        .field-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-        .field-row label { flex: 1; font-size: 14px; color: var(--text-secondary); margin-right: 2px; }
+          .field-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            min-height: 48px;        /* ← одинаковая высота всех строк */
+            margin-bottom: 4px;      /* ← дополнительный воздух между полями */
+            }
+        .field-row label {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-right: 2px;
+    padding: 4px 0;          /* ← воздух внутри строки */
+    line-height: 1.3;        /* ← чтобы строки не слипались */
+}
         .field-row input, .field-row select {
             flex: 1; padding: 10px 8px; border: 1px solid var(--border);
             border-radius: 10px; background: var(--btn-bg); color: var(--text);
             font-size: 16px; text-align: right; min-width: 0;
         }
-        .engineer-block { display: none; flex-direction: column; gap: 6px; }
+        .engineer-block { display: none; flex-direction: column; gap: 5px; }
+        .extra-resistances { display: none; flex-direction: column; gap: 5px; }
         .engineer-block.show { display: flex; }
-        .info-block { display: none; margin-top: 8px; }
+        .info-block { display: none; margin-top: 4px; }
         .info-block.show { display: block; }
         .info-panel {
             font-size: 12px; color: var(--text-secondary); font-style: italic;
@@ -112,7 +127,7 @@
         .info-panel.show { display: block; }
         .warning-text { color: #e06c00; font-weight: 500; font-size: 13px; margin-top: 4px; display: none; }
         .warning-text.show { display: block; }
-        .btn-row { display: flex; gap: 8px; margin-top: 12px; }
+        .btn-row { display: flex; gap: 8px; margin-top: 6px; }
         .calc-btn, .save-btn {
             flex: 1; padding: 14px; font-size: 16px; font-weight: bold;
             background: var(--btn-active); color: white; border: none;
