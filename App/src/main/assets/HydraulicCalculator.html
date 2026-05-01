@@ -240,7 +240,7 @@
                 presetNeon:'Неон', presetArgon:'Аргон', presetKrypton:'Криптон', presetXenon:'Ксенон',
                 presetAmmonia:'Аммиак', presetEthane:'Этан', presetEthylene:'Этилен', presetPropane:'Пропан', presetFreon22:'Фреон-22',
                 viscosity:'Вязкость (сСт):', roughness:'Шероховатость (мм):',
-                pressure:'Абс. давление (бар):', temperature:'Температура (°C):', molarMass:'Молярная масса (г/моль):',
+                pressure:'Абс. давление (бар):', temperature:'Температура (°C):', molarMass:'Молярная масса<br>(г/моль):',
                 pressureUnit:'Единицы давления:', calculate:'Рассчитать', save:'Сохранить в файл',
                 velocity:'Скорость', pressureDrop:'Потеря давления', reynolds:'Число Рейнольдса', lambda:'Коэффициент трения λ',
                 errorNum:'Проверьте правильность ввода чисел', errorDiam:'Некорректный диаметр или толщина стенки',
@@ -707,7 +707,7 @@
             document.getElementById('lblRoughness').textContent = t('roughness');
             document.getElementById('lblPressure').textContent = t('pressure');
             document.getElementById('lblTemperature').textContent = t('temperature');
-            document.getElementById('lblMolarMass').textContent = t('molarMass');
+            document.getElementById('lblMolarMass').innerHTML = t('molarMass');
             document.getElementById('lblPressureUnit').textContent = t('pressureUnit');
             document.getElementById('lblContractions').textContent = t('contractions');
             document.getElementById('lblExpansions').textContent = t('expansions');
