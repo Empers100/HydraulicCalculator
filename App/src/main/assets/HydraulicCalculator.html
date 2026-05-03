@@ -985,7 +985,7 @@ if(l){ti.min=(l.Tmin-273.15).toFixed(2);ti.max=(l.Tmax-273.15).toFixed(2);pi.min
 else{ti.min=-273.15;ti.max=2000;pi.min=0.0001;pi.max=1000}
 }
 function resetResults() {
-lastResult={velocity:0,deltaP:0,re:0,lambda:0,mode:'',mediumType:'',preset:'',pressureUnit:'Pa',compressDiff:null,compressMach:false};
+lastResult={velocity:0,deltaP:0,re:0,lambda:0,mode:'',mediumType:'',preset:'',pressureUnit:'Pa',compressDiff:null,compressMach:false,compressCorrection:null};
 updateResultLabels(); const n=document.getElementById('compressNote'); n.textContent='';n.classList.remove('show');n.style.display='none';
 saveBtn.disabled=true; formulaDisplay.textContent=t('ready'); mainDisplay.value='0';
 }
@@ -1007,7 +1007,7 @@ const outerD=parseFloat(document.getElementById('outerDiam').value), wall=parseF
 if(outerD<=0||wall<0||outerD-2*wall<=0){alert(t('errorDiam'));return}
 if(density<=0||length<=0||massFlow<=0){alert(t('errorPos'));return}
 const innerD=outerD-2*wall, area=Math.PI*Math.pow(innerD/1000,2)/4, velocity=massFlow/3600/area/density;
-let deltaP, lambda=0, re=0, compressDiff=null, machExceeded=false;
+let deltaP, lambda=0, re=0, compressDiff=null, machExceeded=false, compressCorrection=null;
 if(modeSelect.value=='simple'){deltaP=density*Math.pow(velocity,2)/2*(41*length/innerD+5*valves+0.17*bends);lastResult.mode='simple'}
 else{
 const viscosity=parseFloat(document.getElementById('viscosity').value), roughness=parseFloat(document.getElementById('roughness').value), kinVisc=viscosity*1e-6, medium=mediumSelect.value;
@@ -1015,13 +1015,14 @@ lastResult.mediumType=medium;lastResult.preset=presetSelect.value;
 if(medium=='gas'){const P=parseFloat(document.getElementById('pressure').value)*1e5, T=parseFloat(document.getElementById('temperature').value)+273.15, M=parseFloat(document.getElementById('molarMass').value)/1000;compressDiff=Math.abs(density-P*M/(8.314*T))/ (P*M/(8.314*T))*100}
 re=velocity*(innerD/1000)/kinVisc;lambda=(re<2300)?64/re:0.25/Math.pow(Math.log10(roughness/innerD/3.7+5.74/Math.pow(re,0.9)),2);
 const totalZeta=lambda*length*1000/innerD+bends*0.3+valves*3.0+contractions*0.5+expansions*1.0+orifices*2.0, dP0=totalZeta*density*velocity*velocity/2;
-let dPf=dP0, compCorr=null;
-if(medium==='gas'){compCorr=calcCompressibilityCorrection(velocity,dP0);dPf=compCorr.dP_corrected;machExceeded=compCorr.mach>0.3;updateCompressNoteFromCorr(compCorr)}
+let dPf=dP0;
+if(medium==='gas'){compressCorrection=calcCompressibilityCorrection(velocity,dP0);dPf=compressCorrection.dP_corrected;machExceeded=compressCorrection.mach>0.3;updateCompressNoteFromCorr(compressCorrection)}
 else{const n=document.getElementById('compressNote');n.textContent='';n.classList.remove('show');n.style.display='none'}
 deltaP=dPf;lastResult.re=re;lastResult.lambda=lambda;
 }
 lastResult.velocity=velocity;lastResult.deltaP=deltaP;lastResult.pressureUnit=document.getElementById('pressureUnit').value;
 lastResult.compressDiff=(compressDiff!==null&&compressDiff>10)?compressDiff:null;lastResult.compressMach=machExceeded;
+lastResult.compressCorrection=compressCorrection||null;
 saveBtn.disabled=false;updateResultLabels();updateDisplayWithResult();updateAllWarnings();updateFieldBorders();
 }catch(e){alert(t('errorNum'))}
 });
@@ -1094,7 +1095,14 @@ if(lastResult.pressureUnit)pu.value=lastResult.pressureUnit;
 updateResultLabels();updateThemeLabel();updateEngineerVisibility();
 if(lastResult.velocity>0)updateDisplayWithResult();else{formulaDisplay.textContent=t('ready');mainDisplay.value='0'}
 updateAllWarnings();updateFieldBorders();
-const n=document.getElementById('compressNote');if(lastResult.compressMach||lastResult.compressDiff){n.classList.add('show');n.style.display='block'}else{n.classList.remove('show');n.style.display='none'}
+const n=document.getElementById('compressNote');
+if(lastResult.velocity>0&&lastResult.mediumType==='gas'&&lastResult.compressCorrection){
+updateCompressNoteFromCorr(lastResult.compressCorrection);
+}else if(lastResult.compressMach||lastResult.compressDiff){
+n.classList.add('show');n.style.display='block';
+}else{
+n.classList.remove('show');n.style.display='none';
+}
 }
 langSelect.addEventListener('change',()=>{currentLang=langSelect.value;localStorage.setItem('calc_hyd_lang',currentLang);applyLanguage()});
 applyLanguage();updateEngineerVisibility();
