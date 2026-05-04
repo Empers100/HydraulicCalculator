@@ -466,7 +466,6 @@ units: { mm: '毫米', m: '米', kgm3: '千克/立方米', kgh: '千克/小时',
 };
 
 let currentLang = localStorage.getItem('calc_hyd_lang') || 'ru';
-
 function t(key) { return locales[currentLang]?.[key] || key; }
 
 const lngPureComponents = {
@@ -487,20 +486,17 @@ argon: { Tc: 150.8, Pc: 48.98, w: 0.0 }, krypton: { Tc: 209.4, Pc: 55.0, w: 0.0 
 ammonia: { Tc: 405.5, Pc: 112.8, w: 0.253 }, ethane: { Tc: 305.4, Pc: 48.84, w: 0.099 }, ethylene: { Tc: 282.35, Pc: 50.42, w: 0.087 },
 propane: { Tc: 369.8, Pc: 42.48, w: 0.152 }, freon22: { Tc: 369.3, Pc: 49.86, w: 0.221 }
 };
-
-// ИСПРАВЛЕННЫЕ КОЭФФИЦИЕНТЫ АНТУАНА (проверено по NIST)
 const antoineCoeffs = {
 air: { A: 3.7362, B: 264.651, C: -6.788, Tmin: 60, Tmax: 132 },
 nitrogen: { A: 3.7362, B: 264.651, C: -6.788, Tmin: 54, Tmax: 126 },
-oxygen: { A: 4.0639, B: 356.66, C: -4.28, Tmin: 60, Tmax: 154 },          // NIST
+oxygen: { A: 4.0639, B: 356.66, C: -4.28, Tmin: 60, Tmax: 154 },
 methane: { A: 3.9895, B: 443.028, C: -0.490, Tmin: 91, Tmax: 190 },
 co2: { A: 4.6598, B: 872.61, C: -29.68, Tmin: 154, Tmax: 304 },
-// Водород и гелий убраны – используются спец. формулы
-neon: { A: 3.5155, B: 98.39, C: 2.11, Tmin: 24, Tmax: 44 },              // исправлено
-argon: { A: 4.1230, B: 407.22, C: -23.44, Tmin: 84, Tmax: 150 },         // исправлено
-krypton: { A: 4.2420, B: 570.31, C: -24.55, Tmin: 116, Tmax: 209 },      // исправлено
-xenon: { A: 4.2120, B: 723.52, C: -18.42, Tmin: 161, Tmax: 289 },        // исправлено
-ammonia: { A: 5.0516, B: 1266.79, C: -38.18, Tmin: 180, Tmax: 405 },     // исправлено
+neon: { A: 3.5155, B: 98.39, C: 2.11, Tmin: 24, Tmax: 44 },
+argon: { A: 4.1230, B: 407.22, C: -23.44, Tmin: 84, Tmax: 150 },
+krypton: { A: 4.2420, B: 570.31, C: -24.55, Tmin: 116, Tmax: 209 },
+xenon: { A: 4.2120, B: 723.52, C: -18.42, Tmin: 161, Tmax: 289 },
+ammonia: { A: 4.67956, B: 1002.711, C: -25.265, Tmin: 190, Tmax: 333 },   // ИСПРАВЛЕНО (Perry)
 ethane: { A: 4.0668, B: 663.72, C: -16.81, Tmin: 93, Tmax: 305 },
 ethylene: { A: 3.9728, B: 584.146, C: -18.27, Tmin: 104, Tmax: 282 },
 propane: { A: 4.0115, B: 790.98, C: -24.45, Tmin: 86, Tmax: 370 },
@@ -573,6 +569,7 @@ function determinePhase(P_bar, P_sat, T_K, Tc) {
   if (P_bar > P_sat * (1 + tol)) return 'liquid';
   return 'two-phase';
 }
+
 function alphaTwu(Tr, w) {
   const a0 = Math.pow(Tr, -0.171813) * Math.exp(0.125283 * (1 - Math.pow(Tr, 1.77634)));
   const a1 = Math.pow(Tr, -0.607352) * Math.exp(0.511614 * (1 - Math.pow(Tr, 2.20517)));
@@ -1240,4 +1237,4 @@ applyLanguage();updateEngineerVisibility();buildLngComposition();
 })();
 </script>
 </body>
-</html>
+</html
