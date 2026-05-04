@@ -328,6 +328,8 @@ reliabilityLngSupercritical: 'Сверхкритический флюид (Tr={t
 reliabilityLngTwoPhase: '⚠ Двухфазная область. Возможно кипение или конденсация.',
 reliabilityGasLimitsTemp: 'Температура вне допустимого диапазона ({tmin}...{tmax}°C).',
 reliabilityGasLimitsPressure: 'Давление вне допустимого диапазона ({pmin}...{pmax} бар).',
+warningLiquidDensity: 'Плотность жидкости вне допустимого диапазона.',
+warningLiquidViscosity: 'Вязкость жидкости вне допустимого диапазона.',
 lngBalanceOk: '✅ Сумма 100% --- баланс сошёлся',
 lngBalanceWarn: '⚠ Сумма {total}% --- небольшое отклонение',
 lngBalanceError: '🔴 Сумма {total}% --- необходимо ровно 100%',
@@ -392,6 +394,8 @@ reliabilityLngSupercritical: 'Supercritical fluid (Tr={tr}). Properties undefine
 reliabilityLngTwoPhase: '⚠ Two-phase region. Boiling or condensation possible.',
 reliabilityGasLimitsTemp: 'Temperature outside valid range ({tmin}...{tmax}°C).',
 reliabilityGasLimitsPressure: 'Pressure outside valid range ({pmin}...{pmax} bar).',
+warningLiquidDensity: 'Liquid density out of range.',
+warningLiquidViscosity: 'Liquid viscosity out of range.',
 lngBalanceOk: '✅ Total 100% --- balanced',
 lngBalanceWarn: '⚠ Total {total}% --- slight deviation',
 lngBalanceError: '🔴 Total {total}% --- exactly 100% required',
@@ -456,6 +460,8 @@ reliabilityLngSupercritical: '超临界流体 (Tr={tr})。性质未定义。',
 reliabilityLngTwoPhase: '⚠ 两相区域。可能沸腾或冷凝。',
 reliabilityGasLimitsTemp: '温度超出有效范围 ({tmin}...{tmax}°C)。',
 reliabilityGasLimitsPressure: '压力超出有效范围 ({pmin}...{pmax} 巴)。',
+warningLiquidDensity: '液体密度超出范围。',
+warningLiquidViscosity: '液体粘度超出范围。',
 lngBalanceOk: '✅ 总和100% --- 已平衡',
 lngBalanceWarn: '⚠ 总和{total}% --- 轻微偏离',
 lngBalanceError: '🔴 总和{total}% --- 需要恰好100%',
@@ -480,12 +486,14 @@ n2: { Tc: 126.2, Pc: 33.90, w: 0.039, M: 28.01, Vc: 0.0000895, Zra: 0.290, Tmin:
 
 const gasCritical = {
 air: { Tc: 132.5, Pc: 37.7, w: 0.0 }, nitrogen: { Tc: 126.2, Pc: 33.9, w: 0.039 }, oxygen: { Tc: 154.58, Pc: 50.43, w: 0.022 },
-methane: { Tc: 190.6, Pc: 45.99, w: 0.011 }, co2: { Tc: 304.2, Pc: 73.83, w: 0.225 }, parahydrogen: { Tc: 32.98, Pc: 12.84, w: -0.219 },
-normalhydrogen: { Tc: 33.19, Pc: 13.13, w: -0.216 }, helium4: { Tc: 5.195, Pc: 2.275, w: -0.387 }, neon: { Tc: 44.4, Pc: 27.56, w: -0.04 },
+methane: { Tc: 190.6, Pc: 45.99, w: 0.011 }, co2: { Tc: 304.2, Pc: 73.83, w: 0.225 },
+parahydrogen: { Tc: 32.938, Pc: 12.838, w: -0.219 }, normalhydrogen: { Tc: 33.19, Pc: 13.13, w: -0.216 },
+helium4: { Tc: 5.1953, Pc: 2.2746, w: -0.387 }, neon: { Tc: 44.4, Pc: 27.56, w: -0.04 },
 argon: { Tc: 150.8, Pc: 48.98, w: 0.0 }, krypton: { Tc: 209.4, Pc: 55.0, w: 0.0 }, xenon: { Tc: 289.7, Pc: 58.4, w: 0.0 },
 ammonia: { Tc: 405.5, Pc: 112.8, w: 0.253 }, ethane: { Tc: 305.4, Pc: 48.84, w: 0.099 }, ethylene: { Tc: 282.35, Pc: 50.42, w: 0.087 },
 propane: { Tc: 369.8, Pc: 42.48, w: 0.152 }, freon22: { Tc: 369.3, Pc: 49.86, w: 0.221 }
 };
+
 const antoineCoeffs = {
 air: { A: 3.7362, B: 264.651, C: -6.788, Tmin: 60, Tmax: 132 },
 nitrogen: { A: 3.7362, B: 264.651, C: -6.788, Tmin: 54, Tmax: 126 },
@@ -496,27 +504,49 @@ neon: { A: 3.5155, B: 98.39, C: 2.11, Tmin: 24, Tmax: 44 },
 argon: { A: 4.1230, B: 407.22, C: -23.44, Tmin: 84, Tmax: 150 },
 krypton: { A: 4.2420, B: 570.31, C: -24.55, Tmin: 116, Tmax: 209 },
 xenon: { A: 4.2120, B: 723.52, C: -18.42, Tmin: 161, Tmax: 289 },
-ammonia: { A: 4.67956, B: 1002.711, C: -25.265, Tmin: 190, Tmax: 333 },   // ИСПРАВЛЕНО (Perry)
+ammonia: { A: 4.67956, B: 1002.711, C: -25.265, Tmin: 190, Tmax: 333 },
 ethane: { A: 4.0668, B: 663.72, C: -16.81, Tmin: 93, Tmax: 305 },
 ethylene: { A: 3.9728, B: 584.146, C: -18.27, Tmin: 104, Tmax: 282 },
 propane: { A: 4.0115, B: 790.98, C: -24.45, Tmin: 86, Tmax: 370 },
 freon22: { A: 3.9997, B: 783.42, C: -29.39, Tmin: 233, Tmax: 369 }
 };
 
+// Таблицы насыщения (T[K], P_sat[бар], ρ_liq[кг/м³], ρ_vap[кг/м³])
+const HE4_SAT_TABLE = [
+  [2.1768, 0.0497, 145.2, 1.19],
+  [3.0,    0.117,  141.5, 2.6],
+  [4.0,    0.275,  134.8, 5.8],
+  [4.224,  1.013,  125.0, 16.9],  // н.т.
+  [4.5,    1.43,   115.0, 25.0],
+  [5.0,    1.69,   102.0, 37.0],
+  [5.1953, 2.2746,  69.6, 69.6]   // крит.
+];
+
+const PH2_SAT_TABLE = [   // пара-водород
+  [13.803, 0.00704, 77.0, 0.13],
+  [20.27,  1.013,   70.8, 1.33],  // н.т.
+  [25.0,   3.21,    61.5, 3.8],
+  [32.938, 12.838,  31.2, 31.2]   // крит.
+];
+// Для нормального водорода используем ту же таблицу с допустимой погрешностью
+const NH2_SAT_TABLE = PH2_SAT_TABLE;
+
 const rackettParams = {
 air: { Zra: 0.290, Vc: 0.0000848 }, nitrogen: { Zra: 0.290, Vc: 0.0000895 }, oxygen: { Zra: 0.288, Vc: 0.0000734 },
-methane: { Zra: 0.289, Vc: 0.0000992 }, co2: { Zra: 0.274, Vc: 0.0000940 }, parahydrogen:{ Zra: 0.301, Vc: 0.0000642 },
-normalhydrogen:{ Zra: 0.301, Vc: 0.0000642 }, helium4: { Zra: 0.301, Vc: 0.0000573 }, neon: { Zra: 0.296, Vc: 0.0000417 },
-argon: { Zra: 0.291, Vc: 0.0000749 }, krypton: { Zra: 0.288, Vc: 0.0000641 }, xenon: { Zra: 0.286, Vc: 0.0000610 },
-ammonia: { Zra: 0.247, Vc: 0.0000725 }, ethane: { Zra: 0.281, Vc: 0.0001480 }, ethylene: { Zra: 0.280, Vc: 0.0001290 },
-propane: { Zra: 0.276, Vc: 0.0002000 }, freon22: { Zra: 0.267, Vc: 0.0001640 }
+methane: { Zra: 0.289, Vc: 0.0000992 }, co2: { Zra: 0.274, Vc: 0.0000940 },
+neon: { Zra: 0.296, Vc: 0.0000417 }, argon: { Zra: 0.291, Vc: 0.0000749 },
+krypton: { Zra: 0.288, Vc: 0.0000641 }, xenon: { Zra: 0.286, Vc: 0.0000610 },
+ammonia: { Zra: 0.247, Vc: 0.0000725 }, ethane: { Zra: 0.281, Vc: 0.0001480 },
+ethylene: { Zra: 0.280, Vc: 0.0001290 }, propane: { Zra: 0.276, Vc: 0.0002000 },
+freon22: { Zra: 0.267, Vc: 0.0001640 }
 };
 
 const gasLimits = {
 air: { Tmin: 70, Tmax: 1300, Pmin: 0.3401, Pmax: 1000 }, nitrogen: { Tmin: 65.9, Tmax: 1300, Pmin: 0.2, Pmax: 1000 },
 oxygen: { Tmin: 55, Tmax: 1300, Pmin: 0.0018, Pmax: 1000 }, methane: { Tmin: 91, Tmax: 600, Pmin: 0.122, Pmax: 1000 },
-co2: { Tmin: 219, Tmax: 600, Pmin: 0.5, Pmax: 1000 }, parahydrogen: { Tmin: 14, Tmax: 500, Pmin: 0.1, Pmax: 500 },
-normalhydrogen: { Tmin: 14, Tmax: 500, Pmin: 0.1, Pmax: 500 }, helium4: { Tmin: 2, Tmax: 600, Pmin: 0.005, Pmax: 500 },
+co2: { Tmin: 219, Tmax: 600, Pmin: 0.5, Pmax: 1000 },
+parahydrogen: { Tmin: 13.803, Tmax: 500, Pmin: 0.007, Pmax: 100 }, normalhydrogen: { Tmin: 13.803, Tmax: 500, Pmin: 0.007, Pmax: 100 },
+helium4: { Tmin: 2.1768, Tmax: 600, Pmin: 0.01, Pmax: 100 },
 neon: { Tmin: 24.56, Tmax: 600, Pmin: 0.5, Pmax: 1000 }, argon: { Tmin: 84, Tmax: 1300, Pmin: 0.71, Pmax: 1000 },
 krypton: { Tmin: 115.76,Tmax: 600, Pmin: 0.72498, Pmax: 1000 }, xenon: { Tmin: 161.41,Tmax: 600, Pmin: 0.82, Pmax: 1000 },
 ammonia: { Tmin: 200, Tmax: 750, Pmin: 0.08, Pmax: 1000 }, ethane: { Tmin: 93, Tmax: 600, Pmin: 0.0017, Pmax: 1000 },
@@ -533,6 +563,8 @@ oxygen: { densityMin: 900, densityMax: 1200, viscosityMin: 0.1, viscosityMax: 0.
 methane: { densityMin: 350, densityMax: 500, viscosityMin: 0.05, viscosityMax: 0.2 },
 co2: { densityMin: 900, densityMax: 1200, viscosityMin: 0.05, viscosityMax: 0.2 },
 helium4: { densityMin: 100, densityMax: 150, viscosityMin: 0.01, viscosityMax: 0.05 },
+parahydrogen: { densityMin: 60, densityMax: 80, viscosityMin: 0.01, viscosityMax: 0.2 },
+normalhydrogen: { densityMin: 60, densityMax: 80, viscosityMin: 0.01, viscosityMax: 0.2 },
 ammonia: { densityMin: 600, densityMax: 750, viscosityMin: 0.15, viscosityMax: 0.5 },
 argon: { densityMin: 1200, densityMax: 1500, viscosityMin: 0.2, viscosityMax: 0.5 },
 propane: { densityMin: 400, densityMax: 550, viscosityMin: 0.1, viscosityMax: 0.3 },
@@ -540,16 +572,22 @@ ethane: { densityMin: 450, densityMax: 600, viscosityMin: 0.2, viscosityMax: 0.5
 freon22: { densityMin: 1100, densityMax: 1300, viscosityMin: 0.15, viscosityMax: 0.4 }
 };
 
+// Универсальная линейная интерполяция по таблице (столбцы: 0 - T, col - значение)
+function interpolateSatTable(table, T_K, col) {
+  if (T_K < table[0][0] || T_K > table[table.length-1][0]) return null;
+  for (let i = 0; i < table.length-1; i++) {
+    if (T_K >= table[i][0] && T_K <= table[i+1][0]) {
+      const t = (T_K - table[i][0]) / (table[i+1][0] - table[i][0]);
+      return table[i][col] + t * (table[i+1][col] - table[i][col]);
+    }
+  }
+  return null;
+}
+
 function getSaturationPressure(T_K, gas) {
-  // Для водорода и гелия всегда используем спец. формулы
-  if (gas === 'parahydrogen' || gas === 'normalhydrogen') {
-    if (T_K > 14 && T_K < 33) return Math.exp(3.15 - 32.0 / T_K);
-    return null;
-  }
-  if (gas === 'helium4') {
-    if (T_K > 2.0 && T_K < 5.2) return Math.exp(2.5 - 7.0 / T_K);
-    return null;
-  }
+  if (gas === 'helium4') return interpolateSatTable(HE4_SAT_TABLE, T_K, 1);
+  if (gas === 'parahydrogen') return interpolateSatTable(PH2_SAT_TABLE, T_K, 1);
+  if (gas === 'normalhydrogen') return interpolateSatTable(NH2_SAT_TABLE, T_K, 1);
 
   const coeffs = antoineCoeffs[gas];
   if (!coeffs) return null;
@@ -563,7 +601,7 @@ function getSaturationPressure(T_K, gas) {
 
 function determinePhase(P_bar, P_sat, T_K, Tc) {
   if (T_K >= Tc) return 'supercritical';
-  if (P_sat === null) return 'gas';
+  if (P_sat === null) return (T_K < Tc) ? 'gas' : 'supercritical';
   const tol = 0.001;
   if (P_bar < P_sat * (1 - tol)) return 'gas';
   if (P_bar > P_sat * (1 + tol)) return 'liquid';
@@ -615,23 +653,24 @@ function calcRealGasDensity(T_C, P_bar, gas) {
   const P_sat = getSaturationPressure(T_K, gas);
   const phase = determinePhase(P_bar, P_sat, T_K, crit.Tc);
   window._lastPhaseInfo = { phase, P_sat, gas, T_K, P_bar };
-  let density;
+
+  // Для квантовых жидкостей – табличная плотность насыщенной жидкости
+  if (phase === 'liquid' && (gas === 'helium4' || gas === 'parahydrogen' || gas === 'normalhydrogen')) {
+    const table = gas === 'helium4' ? HE4_SAT_TABLE : (gas === 'parahydrogen' ? PH2_SAT_TABLE : NH2_SAT_TABLE);
+    const rho = interpolateSatTable(table, T_K, 2);  // колонка 2 – ρ_liq
+    if (rho !== null) return rho;  // небольшое превышение давления почти не меняет плотность жидкости
+  }
+
+  // Стандартный расчёт через PR
   if (phase === 'liquid') {
     const rackett = rackettParams[gas];
     if (rackett && T_K < crit.Tc) {
       const Tr = T_K / crit.Tc, Vsat = rackett.Vc * Math.pow(rackett.Zra, Math.pow(1 - Tr, 0.2857));
-      density = (M / 1000) / Vsat;
-    } else {
-      const Z = calcZ_PengRobinson(T_K, P_bar, crit.Tc, crit.Pc, crit.w, 'liquid');
-      density = (P_bar * 1e5 * (M/1000)) / (Z * R_GAS * T_K);
+      return Math.max((M / 1000) / Vsat, 0.5);
     }
-  } else if (phase === 'supercritical' || phase === 'two-phase') {
-    const Z = calcZ_PengRobinson(T_K, P_bar, crit.Tc, crit.Pc, crit.w, phase);
-    density = (P_bar * 1e5 * (M/1000)) / (Z * R_GAS * T_K);
-  } else {
-    const Z = calcZ_PengRobinson(T_K, P_bar, crit.Tc, crit.Pc, crit.w, 'gas');
-    density = (P_bar * 1e5 * (M/1000)) / (Z * R_GAS * T_K);
   }
+  const Z = calcZ_PengRobinson(T_K, P_bar, crit.Tc, crit.Pc, crit.w, phase === 'gas' ? 'gas' : (phase === 'liquid' ? 'liquid' : 'supercritical'));
+  const density = (P_bar * 1e5 * (M/1000)) / (Z * R_GAS * T_K);
   return Math.max(density, 0.001);
 }
 
@@ -1237,4 +1276,4 @@ applyLanguage();updateEngineerVisibility();buildLngComposition();
 })();
 </script>
 </body>
-</html
+</html>
