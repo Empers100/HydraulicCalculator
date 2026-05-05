@@ -200,7 +200,6 @@
 </div>
 </div>
 
-<!-- Модальное окно справки -->
 <div id="helpModal">
 <div>
 <h2 id="helpTitle">Справка</h2>
@@ -998,10 +997,23 @@ function syncFromTempPress(){
   }
   updating=false;
 }
-document.getElementById('temperature').addEventListener('input',syncFromTempPress);
-document.getElementById('temperature').addEventListener('change',syncFromTempPress);
-document.getElementById('pressure').addEventListener('input',syncFromTempPress);
-document.getElementById('pressure').addEventListener('change',syncFromTempPress);
+// Универсальные обработчики, срабатывающие при любом изменении полей
+document.getElementById('temperature').addEventListener('input', function(){
+  if (modeSelect.value==='engineer' && mediumSelect.value==='gas') syncFromTempPress();
+  updateFieldBorders(); updateAllWarnings();
+});
+document.getElementById('temperature').addEventListener('change', function(){
+  if (modeSelect.value==='engineer' && mediumSelect.value==='gas') syncFromTempPress();
+  updateFieldBorders(); updateAllWarnings();
+});
+document.getElementById('pressure').addEventListener('input', function(){
+  if (modeSelect.value==='engineer' && mediumSelect.value==='gas') syncFromTempPress();
+  updateFieldBorders(); updateAllWarnings();
+});
+document.getElementById('pressure').addEventListener('change', function(){
+  if (modeSelect.value==='engineer' && mediumSelect.value==='gas') syncFromTempPress();
+  updateFieldBorders(); updateAllWarnings();
+});
 
 function updatePropertiesForState(p){
   if(p==='lng'){document.getElementById('temperature').value=-162;document.getElementById('pressure').value=1;syncLngProperties();return;}
