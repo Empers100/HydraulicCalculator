@@ -309,7 +309,7 @@ const locales = {
     presetNeon:'Неон', presetArgon:'Аргон', presetKrypton:'Криптон', presetXenon:'Ксенон',
     presetAmmonia:'Аммиак', presetEthane:'Этан', presetEthylene:'Этилен', presetPropane:'Пропан', presetFreon22:'Фреон-22',
     viscosity:'Вязкость (сСт):', roughness:'Шероховатость (мм):',
-    pressure:'Абс. давление (бар):', temperature:'Температура (°C):', molarMass:'Молярная масса<br>(г/моль):',
+    pressure:'Абс. давление (бар):', temperature:'Температура (°C):', molarMass:'Молярная масса (г/моль):',
     pressureUnit:'Единицы давления:', calculate:'Рассчитать', save:'Сохранить в файл',
     velocity:'Скорость', pressureDrop:'Потеря давления', reynolds:'Число Рейнольдса', lambda:'Коэффициент трения λ',
     errorNum:'Проверьте правильность ввода чисел', errorDiam:'Некорректный диаметр или толщина стенки',
@@ -709,6 +709,11 @@ function alphaTwu(Tr, w) {
   return a0 + w * (a1 - a0);
 }
 
+/**
+ * Уравнение Пенга-Робинсона с альфа-функцией Тву.
+ * Для жидкости используется функция Twu, для газа – стандартная Soave-форма.
+ * Выбор корня кубического уравнения – наименьший Z для жидкости, наибольший для сверхкритики и газа.
+ */
 function calcZ_PengRobinson(T, P_bar, Tc, Pc, w, phase) {
   const Tr = T / Tc;
   if (Tr <= 0 || Pc <= 0) return 1.0;
@@ -739,6 +744,11 @@ function calcZ_PengRobinson(T, P_bar, Tc, Pc, w, phase) {
   return Math.max(Z, 0.05);
 }
 
+/**
+ * Плотность чистых веществ.
+ * Для квантовых газов (He, H2) используются табличные значения насыщенной жидкости/пара,
+ * для остальных – уравнение Пенга-Робинсона и метод Ракетта для жидкости.
+ */
 function calcRealGasDensity(T_C, P_bar, gas) {
   if (gas === 'lng') return calcLngDensity(T_C, P_bar);
   const M_input = parseFloat(document.getElementById('molarMass').value);
@@ -768,6 +778,11 @@ function calcRealGasDensity(T_C, P_bar, gas) {
   return Math.max(density, 0.001);
 }
 
+/**
+ * Вязкость чистых веществ.
+ * Для жидкости – упрощённая корреляция через приведённую температуру и давление,
+ * для газа – метод Джосси-Стила-Тодоса (JST) с полиномиальной поправкой на плотность.
+ */
 function calcRealGasViscosity(T_C, P_bar, gas) {
   if (gas === 'lng') return calcLngViscosity(T_C, P_bar);
   const crit = gasCritical[gas];
@@ -1142,6 +1157,9 @@ function updateGasPropsVisibility(){
   document.getElementById('molarRow').style.display=(isGas&&!isLng)?'flex':'none';
   document.getElementById('density').readOnly=isLng; document.getElementById('viscosity').readOnly=isLng;
   if(isLng)mediumSelect.disabled=true;else mediumSelect.disabled=false;
+  // Молярная масса фиксируется при выбранном газовом пресете
+  const isPreset = presetSelect.value !== 'choose';
+  document.getElementById('molarMass').readOnly = (isPreset && isGas);
 }
 modeSelect.addEventListener('change',()=>{updateEngineerVisibility();if(modeSelect.value==='engineer'&&mediumSelect.value==='gas'&&presetSelect.value!=='lng')syncFromTempPress();resetResults()});
 mediumSelect.addEventListener('change',()=>{const p=presetSelect.value;if(p==='lng'){return}if((p=='water'||p=='oil')&&mediumSelect.value=='gas')presetSelect.value='choose';else if(p!=='choose')updatePropertiesForState(p);updateGasPropsVisibility();applyGasLimits();updateInfoPanel();updateAllWarnings();updateFieldBorders();resetResults();if(mediumSelect.value==='gas')syncFromTempPress()});
