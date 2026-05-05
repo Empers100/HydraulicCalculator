@@ -200,6 +200,7 @@
 </div>
 </div>
 
+<!-- Модальное окно справки -->
 <div id="helpModal">
 <div>
 <h2 id="helpTitle">Справка</h2>
@@ -363,7 +364,9 @@ const locales = {
     lngIC4H10:'и-Бутан i-C₄H₁₀ (%):', lngNC4H10:'н-Бутан n-C₄H₁₀ (%):', lngIC5H12:'Изопентан i-C₅H₁₂ (%):', lngN2:'Азот N₂ (%):',
     helpTitle:'Справка', helpClose:'Закрыть', helpBtn:'Справка',
     helpContent:`
-<h3>Режимы</h3><p><b>Упрощённый</b> — только гидравлика. Быстрая оценка без учёта свойств среды.</p><p><b>Инженерный</b> — полный расчёт.</p>
+<h3>Режимы расчёта</h3>
+<p><b>Упрощённый</b> – только гидравлика. Быстрая оценка без учёта свойств среды.</p>
+<p><b>Инженерный</b> – полный расчёт с учётом реальных свойств газа/жидкости, сжимаемости и фазового состояния.</p>
 <h3>Индикаторы достоверности</h3>
 <p>🟢 Зелёный – модели работают в оптимальной области.</p>
 <p>🟡 Жёлтый – повышенная погрешность (см. список предупреждений).</p>
@@ -388,7 +391,7 @@ const locales = {
 <p>Состав: метан, этан, пропан, бутаны, изопентан, азот. Фаза определяется автоматически по линии насыщения. Псевдокритические параметры по правилу Кея. Погрешность ±5-10%.</p>
 <h3>Важно</h3>
 <p>Для проектных расчётов сверяйте результаты с NIST REFPROP. При выходе за границы диапазона расчёт блокируется.</p>
- `,
+`,
     units:{ mm:'мм', m:'м', kgm3:'кг/м³', kgh:'кг/ч', cSt:'сСт', gmol:'г/моль', Pa:'Па', kPa:'кПа', bar:'бар', 'kgf/cm²':'кгс/см²', psi:'psi', m_s:'м/с' }
   },
   en: {
@@ -459,6 +462,8 @@ const locales = {
     lngIC4H10:'i-Butane i-C₄H₁₀ (%):', lngNC4H10:'n-Butane n-C₄H₁₀ (%):', lngIC5H12:'i-Pentane i-C₅H₁₂ (%):', lngN2:'Nitrogen N₂ (%):',
     helpTitle:'Help', helpClose:'Close', helpBtn:'Help',
     helpContent:`
+<h3>Calculation modes</h3>
+<p><b>Simplified</b> – hydraulics only. Quick estimate without fluid properties.</p>
 <p><b>Engineering</b> – full calculation with real gas/liquid properties, compressibility, and phase state.</p>
 <h3>Reliability indicators</h3>
 <p>🟢 Green – models in optimal range.</p>
@@ -484,7 +489,7 @@ const locales = {
 <p>Composition: methane, ethane, propane, butanes, isopentane, nitrogen. Phase auto-detected from saturation line. Pseudocritical parameters by Kay's rule. Accuracy ±5-10%.</p>
 <h3>Important</h3>
 <p>For design calculations, verify against NIST REFPROP. Out-of-range inputs are blocked.</p>
- `,
+`,
     units:{ mm:'mm', m:'m', kgm3:'kg/m³', kgh:'kg/h', cSt:'cSt', gmol:'g/mol', Pa:'Pa', kPa:'kPa', bar:'bar', 'kgf/cm²':'kgf/cm²', psi:'psi', m_s:'m/s' }
   },
   zh: {
@@ -555,10 +560,10 @@ const locales = {
     lngIC4H10:'异丁烷 i-C₄H₁₀ (%):', lngNC4H10:'正丁烷 n-C₄H₁₀ (%):', lngIC5H12:'异戊烷 i-C₅H₁₂ (%):', lngN2:'氮气 N₂ (%):',
     helpTitle:'帮助', helpClose:'关闭', helpBtn:'帮助',
     helpContent:`
-<h3>模式</h3><p><b>简化模式</b> — 仅考虑水力学。快速评估，不考虑介质特性。</p><p><b>工程模式</b> — 完整计算。</p>
-<h3>指示器</h3><p>🟢 适用。 🟡 不确定性增加。 🔴 超出适用范围。</p>
+<h3>计算模式</h3>
+<p><b>简化模式</b> – 仅考虑水力学。快速评估，不考虑介质特性。</p>
 <p><b>工程模式</b> – 完整计算，包含实际气体/液体性质、压缩性和相态。</p>
-<h3>可靠性指示</h3>
+<h3>指示器</h3>
 <p>🟢 绿色 – 模型在最佳范围内。</p>
 <p>🟡 黄色 – 不确定性增加（请查看警告）。</p>
 <p>🔴 红色 – 计算超出模型适用范围。</p>
@@ -582,7 +587,7 @@ const locales = {
 <p>组成：甲烷、乙烷、丙烷、丁烷、异戊烷、氮气。相态据饱和线自动确定。伪临界参数由 Kay 规则计算。精度 ±5-10%。</p>
 <h3>重要</h3>
 <p>设计计算请与 NIST REFPROP 对比验证。超出范围的输入将被阻止。</p>
- `,
+`,
     units:{ mm:'毫米', m:'米', kgm3:'千克/立方米', kgh:'千克/小时', cSt:'厘斯', gmol:'克/摩尔', Pa:'帕', kPa:'千帕', bar:'巴', 'kgf/cm²':'千克力/平方厘米', psi:'psi', m_s:'米/秒' }
   }
 };
@@ -709,11 +714,6 @@ function alphaTwu(Tr, w) {
   return a0 + w * (a1 - a0);
 }
 
-/**
- * Уравнение Пенга-Робинсона с альфа-функцией Тву.
- * Для жидкости используется функция Twu, для газа – стандартная Soave-форма.
- * Выбор корня кубического уравнения – наименьший Z для жидкости, наибольший для сверхкритики и газа.
- */
 function calcZ_PengRobinson(T, P_bar, Tc, Pc, w, phase) {
   const Tr = T / Tc;
   if (Tr <= 0 || Pc <= 0) return 1.0;
@@ -744,11 +744,6 @@ function calcZ_PengRobinson(T, P_bar, Tc, Pc, w, phase) {
   return Math.max(Z, 0.05);
 }
 
-/**
- * Плотность чистых веществ.
- * Для квантовых газов (He, H2) используются табличные значения насыщенной жидкости/пара,
- * для остальных – уравнение Пенга-Робинсона и метод Ракетта для жидкости.
- */
 function calcRealGasDensity(T_C, P_bar, gas) {
   if (gas === 'lng') return calcLngDensity(T_C, P_bar);
   const M_input = parseFloat(document.getElementById('molarMass').value);
@@ -778,11 +773,6 @@ function calcRealGasDensity(T_C, P_bar, gas) {
   return Math.max(density, 0.001);
 }
 
-/**
- * Вязкость чистых веществ.
- * Для жидкости – упрощённая корреляция через приведённую температуру и давление,
- * для газа – метод Джосси-Стила-Тодоса (JST) с полиномиальной поправкой на плотность.
- */
 function calcRealGasViscosity(T_C, P_bar, gas) {
   if (gas === 'lng') return calcLngViscosity(T_C, P_bar);
   const crit = gasCritical[gas];
