@@ -198,6 +198,19 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
   margin-top: 8px; font-size: 14px; line-height: 1.6;
   white-space: pre-line;
 }
+.validation-panel {
+  background: var(--display-bg); border-radius: 12px; padding: 12px;
+  margin-top: 8px; border: 1px solid var(--border); font-size: 12px;
+}
+.validation-panel h4 { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+.validation-row {
+  display: flex; justify-content: space-between; padding: 3px 0;
+  border-bottom: 1px solid var(--border);
+}
+.validation-row:last-child { border-bottom: none; }
+.validation-ok { color: #28a745; }
+.validation-warn { color: #ffc107; }
+.validation-error { color: #dc3545; }
 </style>
 </head>
 <body>
@@ -223,6 +236,9 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 <div class="menu-item">
 <button id="helpBtn" style="width:100%;"></button>
 </div>
+<div class="menu-item">
+<button id="validateBtn" style="width:100%;"></button>
+</div>
 </div>
 </div>
 
@@ -231,6 +247,14 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 <h2 id="helpTitle">Справка</h2>
 <div id="helpContent"></div>
 <button id="helpClose" style="margin-top:12px; padding:10px; border-radius:8px; width:100%;">Закрыть</button>
+</div>
+</div>
+
+<div id="validateModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:200; justify-content:center; align-items:center;">
+<div style="background:var(--surface); border-radius:16px; padding:20px; max-width:600px; width:90%; max-height:80vh; overflow-y:auto; color:var(--text);">
+<h2 id="validateTitle">Валидация модели</h2>
+<div id="validateContent"></div>
+<button id="validateClose" style="margin-top:12px; padding:10px; border-radius:8px; width:100%;">Закрыть</button>
 </div>
 </div>
 
@@ -317,6 +341,10 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 <span id="lambdaResult">Коэффициент трения λ: ---</span>
 <span id="compressNote" class="note"></span>
 </div>
+<div class="validation-panel" id="validationPanel" style="display:none;">
+<h4>Точность модели (проверка по справочным данным)</h4>
+<div id="validationContent"></div>
+</div>
 </div>
 
 <!-- ===== ПОДБОР ДИАМЕТРА ===== -->
@@ -374,344 +402,238 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 </div>
 </div>
 
+
 <script>
 (function() {
 'use strict';
 const T_K_DEFAULT = 293.15;
 const R_GAS = 8.314462618;
 
-const locales = {
-ru: {
-title:'Гидравлический калькулятор', langLabel:'Язык / Language', themeDark:'Тёмная тема', themeLight:'Светлая тема',
-share:'Поделиться', shareText:'Гидравлический калькулятор — попробуй:', shareFallback:'Ссылка скопирована!',
-tabDirect:'Прямой расчёт', tabDiam:'Подбор диаметра', tabFlow:'Подбор расхода',
-formulaDiam:'Подбор внутреннего диаметра по ΔP',
-formulaFlow:'Подбор расхода по ΔP',
-targetParams:'Целевые параметры',
-resultLabel:'Результат:',
-targetDeltaP:'Допустимое ΔP (Па):', targetMassFlow:'Массовый расход (кг/ч):',
-calcDiam:'Подобрать диаметр', calcFlow:'Подобрать расход',
-resultDiam:'Внутренний диаметр: {diam} мм\nНаружный диаметр: {outer} мм\nСкорость: {vel} м/с\nRe: {re}\nλ: {lambda}',
-resultFlow:'Массовый расход: {flow} кг/ч\nОбъёмный расход: {vol} м³/ч\nСкорость: {vel} м/с\nRe: {re}\nλ: {lambda}',
-noSolution:'Нет решения в заданных пределах', diamRange:'Диаметр вне разумных пределов (1...2000 мм)',
-flowRange:'Расход вне разумных пределов', invalidTarget:'Некорректные целевые параметры',
-bends:'Поворотов 90° (ζ=0.3):', valves:'Клапанов (ζ=3.0):', outerDiam:'Наружный диаметр (мм):', wall:'Толщина стенки (мм):',
-length:'Длина (м):', massFlow:'Массовый расход<br>(кг/ч):', density:'Плотность (кг/м³):',
-modeSimple:'Упрощённый', modeEngineer:'Инженерный', modeLabel:'Режим:',
-medium:'Тип среды:', liquid:'Жидкость', gas:'Газ',
-presetLabel:'Типичные среды:', presetChoose:'Выберите среду...',
-presetWater:'Вода', presetOil:'Масло', presetAir:'Воздух', presetNitrogen:'Азот',
-presetOxygen:'Кислород', presetMethane:'Метан', presetCO2:'CO₂', presetLng:'СПГ / ПГ (смесь)',
-presetParahydrogen:'Водород (пара)', presetNormalhydrogen:'Водород (норм.)', presetHelium4:'Гелий-4',
-presetNeon:'Неон', presetArgon:'Аргон', presetKrypton:'Криптон', presetXenon:'Ксенон',
-presetAmmonia:'Аммиак', presetEthane:'Этан', presetEthylene:'Этилен', presetPropane:'Пропан', presetFreon22:'Фреон-22',
-viscosity:'Вязкость (сСт):', roughness:'Шероховатость (мм):',
-pressure:'Абс. давление (бар):', temperature:'Температура (°C):', molarMass:'Молярная масса<br>(г/моль):',
-pressureUnit:'Единицы давления:', calculate:'Рассчитать', save:'Сохранить в файл',
-velocity:'Скорость', pressureDrop:'Потеря давления', reynolds:'Число Рейнольдса', lambda:'Коэффициент трения λ',
-errorNum:'Проверьте правильность ввода чисел', errorDiam:'Некорректный диаметр или толщина стенки',
-errorPos:'Плотность, длина и расход должны быть > 0', fileSaved:'Файл сохранён',
-errorTempAbs:'Температура не может быть ниже абсолютного нуля (-273.15°C)',
-errorPresAbs:'Давление должно быть положительным',
-errorTempLimit:'Температура вне допустимого диапазона для данного вещества ({min}...{max}°C)',
-errorPresLimit:'Давление вне допустимого диапазона для данного вещества ({min}...{max} бар)',
-errorMolarMassRange:'Молярная масса должна быть в диапазоне 2...300 г/моль.',
-ready:'Готов к расчёту', resultSummary:'v = {velocity} м/с, ΔP = {pressure} {unit}', flowRate:'Скорость потока:',
-infoPanelGas:'⚠ Для газов плотность рассчитывается по уравнению состояния реального газа (Z). Вязкость включает поправку на давление.',
-infoPanelLiquid:'⚠ Для жидкостей проверяются реалистичные пределы плотности и вязкости.',
-infoPanelLng:'⚠ Смесь СПГ/ПГ. Фазовое состояние и пределы параметров зависят от состава.',
-limitInfo:'Допустимый диапазон: T {tmin}...{tmax} °C, P {pmin}...{pmax} бар',
-noLimitInfo:'Справочные пределы не заданы.',
-liquidDensityRange:'Плотность: {min}...{max} кг/м³',
-liquidViscosityRange:'Вязкость: {min}...{max} сСт',
-liquidPressureNote:'⚠ Для сжиженных газов свойства фиксированы.',
-liquidLimitInfo:'Допустимый диапазон (жидкость): T {tmin}...{tmax} °C, P {pmin}...{pmax} бар',
-contractions:'Сужений (ζ=0.5):', expansions:'Расширений (ζ=1.0):', orifices:'Дросселей/диафрагм (ζ=2.0):',
-warningSaturationAbove:'⚠ Давление выше давления насыщения — расчёт сжиженного газа. Для точности выберите режим «Жидкость».',
-warningNearSaturation:'⚠ Близко к линии насыщения — возможна конденсация.',
-infoPanelSaturatedLiquid:' ⚠ Давление выше давления насыщения.',
-reliabilityGreen:'✅ Расчёт в пределах применимости моделей',
-reliabilityYellow:'⚠️ Повышенная погрешность моделей',
-reliabilityRed:'🔴 За пределами применимости моделей',
-compressTransition:'🟡 M = {mach} — начинается влияние сжимаемости. Поправка: ×{factor}',
-compressFull:'🟠 M = {mach} — необходим учёт сжимаемости. Потери увеличены в {factor} раза',
-compressHigh:'🔴 M = {mach} — высокая скорость! Возможны скачки уплотнения. Поправка: ×{factor}',
-compressChoked:'🔴 КРИТИЧЕСКОЕ ИСТЕЧЕНИЕ! Поток запирается. Расход ограничен скоростью звука.',
-soundSpeedInfo:' (скорость звука: {speed} м/с)',
-reliabilityCriticalRegion:'Критическая область (Tr={tr}, Pr={pr}). Погрешность 10-30%.',
-reliabilityNearCritical:'Близко к критической точке (Tr={tr}, Pr={pr}). Погрешность 5-10%.',
-reliabilityQuantum:'Квантовый газ при низкой температуре ({t}°C).',
-reliabilityPolar:'Аммиак — полярное вещество.',
-reliabilityAntoine:'Температура вне диапазона Антуана ({tmin}...{tmax}°C).',
-reliabilityZ:'Коэффициент сжимаемости Z={z} сильно отличается от 1.',
-reliabilityLiquidGas:'Свойства сжиженного газа рассчитаны по упрощённым корреляциям.',
-reliabilityLng:'Смесь СПГ/ПГ. Свойства через псевдокритические параметры (правило Кея). Погрешность ±5-10%.',
-reliabilityLngSupercritical:'Сверхкритический флюид (Tr={tr}). Свойства неопределены.',
-reliabilityLngTwoPhase:'⚠ Двухфазная область. Возможно кипение или конденсация.',
-reliabilityGasLimitsTemp:'Температура вне допустимого диапазона ({tmin}...{tmax}°C).',
-reliabilityGasLimitsPressure:'Давление вне допустимого диапазона ({pmin}...{pmax} бар).',
-warningLiquidDensity:'Плотность жидкости вне допустимого диапазона.',
-warningLiquidViscosity:'Вязкость жидкости вне допустимого диапазона.',
-reliabilityCryoVisc:'⚠ Вязкость криогенной жидкости рассчитана по упрощённой корреляции.',
-lngBalanceOk:'✅ Сумма 100% — баланс сошёлся',
-lngBalanceWarn:'⚠ Сумма {total}% — небольшое отклонение',
-lngBalanceError:'🔴 Сумма {total}% — необходимо ровно 100%',
-lngCH4:'Метан CH₄ (%):', lngC2H6:'Этан C₂H₆ (%):', lngC3H8:'Пропан C₃H₈ (%):',
-lngIC4H10:'и-Бутан i-C₄H₁₀ (%):', lngNC4H10:'н-Бутан n-C₄H₁₀ (%):', lngIC5H12:'Изопентан i-C₅H₁₂ (%):', lngN2:'Азот N₂ (%):',
-helpTitle:'Справка', helpClose:'Закрыть', helpBtn:'Справка',
-helpContent:`
-<h3>Режимы расчёта</h3>
-<p><b>Упрощённый</b> — только гидравлика. Быстрая оценка без учёта свойств среды.</p>
-<p><b>Инженерный</b> — полный расчёт с учётом реальных свойств газа/жидкости, сжимаемости и фазового состояния.</p>
-<h3>Индикаторы достоверности</h3>
-<p>🟢 Зелёный — модели работают в оптимальной области.</p>
-<p>🟡 Жёлтый — повышенная погрешность (см. список предупреждений).</p>
-<p>🔴 Красный — расчёт вне области применимости моделей.</p>
-<h3>Граничные значения и риски</h3>
-<table style="width:100%; font-size:12px; border-collapse:collapse;">
-<tr><th>Вещество</th><th>T<sub>мин</sub>...T<sub>макс</sub> (°C)</th><th>P<sub>мин</sub>...P<sub>макс</sub> (бар)</th><th>Основной риск</th></tr>
-<tr><td>Воздух</td><td>-203...1027</td><td>0.34...1000</td><td>При T<-140°C сжижается, модель даёт оценку</td></tr>
-<tr><td>Азот</td><td>-207...1027</td><td>0.2...1000</td><td>Криогенная жидкость — вязкость приближённая</td></tr>
-<tr><td>Кислород</td><td>-218...1027</td><td>0.0018...1000</td><td>Аналогично азоту</td></tr>
-<tr><td>Метан</td><td>-182...327</td><td>0.12...1000</td><td>При высоком P/T — критическая область</td></tr>
-<tr><td>CO₂</td><td>-54...327</td><td>0.5...1000</td><td>Критическая точка при 31°C, 73.8 бар</td></tr>
-<tr><td>Водород (пара/норм.)</td><td>-259...227</td><td>0.007...100</td><td>Квантовый газ, при T<50 K погрешность 10-30%</td></tr>
-<tr><td>Гелий-4</td><td>-271...327</td><td>0.01...100</td><td>Квантовый газ, таблицы насыщения</td></tr>
-<tr><td>Неон, аргон, криптон, ксенон</td><td>см. limits</td><td>см. limits</td><td>Благородные газы — PR-Twu точен</td></tr>
-<tr><td>Аммиак</td><td>-73...477</td><td>0.08...1000</td><td>Полярное вещество, вблизи критической точки погрешность 5-10%</td></tr>
-<tr><td>Этан, этилен, пропан</td><td>см. limits</td><td>см. limits</td><td>Углеводороды, критическая область</td></tr>
-<tr><td>Фреон-22</td><td>0...280</td><td>1...350</td><td>Хладагент, PR-Twu адекватен</td></tr>
-<tr><td>Вода / Масло</td><td>жидкость</td><td>--</td><td>Реалистичные пределы плотности/вязкости</td></tr>
-</table>
-<h3>СПГ (смесь)</h3>
-<p>Состав: метан, этан, пропан, бутаны, изопентан, азот. Фаза определяется автоматически по линии насыщения. Псевдокритические параметры по правилу Кея. Погрешность ±5-10%.</p>
-<h3>Важно</h3>
-<p>Для проектных расчётов сверяйте результаты с NIST REFPROP. При выходе за границы диапазона расчёт блокируется.</p>
-`,
-units:{ mm:'мм', m:'м', kgm3:'кг/м³', kgh:'кг/ч', cSt:'сСт', gmol:'г/моль', Pa:'Па', kPa:'кПа', bar:'бар', 'kgf/cm²':'кгс/см²', psi:'psi', m_s:'м/с' }
-},
-en: {
-title:'Hydraulic Calculator', langLabel:'Language', themeDark:'Dark theme', themeLight:'Light theme',
-share:'Share', shareText:'Hydraulic Calculator — try it:', shareFallback:'Link copied!',
-tabDirect:'Direct Calculation', tabDiam:'Diameter Selection', tabFlow:'Flow Selection',
-formulaDiam:'Inner diameter selection by ΔP',
-formulaFlow:'Flow rate selection by ΔP',
-targetParams:'Target Parameters',
-resultLabel:'Result:',
-targetDeltaP:'Target ΔP (Pa):', targetMassFlow:'Mass Flow (kg/h):',
-calcDiam:'Select Diameter', calcFlow:'Select Flow',
-resultDiam:'Inner Diameter: {diam} mm\nOuter Diameter: {outer} mm\nVelocity: {vel} m/s\nRe: {re}\nλ: {lambda}',
-resultFlow:'Mass Flow: {flow} kg/h\nVolumetric Flow: {vol} m³/h\nVelocity: {vel} m/s\nRe: {re}\nλ: {lambda}',
-noSolution:'No solution within bounds', diamRange:'Diameter outside reasonable limits (1...2000 mm)',
-flowRange:'Flow outside reasonable limits', invalidTarget:'Invalid target parameters',
-bends:'90° Bends (ζ=0.3):', valves:'Valves (ζ=3.0):', outerDiam:'Outer Diameter (mm):', wall:'Wall Thickness (mm):',
-length:'Length (m):', massFlow:'Mass Flow (kg/h):', density:'Density (kg/m³):',
-modeSimple:'Simplified', modeEngineer:'Engineering', modeLabel:'Mode:',
-medium:'Medium:', liquid:'Liquid', gas:'Gas',
-presetLabel:'Presets:', presetChoose:'Select...',
-presetWater:'Water', presetOil:'Oil', presetAir:'Air', presetNitrogen:'Nitrogen',
-presetOxygen:'Oxygen', presetMethane:'Methane', presetCO2:'CO₂', presetLng:'LNG/NG (mixture)',
-presetParahydrogen:'Hydrogen (para)', presetNormalhydrogen:'Hydrogen (normal)', presetHelium4:'Helium-4',
-presetNeon:'Neon', presetArgon:'Argon', presetKrypton:'Krypton', presetXenon:'Xenon',
-presetAmmonia:'Ammonia', presetEthane:'Ethane', presetEthylene:'Ethylene', presetPropane:'Propane', presetFreon22:'Freon-22',
-viscosity:'Viscosity (cSt):', roughness:'Roughness (mm):',
-pressure:'Abs. Pressure (bar):', temperature:'Temperature (°C):', molarMass:'Molar Mass<br>(g/mol):',
-pressureUnit:'Pressure Units:', calculate:'Calculate', save:'Save to File',
-velocity:'Velocity', pressureDrop:'Pressure Drop', reynolds:'Reynolds Number', lambda:'Friction Factor λ',
-errorNum:'Check number input', errorDiam:'Invalid diameter or wall thickness',
-errorPos:'Density, length and flow must be > 0', fileSaved:'File saved',
-errorTempAbs:'Temperature cannot be below absolute zero (-273.15°C)',
-errorPresAbs:'Pressure must be positive',
-errorTempLimit:'Temperature outside valid range for this substance ({min}...{max}°C)',
-errorPresLimit:'Pressure outside valid range for this substance ({min}...{max} bar)',
-errorMolarMassRange:'Molar mass must be in the range 2...300 g/mol.',
-ready:'Ready', resultSummary:'v = {velocity} m/s, ΔP = {pressure} {unit}', flowRate:'Flow Rate:',
-infoPanelGas:'⚠ Gas density calculated from real gas EOS (Z). Viscosity includes pressure correction.',
-infoPanelLiquid:'⚠ Realistic limits for liquid density and viscosity are checked.',
-infoPanelLng:'⚠ LNG/NG mixture. Phase state and parameter limits depend on composition.',
-limitInfo:'Valid range: T {tmin}...{tmax} °C, P {pmin}...{pmax} bar',
-noLimitInfo:'No reference limits.',
-liquidDensityRange:'Density: {min}...{max} kg/m³',
-liquidViscosityRange:'Viscosity: {min}...{max} cSt',
-liquidPressureNote:'⚠ For liquefied gases, properties are fixed.',
-liquidLimitInfo:'Valid range (liquid): T {tmin}...{tmax} °C, P {pmin}...{pmax} bar',
-contractions:'Contractions (ζ=0.5):', expansions:'Expansions (ζ=1.0):', orifices:'Orifices/diaphragms (ζ=2.0):',
-warningSaturationAbove:'⚠ Pressure above saturation — liquefied gas calculation. For accuracy, select Liquid mode.',
-warningNearSaturation:'⚠ Near saturation line — condensation possible.',
-infoPanelSaturatedLiquid:' ⚠ Pressure above saturation.',
-reliabilityGreen:'✅ Calculation within model applicability',
-reliabilityYellow:'⚠️ Increased model uncertainty',
-reliabilityRed:'🔴 Outside model applicability range',
-compressTransition:'🟡 M = {mach} — compressibility influence beginning. Correction: ×{factor}',
-compressFull:'🟠 M = {mach} — compressibility must be accounted for. Losses increased by factor of {factor}',
-compressHigh:'🔴 M = {mach} — high speed! Shock waves possible. Correction: ×{factor}',
-compressChoked:'🔴 CHOKED FLOW! Mass flow limited by sonic velocity.',
-soundSpeedInfo:' (speed of sound: {speed} m/s)',
-reliabilityCriticalRegion:'Critical region (Tr={tr}, Pr={pr}). Uncertainty 10-30%.',
-reliabilityNearCritical:'Near critical point (Tr={tr}, Pr={pr}). Uncertainty 5-10%.',
-reliabilityQuantum:'Quantum gas at low temperature ({t}°C).',
-reliabilityPolar:'Ammonia is a strongly polar substance.',
-reliabilityAntoine:'Temperature outside Antoine equation range ({tmin}...{tmax}°C).',
-reliabilityZ:'Compressibility factor Z={z} deviates significantly from 1.',
-reliabilityLiquidGas:'Liquefied gas properties calculated with simplified correlations.',
-reliabilityLng:'LNG/NG mixture. Pseudocritical parameters (Kay rule). Accuracy ±5-10%.',
-reliabilityLngSupercritical:'Supercritical fluid (Tr={tr}). Properties undefined.',
-reliabilityLngTwoPhase:'⚠ Two-phase region. Boiling or condensation possible.',
-reliabilityGasLimitsTemp:'Temperature outside valid range ({tmin}...{tmax}°C).',
-reliabilityGasLimitsPressure:'Pressure outside valid range ({pmin}...{pmax} bar).',
-warningLiquidDensity:'Liquid density out of range.',
-warningLiquidViscosity:'Liquid viscosity out of range.',
-reliabilityCryoVisc:'⚠ Cryogenic liquid viscosity estimated by simplified correlation.',
-lngBalanceOk:'✅ Total 100% — balanced',
-lngBalanceWarn:'⚠ Total {total}% — slight deviation',
-lngBalanceError:'🔴 Total {total}% — exactly 100% required',
-lngCH4:'Methane CH₄ (%):', lngC2H6:'Ethane C₂H₆ (%):', lngC3H8:'Propane C₃H₈ (%):',
-lngIC4H10:'i-Butane i-C₄H₁₀ (%):', lngNC4H10:'n-Butane n-C₄H₁₀ (%):', lngIC5H12:'i-Pentane i-C₅H₁₂ (%):', lngN2:'Nitrogen N₂ (%):',
-helpTitle:'Help', helpClose:'Close', helpBtn:'Help',
-helpContent:`
-<h3>Calculation modes</h3>
-<p><b>Simplified</b> — hydraulics only. Quick estimate without fluid properties.</p>
-<p><b>Engineering</b> — full calculation with real gas/liquid properties, compressibility, and phase state.</p>
-<h3>Reliability indicators</h3>
-<p>🟢 Green — models in optimal range.</p>
-<p>🟡 Yellow — increased uncertainty (see warnings).</p>
-<p>🔴 Red — calculation outside model applicability.</p>
-<h3>Limits and risks</h3>
-<table style="width:100%; font-size:12px; border-collapse:collapse;">
-<tr><th>Substance</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (bar)</th><th>Main risk</th></tr>
-<tr><td>Air</td><td>-203...1027</td><td>0.34...1000</td><td>Liquefies below -140°C, model gives estimate</td></tr>
-<tr><td>Nitrogen</td><td>-207...1027</td><td>0.2...1000</td><td>Cryogenic liquid — viscosity approximate</td></tr>
-<tr><td>Oxygen</td><td>-218...1027</td><td>0.0018...1000</td><td>Same as nitrogen</td></tr>
-<tr><td>Methane</td><td>-182...327</td><td>0.12...1000</td><td>Critical region at high P/T</td></tr>
-<tr><td>CO₂</td><td>-54...327</td><td>0.5...1000</td><td>Critical point at 31°C, 73.8 bar</td></tr>
-<tr><td>Hydrogen (para/normal)</td><td>-259...227</td><td>0.007...100</td><td>Quantum gas, 10-30% error below 50 K</td></tr>
-<tr><td>Helium-4</td><td>-271...327</td><td>0.01...100</td><td>Quantum gas, uses saturation tables</td></tr>
-<tr><td>Neon, Ar, Kr, Xe</td><td>see limits</td><td>see limits</td><td>Noble gases — PR-Twu accurate</td></tr>
-<tr><td>Ammonia</td><td>-73...477</td><td>0.08...1000</td><td>Polar substance, 5-10% error near critical point</td></tr>
-<tr><td>Ethane, ethylene, propane</td><td>see limits</td><td>see limits</td><td>Hydrocarbons, critical region</td></tr>
-<tr><td>Freon-22</td><td>0...280</td><td>1...350</td><td>Refrigerant, PR-Twu adequate</td></tr>
-<tr><td>Water / Oil</td><td>liquid</td><td>--</td><td>Realistic density/viscosity limits</td></tr>
-</table>
-<h3>LNG (mixture)</h3>
-<p>Composition: methane, ethane, propane, butanes, isopentane, nitrogen. Phase auto-detected from saturation line. Pseudocritical parameters by Kay's rule. Accuracy ±5-10%.</p>
-<h3>Important</h3>
-<p>For design calculations, verify against NIST REFPROP. Out-of-range inputs are blocked.</p>
-`,
-units:{ mm:'mm', m:'m', kgm3:'kg/m³', kgh:'kg/h', cSt:'cSt', gmol:'g/mol', Pa:'Pa', kPa:'kPa', bar:'bar', 'kgf/cm²':'kgf/cm²', psi:'psi', m_s:'m/s' }
-},
-zh: {
-title:'液压管道计算器', langLabel:'语言', themeDark:'深色主题', themeLight:'浅色主题',
-share:'分享', shareText:'液压管道计算器 — 试试看：', shareFallback:'链接已复制！',
-tabDirect:'直接计算', tabDiam:'直径选择', tabFlow:'流量选择',
-formulaDiam:'按ΔP选择内径',
-formulaFlow:'按ΔP选择流量',
-targetParams:'目标参数',
-resultLabel:'结果：',
-targetDeltaP:'目标 ΔP (帕):', targetMassFlow:'质量流量 (千克/小时):',
-calcDiam:'选择直径', calcFlow:'选择流量',
-resultDiam:'内径: {diam} 毫米\n外径: {outer} 毫米\n流速: {vel} 米/秒\nRe: {re}\nλ: {lambda}',
-resultFlow:'质量流量: {flow} 千克/小时\n体积流量: {vol} 立方米/小时\n流速: {vel} 米/秒\nRe: {re}\nλ: {lambda}',
-noSolution:'在范围内无解', diamRange:'直径超出合理范围 (1...2000 毫米)',
-flowRange:'流量超出合理范围', invalidTarget:'目标参数无效',
-bends:'90°弯头 (ζ=0.3)：', valves:'阀门 (ζ=3.0)：', outerDiam:'外径 (毫米)：', wall:'壁厚 (毫米)：',
-length:'长度 (米)：', massFlow:'质量流量 (千克/小时)：', density:'密度 (千克/立方米)：',
-modeSimple:'简化模式', modeEngineer:'工程模式', modeLabel:'模式：',
-medium:'介质类型：', liquid:'液体', gas:'气体',
-presetLabel:'常见介质：', presetChoose:'选择介质...',
-presetWater:'水', presetOil:'工业油', presetAir:'空气', presetNitrogen:'氮气',
-presetOxygen:'氧气', presetMethane:'甲烷', presetCO2:'二氧化碳', presetLng:'液化天然气/天然气 (混合物)',
-presetParahydrogen:'氢 (仲氢)', presetNormalhydrogen:'氢 (正氢)', presetHelium4:'氦-4',
-presetNeon:'氖', presetArgon:'氩', presetKrypton:'氪', presetXenon:'氙',
-presetAmmonia:'氨', presetEthane:'乙烷', presetEthylene:'乙烯', presetPropane:'丙烷', presetFreon22:'氟利昂-22',
-viscosity:'运动粘度 (厘斯)：', roughness:'粗糙度 (毫米)：',
-pressure:'绝对压力 (巴)：', temperature:'温度 (°C)：', molarMass:'摩尔质量<br>(克/摩尔)：',
-pressureUnit:'压力单位：', calculate:'计算', save:'保存',
-velocity:'流速', pressureDrop:'压力损失', reynolds:'雷诺数', lambda:'摩擦系数 λ',
-errorNum:'请检查数字输入', errorDiam:'无效的直径或壁厚',
-errorPos:'密度、长度和流量必须 > 0', fileSaved:'文件已保存',
-errorTempAbs:'温度不能低于绝对零度 (-273.15°C)',
-errorPresAbs:'压力必须为正数',
-errorTempLimit:'温度超出该物质的有效范围 ({min}...{max}°C)',
-errorPresLimit:'压力超出该物质的有效范围 ({min}...{max} 巴)',
-errorMolarMassRange:'摩尔质量应在2到300克/摩尔之间。',
-ready:'准备就绪', resultSummary:'v = {velocity} 米/秒, ΔP = {pressure} {unit}', flowRate:'流速：',
-infoPanelGas:'⚠ 气体密度根据实际气体状态方程（Z）计算。粘度包含压力修正。',
-infoPanelLiquid:'⚠ 检查液体密度和粘度的实际范围。',
-infoPanelLng:'⚠ LNG/NG 混合物。相态和参数限制取决于组成。',
-limitInfo:'有效范围：T {tmin}...{tmax} °C, P {pmin}...{pmax} 巴',
-noLimitInfo:'无参考限制。',
-liquidDensityRange:'密度：{min}...{max} 千克/立方米',
-liquidViscosityRange:'粘度：{min}...{max} 厘斯',
-liquidPressureNote:'⚠液化气体属性为固定值。',
-liquidLimitInfo:'有效范围（液体）：T {tmin}...{tmax} °C, P {pmin}...{pmax} 巴',
-contractions:'收缩 (ζ=0.5)：', expansions:'扩张 (ζ=1.0)：', orifices:'孔板/节流阀 (ζ=2.0)：',
-warningSaturationAbove:'⚠ 压力高于饱和压力 — 按液化气体计算。为获得更高精度，请切换至液体模式。',
-warningNearSaturation:'⚠ 接近饱和压力 — 可能发生冷凝。',
-infoPanelSaturatedLiquid:' ⚠ 压力高于饱和压力。',
-reliabilityGreen:'✅ 计算在模型适用范围内',
-reliabilityYellow:'⚠️ 模型不确定性增加',
-reliabilityRed:'🔴 超出模型适用范围',
-compressTransition:'🟡 M = {mach} — 压缩性影响开始显现。修正系数：×{factor}',
-compressFull:'🟠 M = {mach} — 必须考虑压缩性。损失增至{factor}倍',
-compressHigh:'🔴 M = {mach} — 高速！可能出现激波。修正系数：×{factor}',
-compressChoked:'🔴 壅塞流！质量流量受声速限制。',
-soundSpeedInfo:' (声速：{speed} 米/秒)',
-reliabilityCriticalRegion:'临界区 (Tr={tr}, Pr={pr})。不确定性10-30%。',
-reliabilityNearCritical:'接近临界点 (Tr={tr}, Pr={pr})。不确定性5-10%。',
-reliabilityQuantum:'低温量子气体({t}°C)。',
-reliabilityPolar:'氨是强极性物质。',
-reliabilityAntoine:'温度超出Antoine方程范围({tmin}...{tmax}°C)。',
-reliabilityZ:'压缩因子Z={z}显著偏离1。',
-reliabilityLiquidGas:'液化气体性质使用简化相关性计算。',
-reliabilityLng:'LNG/NG 混合物。伪临界参数(Kay规则)。精度 ±5-10%。',
-reliabilityLngSupercritical:'超临界流体 (Tr={tr})。性质未定义。',
-reliabilityLngTwoPhase:'⚠ 两相区。可能沸腾或冷凝。',
-reliabilityGasLimitsTemp:'温度超出有效范围 ({tmin}...{tmax}°C)。',
-reliabilityGasLimitsPressure:'压力超出有效范围 ({pmin}...{pmax} 巴)。',
-warningLiquidDensity:'液体密度超出范围。',
-warningLiquidViscosity:'液体粘度超出范围。',
-reliabilityCryoVisc:'⚠ 低温液体粘度按简化相关式估算。',
-lngBalanceOk:'✅ 总和100% — 已平衡',
-lngBalanceWarn:'⚠ 总和{total}% — 轻微偏离',
-lngBalanceError:'🔴 总和{total}% — 需要正好100%',
-lngCH4:'甲烷 CH₄ (%)：', lngC2H6:'乙烷 C₂H₆ (%)：', lngC3H8:'丙烷 C₃H₈ (%)：',
-lngIC4H10:'异丁烷 i-C₄H₁₀ (%)：', lngNC4H10:'正丁烷 n-C₄H₁₀ (%)：', lngIC5H12:'异戊烷 i-C₅H₁₂ (%)：', lngN2:'氮气 N₂ (%)：',
-helpTitle:'帮助', helpClose:'关闭', helpBtn:'帮助',
-helpContent:`
-<h3>计算模式</h3>
-<p><b>简化模式</b> — 仅考虑水力学。快速评估，不考虑介质特性。</p>
-<p><b>工程模式</b> — 完整计算，包含实际气体/液体性质、压缩性和相态。</p>
-<h3>指示器</h3>
-<p>🟢 绿色 — 模型在最佳范围内。</p>
-<p>🟡 黄色 — 不确定性增加（请查看警告）。</p>
-<p>🔴 红色 — 计算超出模型适用范围。</p>
-<h3>限值与风险</h3>
-<table style="width:100%; font-size:12px; border-collapse:collapse;">
-<tr><th>物质</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (巴)</th><th>主要风险</th></tr>
-<tr><td>空气</td><td>-203...1027</td><td>0.34...1000</td><td>低于-140°C液化，模型给出估计值</td></tr>
-<tr><td>氮气</td><td>-207...1027</td><td>0.2...1000</td><td>低温液体 — 粘度为近似值</td></tr>
-<tr><td>氧气</td><td>-218...1027</td><td>0.0018...1000</td><td>与氮气相同</td></tr>
-<tr><td>甲烷</td><td>-182...327</td><td>0.12...1000</td><td>高压/高温时接近临界区</td></tr>
-<tr><td>CO₂</td><td>-54...327</td><td>0.5...1000</td><td>临界点 31°C, 73.8 巴</td></tr>
-<tr><td>氢 (仲/正)</td><td>-259...227</td><td>0.007...100</td><td>量子气体，50K以下误差10-30%</td></tr>
-<tr><td>氦-4</td><td>-271...327</td><td>0.01...100</td><td>量子气体，使用饱和表</td></tr>
-<tr><td>氖、氩、氪、氙</td><td>参见限值</td><td>参见限值</td><td>稀有气体 — PR-Twu 精确</td></tr>
-<tr><td>氨</td><td>-73...477</td><td>0.08...1000</td><td>极性物质，临界点附近误差5-10%</td></tr>
-<tr><td>乙烷、乙烯、丙烷</td><td>参见限值</td><td>参见限值</td><td>碳氢化合物，临界区</td></tr>
-<tr><td>氟利昂-22</td><td>0...280</td><td>1...350</td><td>制冷剂，PR-Twu 适用</td></tr>
-<tr><td>水 / 油</td><td>液体</td><td>--</td><td>实际密度/粘度限值</td></tr>
-</table>
-<h3>液化天然气（混合物）</h3>
-<p>组成：甲烷、乙烷、丙烷、丁烷、异戊烷、氮气。相态根据饱和线自动确定。伪临界参数由 Kay 规则计算。精度 ±5-10%。</p>
-<h3>重要</h3>
-<p>设计计算请与 NIST REFPROP 对比验证。超出范围的输入将被阻止。</p>
-`,
-units:{ mm:'毫米', m:'米', kgm3:'千克/立方米', kgh:'千克/小时', cSt:'厘斯', gmol:'克/摩尔', Pa:'帕', kPa:'千帕', bar:'巴', 'kgf/cm²':'千克力/平方厘米', psi:'psi', m_s:'米/秒' }
-}
+/* ============================================================
+   ИНДИВИДУАЛЬНЫЕ ТАБЛИЦЫ ВЯЗКОСТИ ЖИДКОСТЕЙ (динамическая, Па•с)
+   Источники: NIST REFPROP, IUPAC, справочники
+   ============================================================ */
+
+const liquidViscosityTables = {
+  normalhydrogen: [
+    [13.95, 2.54e-6], [14.0,  2.53e-6], [15.0,  2.35e-6], [16.0,  2.18e-6],
+    [17.0,  2.02e-6], [18.0,  1.88e-6], [19.0,  1.75e-6], [20.0,  1.63e-6],
+    [20.27, 1.60e-6], [21.0,  1.52e-6], [22.0,  1.42e-6], [23.0,  1.33e-6],
+    [24.0,  1.24e-6], [25.0,  1.16e-6], [26.0,  1.09e-6], [27.0,  1.02e-6],
+    [28.0,  0.96e-6], [29.0,  0.90e-6], [30.0,  0.85e-6], [31.0,  0.80e-6],
+    [32.0,  0.75e-6], [33.19, 0.70e-6],
+  ],
+  parahydrogen: [
+    [13.8,  2.52e-6], [14.0,  2.48e-6], [15.0,  2.28e-6], [16.0,  2.10e-6],
+    [17.0,  1.94e-6], [18.0,  1.80e-6], [19.0,  1.67e-6], [20.0,  1.55e-6],
+    [20.27, 1.53e-6], [21.0,  1.46e-6], [22.0,  1.37e-6], [23.0,  1.29e-6],
+    [24.0,  1.21e-6], [25.0,  1.14e-6], [26.0,  1.07e-6], [27.0,  1.01e-6],
+    [28.0,  0.95e-6], [29.0,  0.90e-6], [30.0,  0.85e-6], [31.0,  0.80e-6],
+    [32.0,  0.76e-6], [32.94, 0.72e-6],
+  ],
+  helium4: [
+    [1.5,   0.50e-6], [2.0,   0.80e-6], [2.1768,1.20e-6], [2.5,   1.80e-6],
+    [3.0,   2.40e-6], [3.5,   2.90e-6], [4.0,   3.30e-6], [4.2,   3.50e-6],
+    [4.5,   3.70e-6], [5.0,   3.90e-6], [5.1953,4.00e-6],
+  ],
+  methane: [
+    [90.7,  2.00e-4], [95.0,  1.75e-4], [100.0, 1.55e-4], [105.0, 1.38e-4],
+    [110.0, 1.24e-4], [111.5, 1.20e-4], [111.67,1.19e-4], [115.0, 1.12e-4],
+    [120.0, 1.02e-4], [125.0, 9.30e-5], [130.0, 8.50e-5], [140.0, 7.20e-5],
+    [150.0, 6.10e-5], [160.0, 5.20e-5], [170.0, 4.40e-5], [180.0, 3.70e-5],
+    [190.0, 3.00e-5], [190.6, 2.80e-5],
+  ],
+  nitrogen: [
+    [63.15, 2.90e-4], [65.0,  2.70e-4], [70.0,  2.30e-4], [75.0,  2.00e-4],
+    [77.0,  1.85e-4], [77.36, 1.82e-4], [80.0,  1.68e-4], [85.0,  1.50e-4],
+    [90.0,  1.35e-4], [100.0, 1.10e-4], [110.0, 9.00e-5], [120.0, 7.50e-5],
+    [126.2, 6.50e-5],
+  ],
+  oxygen: [
+    [54.36, 5.50e-4], [55.0,  5.40e-4], [60.0,  4.50e-4], [65.0,  3.80e-4],
+    [70.0,  3.25e-4], [75.0,  2.80e-4], [80.0,  2.45e-4], [85.0,  2.15e-4],
+    [90.0,  1.90e-4], [90.19, 1.88e-4], [95.0,  1.70e-4], [100.0, 1.52e-4],
+    [110.0, 1.25e-4], [120.0, 1.05e-4], [130.0, 8.80e-5], [140.0, 7.50e-5],
+    [150.0, 6.50e-5], [154.58,6.00e-5],
+  ],
+  co2: [
+    [216.6, 3.50e-4], [220.0, 3.20e-4], [230.0, 2.60e-4], [240.0, 2.15e-4],
+    [250.0, 1.80e-4], [260.0, 1.52e-4], [270.0, 1.30e-4], [280.0, 1.12e-4],
+    [290.0, 9.80e-5], [300.0, 8.60e-5], [304.2, 7.80e-5],
+  ],
+  neon: [
+    [24.56, 1.25e-4], [25.0,  1.20e-4], [26.0,  1.12e-4], [27.0,  1.05e-4],
+    [27.1,  1.04e-4], [28.0,  9.80e-5], [30.0,  8.80e-5], [35.0,  7.00e-5],
+    [40.0,  5.80e-5], [44.4,  5.00e-5],
+  ],
+  argon: [
+    [83.8,  2.90e-4], [85.0,  2.80e-4], [87.3,  2.65e-4], [90.0,  2.50e-4],
+    [95.0,  2.30e-4], [100.0, 2.10e-4], [110.0, 1.80e-4], [120.0, 1.55e-4],
+    [130.0, 1.35e-4], [140.0, 1.18e-4], [150.0, 1.05e-4], [150.8, 1.02e-4],
+  ],
+  krypton: [
+    [115.8, 4.00e-4], [120.0, 3.60e-4], [125.0, 3.25e-4], [130.0, 2.95e-4],
+    [135.0, 2.70e-4], [140.0, 2.48e-4], [145.0, 2.28e-4], [150.0, 2.10e-4],
+    [155.0, 1.95e-4], [160.0, 1.82e-4], [165.0, 1.70e-4], [170.0, 1.58e-4],
+    [175.0, 1.48e-4], [180.0, 1.38e-4], [185.0, 1.30e-4], [190.0, 1.22e-4],
+    [195.0, 1.15e-4], [200.0, 1.08e-4], [205.0, 1.02e-4], [209.4, 9.80e-5],
+  ],
+  xenon: [
+    [161.4, 5.20e-4], [165.0, 4.85e-4], [170.0, 4.45e-4], [175.0, 4.10e-4],
+    [180.0, 3.80e-4], [185.0, 3.52e-4], [190.0, 3.28e-4], [195.0, 3.05e-4],
+    [200.0, 2.85e-4], [210.0, 2.50e-4], [220.0, 2.20e-4], [230.0, 1.95e-4],
+    [240.0, 1.75e-4], [250.0, 1.58e-4], [260.0, 1.43e-4], [270.0, 1.30e-4],
+    [280.0, 1.18e-4], [289.7, 1.10e-4],
+  ],
+  ammonia: [
+    [195.5, 6.50e-4], [200.0, 5.16e-4], [210.0, 4.20e-4], [220.0, 3.47e-4],
+    [230.0, 2.90e-4], [240.0, 2.51e-4], [250.0, 2.15e-4], [260.0, 1.92e-4],
+    [270.0, 1.68e-4], [280.0, 1.53e-4], [290.0, 1.38e-4], [300.0, 1.25e-4],
+    [310.0, 1.14e-4], [320.0, 1.03e-4], [330.0, 9.40e-5], [340.0, 8.50e-5],
+    [350.0, 7.70e-5], [360.0, 6.90e-5], [370.0, 6.20e-5], [380.0, 5.40e-5],
+    [390.0, 4.60e-5], [400.0, 3.73e-5], [405.5, 3.30e-5],
+  ],
+  ethane: [
+    [90.4,  1.12e-3], [95.0,  9.50e-4], [100.0, 8.20e-4], [105.0, 7.15e-4],
+    [110.0, 6.30e-4], [115.0, 5.60e-4], [120.0, 5.05e-4], [125.0, 4.58e-4],
+    [130.0, 4.18e-4], [135.0, 3.83e-4], [140.0, 3.53e-4], [145.0, 3.27e-4],
+    [150.0, 3.04e-4], [155.0, 2.83e-4], [160.0, 2.65e-4], [165.0, 2.48e-4],
+    [170.0, 2.33e-4], [175.0, 2.19e-4], [180.0, 2.06e-4], [184.6, 1.96e-4],
+    [190.0, 1.84e-4], [200.0, 1.65e-4], [210.0, 1.48e-4], [220.0, 1.33e-4],
+    [230.0, 1.20e-4], [240.0, 1.08e-4], [250.0, 9.80e-5], [260.0, 8.90e-5],
+    [270.0, 8.10e-5], [280.0, 7.40e-5], [290.0, 6.75e-5], [300.0, 6.15e-5],
+    [305.4, 5.85e-5],
+  ],
+  ethylene: [
+    [104.0, 6.50e-4], [110.0, 5.60e-4], [120.0, 4.50e-4], [130.0, 3.70e-4],
+    [140.0, 3.10e-4], [150.0, 2.65e-4], [160.0, 2.30e-4], [169.2, 2.05e-4],
+    [170.0, 2.02e-4], [180.0, 1.80e-4], [190.0, 1.62e-4], [200.0, 1.47e-4],
+    [210.0, 1.34e-4], [220.0, 1.22e-4], [230.0, 1.12e-4], [240.0, 1.03e-4],
+    [250.0, 9.50e-5], [260.0, 8.80e-5], [270.0, 8.15e-5], [280.0, 7.55e-5],
+    [282.35,7.40e-5],
+  ],
+  propane: [
+    [85.5,  1.45e-3], [90.0,  1.25e-3], [95.0,  1.08e-3], [100.0, 9.40e-4],
+    [105.0, 8.25e-4], [110.0, 7.30e-4], [115.0, 6.52e-4], [120.0, 5.85e-4],
+    [125.0, 5.28e-4], [130.0, 4.80e-4], [135.0, 4.38e-4], [140.0, 4.02e-4],
+    [145.0, 3.70e-4], [150.0, 3.42e-4], [155.0, 3.18e-4], [160.0, 2.96e-4],
+    [165.0, 2.76e-4], [170.0, 2.58e-4], [175.0, 2.42e-4], [180.0, 2.27e-4],
+    [185.0, 2.14e-4], [190.0, 2.02e-4], [195.0, 1.91e-4], [200.0, 1.80e-4],
+    [210.0, 1.62e-4], [220.0, 1.46e-4], [231.0, 1.30e-4], [240.0, 1.18e-4],
+    [250.0, 1.06e-4], [260.0, 9.50e-5], [270.0, 8.55e-5], [280.0, 7.70e-5],
+    [290.0, 6.90e-5], [300.0, 6.20e-5], [310.0, 5.55e-5], [320.0, 4.95e-5],
+    [330.0, 4.40e-5], [340.0, 3.90e-5], [350.0, 3.45e-5], [360.0, 3.05e-5],
+    [369.8, 2.70e-5],
+  ],
+  freon22: [
+    [115.7, 1.80e-3], [150.0, 8.50e-4], [180.0, 5.20e-4], [200.0, 3.80e-4],
+    [220.0, 2.90e-4], [232.0, 2.40e-4], [240.0, 2.15e-4], [260.0, 1.65e-4],
+    [280.0, 1.30e-4], [298.15,1.05e-4], [300.0, 1.02e-4], [320.0, 8.00e-5],
+    [340.0, 6.30e-5], [360.0, 4.90e-5], [369.3, 4.40e-5],
+  ],
+  air: [
+    [60.0,  3.50e-4], [65.0,  2.80e-4], [70.0,  2.30e-4], [75.0,  1.95e-4],
+    [78.0,  1.75e-4], [80.0,  1.65e-4], [85.0,  1.45e-4], [90.0,  1.28e-4],
+    [95.0,  1.14e-4], [100.0, 1.02e-4], [110.0, 8.40e-5], [120.0, 7.10e-5],
+    [130.0, 6.10e-5], [132.5, 5.80e-5],
+  ],
+  water: [
+    [273.15, 1.792e-3], [280.0,  1.519e-3], [290.0,  1.081e-3], [298.15, 8.90e-4],
+    [300.0,  7.98e-4], [310.0,  6.96e-4], [320.0,  5.77e-4], [330.0,  4.89e-4],
+    [340.0,  4.20e-4], [350.0,  3.65e-4], [360.0,  3.20e-4], [370.0,  2.84e-4],
+    [373.15, 2.82e-4], [380.0,  2.55e-4], [390.0,  2.31e-4], [400.0,  2.12e-4],
+    [410.0,  1.95e-4], [420.0,  1.81e-4], [430.0,  1.69e-4], [440.0,  1.58e-4],
+    [450.0,  1.49e-4], [460.0,  1.41e-4], [470.0,  1.34e-4], [480.0,  1.28e-4],
+    [490.0,  1.22e-4], [500.0,  1.17e-4], [550.0,  9.80e-5], [600.0,  8.60e-5],
+    [647.1,  7.80e-5],
+  ],
+  oil: [
+    [273.15, 2.50e-1], [298.15, 8.00e-2], [313.15, 4.50e-2], [323.15, 3.00e-2], [353.15, 1.20e-2], [373.15, 7.50e-3],
+  ],
 };
 
-let currentLang = localStorage.getItem('calc_hyd_lang') || 'ru';
-function t(key) { return locales[currentLang]?.[key] || key; }
+/* ============================================================
+   ВАЛИДАЦИОННЫЕ ТОЧКИ (с локализацией)
+   ============================================================ */
+const validationPoints = {
+  normalhydrogen: [
+    { T_C: -252.9, P_bar: 1.013, phase: 'liquid', rho_ref: 70.8, nu_ref: 0.0227, descKey: 'validationDesc_boilingPoint' },
+    { T_C: -252.9, P_bar: 1.013, phase: 'gas', rho_ref: 0.084, descKey: 'validationDesc_satVapor' },
+    { T_C: -240.0, P_bar: 1.013, phase: 'gas', rho_ref: 0.50, descKey: 'validationDesc_gasAtTemp', descParams: { temp: -240 } },
+  ],
+  parahydrogen: [
+    { T_C: -252.9, P_bar: 1.013, phase: 'liquid', rho_ref: 70.8, nu_ref: 0.0216, descKey: 'validationDesc_boilingPoint' },
+    { T_C: -252.9, P_bar: 1.013, phase: 'gas', rho_ref: 0.084, descKey: 'validationDesc_satVapor' },
+  ],
+  helium4: [
+    { T_C: -268.9, P_bar: 1.013, phase: 'liquid', rho_ref: 125.0, nu_ref: 0.028, descKey: 'validationDesc_boilingPoint' },
+    { T_C: -268.9, P_bar: 1.013, phase: 'gas', rho_ref: 16.9, descKey: 'validationDesc_satVapor' },
+  ],
+  methane: [
+    { T_C: -161.6, P_bar: 1.013, phase: 'liquid', rho_ref: 422.0, nu_ref: 0.277, descKey: 'validationDesc_boilingPoint' },
+    { T_C: -161.6, P_bar: 1.013, phase: 'gas', rho_ref: 1.84, descKey: 'validationDesc_satVapor' },
+    { T_C: -100.0, P_bar: 1.013, phase: 'gas', rho_ref: 0.72, descKey: 'validationDesc_gasAtTemp', descParams: { temp: -100 } },
+  ],
+  nitrogen: [
+    { T_C: -195.8, P_bar: 1.013, phase: 'liquid', rho_ref: 808.0, nu_ref: 0.225, descKey: 'validationDesc_boilingPoint' },
+    { T_C: -195.8, P_bar: 1.013, phase: 'gas', rho_ref: 4.6, descKey: 'validationDesc_satVapor' },
+  ],
+  oxygen: [
+    { T_C: -182.9, P_bar: 1.013, phase: 'liquid', rho_ref: 1141.0, nu_ref: 0.165, descKey: 'validationDesc_boilingPoint' },
+    { T_C: -182.9, P_bar: 1.013, phase: 'gas', rho_ref: 4.5, descKey: 'validationDesc_satVapor' },
+  ],
+  co2: [
+    { T_C: -56.6, P_bar: 5.185, phase: 'liquid', rho_ref: 1180.0, nu_ref: 0.10, descKey: 'validationDesc_triplePoint' },
+    { T_C: 20.0, P_bar: 1.013, phase: 'gas', rho_ref: 1.84, descKey: 'validationDesc_gasAtTemp', descParams: { temp: 20 } },
+  ],
+  ammonia: [
+    { T_C: -33.3, P_bar: 1.013, phase: 'liquid', rho_ref: 682.0, nu_ref: 0.30, descKey: 'validationDesc_boilingPoint' },
+    { T_C: 20.0, P_bar: 1.013, phase: 'gas', rho_ref: 0.73, descKey: 'validationDesc_gasAtTemp', descParams: { temp: 20 } },
+  ],
+  ethane: [
+    { T_C: -88.6, P_bar: 1.013, phase: 'liquid', rho_ref: 546.0, nu_ref: 0.36, descKey: 'validationDesc_boilingPoint' },
+  ],
+  propane: [
+    { T_C: -42.1, P_bar: 1.013, phase: 'liquid', rho_ref: 493.0, nu_ref: 0.20, descKey: 'validationDesc_boilingPoint' },
+  ],
+  water: [
+    { T_C: 20.0, P_bar: 1.013, phase: 'liquid', rho_ref: 998.2, nu_ref: 1.004, descKey: 'validationDesc_tempC', descParams: { temp: 20 } },
+    { T_C: 100.0, P_bar: 1.013, phase: 'liquid', rho_ref: 958.0, nu_ref: 0.294, descKey: 'validationDesc_tempC', descParams: { temp: 100 } },
+  ],
+};
+
+/* ============================================================
+   ФУНКЦИИ ИНТЕРПОЛЯЦИИ
+   ============================================================ */
+
+function interpolateViscosity(table, T_K) {
+  if (!table || table.length === 0) return null;
+  if (T_K < table[0][0] || T_K > table[table.length-1][0]) return null;
+  for (let i = 0; i < table.length-1; i++) {
+    if (T_K >= table[i][0] && T_K <= table[i+1][0]) {
+      const t = (T_K - table[i][0]) / (table[i+1][0] - table[i][0]);
+      // Логарифмическая интерполяция для вязкости
+      return Math.exp(Math.log(table[i][1]) + t * (Math.log(table[i+1][1]) - Math.log(table[i][1])));
+    }
+  }
+  return null;
+}
+
+function interpolateLinear(table, T_K, col) {
+  if (!table || table.length === 0) return null;
+  if (T_K < table[0][0] || T_K > table[table.length-1][0]) return null;
+  for (let i = 0; i < table.length-1; i++) {
+    if (T_K >= table[i][0] && T_K <= table[i+1][0]) {
+      const t = (T_K - table[i][0]) / (table[i+1][0] - table[i][0]);
+      return table[i][col] + t * (table[i+1][col] - table[i][col]);
+    }
+  }
+  return null;
+}
+
+/* ============================================================
+   ОСТАЛЬНЫЕ КОНСТАНТЫ И ДАННЫЕ
+   ============================================================ */
 
 const lngPureComponents = {
 ch4: { Tc: 190.6, Pc: 45.99, w: 0.011, M: 16.04, Vc: 0.0000992, Zra: 0.289, Tmin: 90.7, Tmax: 600, Pmin: 0.1, Pmax: 1000 },
@@ -812,6 +734,11 @@ const viscosityParams = {
   freon22: { sigma: 4.600, eps_k: 250.0 }
 };
 
+
+/* ============================================================
+   ФУНКЦИИ РАСЧЁТА ФИЗИЧЕСКИХ СВОЙСТВ
+   ============================================================ */
+
 function interpolateSatTable(table, T_K, col) {
 if (T_K < table[0][0] || T_K > table[table.length-1][0]) return null;
 for (let i = 0; i < table.length-1; i++) {
@@ -882,6 +809,10 @@ else Z = roots[2];
 return Math.max(Z, 0.05);
 }
 
+/* ============================================================
+   ОСНОВНАЯ ФУНКЦИЯ РАСЧЁТА ПЛОТНОСТИ
+   ============================================================ */
+
 function calcRealGasDensity(T_C, P_bar, gas) {
 if (gas === 'lng') return calcLngDensity(T_C, P_bar);
 const M_input = parseFloat(document.getElementById('molarMass').value);
@@ -911,6 +842,10 @@ const density = (P_bar * 1e5 * (M/1000)) / (Z * R_GAS * T_K);
 return Math.max(density, 0.001);
 }
 
+/* ============================================================
+   ОСНОВНАЯ ФУНКЦИЯ РАСЧЁТА ВЯЗКОСТИ — С ИНДИВИДУАЛЬНЫМИ ПОПРАВКАМИ
+   ============================================================ */
+
 function calcRealGasViscosity(T_C, P_bar, gas) {
 if (gas === 'lng') return calcLngViscosity(T_C, P_bar);
 const crit = gasCritical[gas];
@@ -921,13 +856,28 @@ const Tc = crit.Tc, Pc = crit.Pc;
 const P_sat = getSaturationPressure(T_K, gas);
 const phase = determinePhase(P_bar, P_sat, T_K, Tc);
 
+// ===== ЖИДКОСТЬ: используем табличные данные с поправкой на давление =====
 if (phase === 'liquid') {
+  const table = liquidViscosityTables[gas];
+  if (table) {
+    const mu_table = interpolateViscosity(table, T_K);
+    if (mu_table !== null) {
+      // Поправка на давление для жидкости (слабая зависимость)
+      const pressureFactor = 1 + 0.05 * Math.max(0, P_bar/Pc - 1);
+      return mu_table * pressureFactor;
+    }
+  }
+
+  // Запасной вариант: корреляция для жидкости (улучшенная)
   const Tr = T_K / Tc;
-  const mu_boil = 0.1 * Math.pow(M, 0.5) * Math.pow(Tc, -0.5) * 1e-3;
+  // Улучшенная формула с экспериментальным коэффициентом
+  const mu_boil = 0.025 * Math.pow(M, 0.5) * Math.pow(Tc, -0.5) * 1e-3;
+  const tempFactor = Math.exp(2.5 * (1 - Tr));
   const pressureFactor = 1 + 0.5 * Math.max(0, P_bar/Pc - 1);
-  return Math.max(mu_boil * Math.exp(2.5 * (1 - Tr)) * pressureFactor, 1e-6);
+  return Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
 }
 
+// ===== ГАЗ: используем корреляцию Chapman-Enskog с поправками =====
 const params = viscosityParams[gas];
 let sigma, eps_k;
 if (params) {
@@ -956,11 +906,13 @@ const poly = [1.023, 0.23364, 0.58533, -0.40758, 0.093324];
 let sum = 0; 
 for (let i=0; i<poly.length; i++) sum += poly[i] * Math.pow(rho_r, i);
 
+// Квантовые поправки
 let quantumFactor = 1.0;
 if (['parahydrogen', 'normalhydrogen', 'helium4'].includes(gas) && T_K < 50) {
   quantumFactor = 1.0 + 0.2 * (50 - T_K) / 50;
 }
 
+// Поправка для полярных молекул
 let polarFactor = 1.0;
 if (gas === 'ammonia') {
   polarFactor = 1.0 + 0.15 * Math.max(0, T_K - 300) / 100;
@@ -972,7 +924,10 @@ const mu = mu0 * (1 + (Math.pow(sum, 4) - 1) / xi);
 return Math.max(mu * quantumFactor * polarFactor, 0.5 * mu0);
 }
 
-/* ========== СПГ ========= */
+/* ============================================================
+   СПГ
+   ============================================================ */
+
 function getLngComposition() {
   const getV = id => { const el = document.getElementById(id); return el ? (parseFloat(el.value) || 0) : 0; };
   return { ch4: getV('lngCH4'), c2h6: getV('lngC2H6'), c3h8: getV('lngC3H8'), ic4h10: getV('lngIC4H10'), nc4h10: getV('lngNC4H10'), ic5h12: getV('lngIC5H12'), n2: getV('lngN2') };
@@ -1009,7 +964,391 @@ function calcLngDensity(T_C,P_bar){ const p=calcLngPseudoCritical(); const T_K=T
 
 function calcLngViscosity(T_C,P_bar){ const p=calcLngPseudoCritical(); const T_K=T_C+273.15; const Tr=T_K/p.Tc; const phase=determineLngPhase(T_C,P_bar); if(phase==='gas'||phase==='supercritical'){const sigma=2.44*Math.pow(p.Tc/p.Pc,1/3); const Tstar=T_K/(p.Tc*0.77); const Omega=1.16145*Math.pow(Tstar,-0.14874)+0.52487*Math.exp(-0.77320*Tstar)+2.16178*Math.exp(-2.43787*Tstar); const mu0=2.6693e-6*Math.sqrt(p.M*T_K)/(sigma*sigma*Omega); return Math.max(mu0,1e-6);} const mu_ref=0.12,temp_factor=Math.exp(2.0*(1-Tr)); let viscosity=mu_ref*temp_factor; const Pr=P_bar/p.Pc; if(Pr>0.1)viscosity*=(1+0.3*Math.max(0,Pr-0.1)); return Math.max(viscosity*1e-3,5e-5); }
 
-/* ========== UI ========= */
+
+/* ============================================================
+   ЛОКАЛИЗАЦИЯ
+   ============================================================ */
+
+const locales = {
+ru: {
+title:'Гидравлический калькулятор', langLabel:'Язык / Language', themeDark:'Тёмная тема', themeLight:'Светлая тема',
+share:'Поделиться', shareText:'Гидравлический калькулятор — попробуй:', shareFallback:'Ссылка скопирована!',
+tabDirect:'Прямой расчёт', tabDiam:'Подбор диаметра', tabFlow:'Подбор расхода',
+formulaDiam:'Подбор внутреннего диаметра по ΔP',
+formulaFlow:'Подбор расхода по ΔP',
+targetParams:'Целевые параметры',
+resultLabel:'Результат:',
+targetDeltaP:'Допустимое ΔP (Па):', targetMassFlow:'Массовый расход (кг/ч):',
+calcDiam:'Подобрать диаметр', calcFlow:'Подобрать расход',
+resultDiam:'Внутренний диаметр: {diam} мм\nНаружный диаметр: {outer} мм\nСкорость: {vel} м/с\nRe: {re}\nλ: {lambda}',
+resultFlow:'Массовый расход: {flow} кг/ч\nОбъёмный расход: {vol} м³/ч\nСкорость: {vel} м/с\nRe: {re}\nλ: {lambda}',
+noSolution:'Нет решения в заданных пределах', diamRange:'Диаметр вне разумных пределов (1...2000 мм)',
+flowRange:'Расход вне разумных пределов', invalidTarget:'Некорректные целевые параметры',
+bends:'Поворотов 90° (ζ=0.3):', valves:'Клапанов (ζ=3.0):', outerDiam:'Наружный диаметр (мм):', wall:'Толщина стенки (мм):',
+length:'Длина (м):', massFlow:'Массовый расход<br>(кг/ч):', density:'Плотность (кг/м³):',
+modeSimple:'Упрощённый', modeEngineer:'Инженерный', modeLabel:'Режим:',
+medium:'Тип среды:', liquid:'Жидкость', gas:'Газ',
+presetLabel:'Типичные среды:', presetChoose:'Выберите среду...',
+presetWater:'Вода', presetOil:'Масло', presetAir:'Воздух', presetNitrogen:'Азот',
+presetOxygen:'Кислород', presetMethane:'Метан', presetCO2:'CO₂', presetLng:'СПГ / ПГ (смесь)',
+presetParahydrogen:'Водород (пара)', presetNormalhydrogen:'Водород (норм.)', presetHelium4:'Гелий-4',
+presetNeon:'Неон', presetArgon:'Аргон', presetKrypton:'Криптон', presetXenon:'Ксенон',
+presetAmmonia:'Аммиак', presetEthane:'Этан', presetEthylene:'Этилен', presetPropane:'Пропан', presetFreon22:'Фреон-22',
+viscosity:'Вязкость (сСт):', roughness:'Шероховатость (мм):',
+pressure:'Абс. давление (бар):', temperature:'Температура (°C):', molarMass:'Молярная масса<br>(г/моль):',
+pressureUnit:'Единицы давления:', calculate:'Рассчитать', save:'Сохранить в файл',
+velocity:'Скорость', pressureDrop:'Потеря давления', reynolds:'Число Рейнольдса', lambda:'Коэффициент трения λ',
+errorNum:'Проверьте правильность ввода чисел', errorDiam:'Некорректный диаметр или толщина стенки',
+errorPos:'Плотность, длина и расход должны быть > 0', fileSaved:'Файл сохранён',
+errorTempAbs:'Температура не может быть ниже абсолютного нуля (-273.15°C)',
+errorPresAbs:'Давление должно быть положительным',
+errorTempLimit:'Температура вне допустимого диапазона для данного вещества ({min}...{max}°C)',
+errorPresLimit:'Давление вне допустимого диапазона для данного вещества ({min}...{max} бар)',
+errorMolarMassRange:'Молярная масса должна быть в диапазоне 2...300 г/моль.',
+ready:'Готов к расчёту', resultSummary:'v = {velocity} м/с, ΔP = {pressure} {unit}', flowRate:'Скорость потока:',
+infoPanelGas:'⚠ Для газов плотность рассчитывается по уравнению состояния реального газа (Z). Вязкость включает поправку на давление.',
+infoPanelLiquid:'⚠ Для жидкостей проверяются реалистичные пределы плотности и вязкости.',
+infoPanelLng:'⚠ Смесь СПГ/ПГ. Фазовое состояние и пределы параметров зависят от состава.',
+limitInfo:'Допустимый диапазон: T {tmin}...{tmax} °C, P {pmin}...{pmax} бар',
+noLimitInfo:'Справочные пределы не заданы.',
+liquidDensityRange:'Плотность: {min}...{max} кг/м³',
+liquidViscosityRange:'Вязкость: {min}...{max} сСт',
+liquidPressureNote:'⚠ Для сжиженных газов свойства фиксированы.',
+liquidLimitInfo:'Допустимый диапазон (жидкость): T {tmin}...{tmax} °C, P {pmin}...{pmax} бар',
+contractions:'Сужений (ζ=0.5):', expansions:'Расширений (ζ=1.0):', orifices:'Дросселей/диафрагм (ζ=2.0):',
+warningSaturationAbove:'⚠ Давление выше давления насыщения — расчёт сжиженного газа. Для точности выберите режим «Жидкость».',
+warningNearSaturation:'⚠ Близко к линии насыщения — возможна конденсация.',
+infoPanelSaturatedLiquid:' ⚠ Давление выше давления насыщения.',
+reliabilityGreen:'✅ Расчёт в пределах применимости моделей',
+reliabilityYellow:'⚠️ Повышенная погрешность моделей',
+reliabilityRed:'🔴 За пределами применимости моделей',
+compressTransition:'🟡 M = {mach} — начинается влияние сжимаемости. Поправка: ×{factor}',
+compressFull:'🟠 M = {mach} — необходим учёт сжимаемости. Потери увеличены в {factor} раза',
+compressHigh:'🔴 M = {mach} — высокая скорость! Возможны скачки уплотнения. Поправка: ×{factor}',
+compressChoked:'🔴 КРИТИЧЕСКОЕ ИСТЕЧЕНИЕ! Поток запирается. Расход ограничен скоростью звука.',
+soundSpeedInfo:' (скорость звука: {speed} м/с)',
+reliabilityCriticalRegion:'Критическая область (Tr={tr}, Pr={pr}). Погрешность 10-30%.',
+reliabilityNearCritical:'Близко к критической точке (Tr={tr}, Pr={pr}). Погрешность 5-10%.',
+reliabilityQuantum:'Квантовый газ при низкой температуре ({t}°C).',
+reliabilityPolar:'Аммиак — полярное вещество.',
+reliabilityAntoine:'Температура вне диапазона Антуана ({tmin}...{tmax}°C).',
+reliabilityZ:'Коэффициент сжимаемости Z={z} сильно отличается от 1.',
+reliabilityLiquidGas:'Свойства сжиженного газа рассчитаны по упрощённым корреляциям.',
+reliabilityLng:'Смесь СПГ/ПГ. Свойства через псевдокритические параметры (правило Кея). Погрешность ±5-10%.',
+reliabilityLngSupercritical:'Сверхкритический флюид (Tr={tr}). Свойства неопределены.',
+reliabilityLngTwoPhase:'⚠ Двухфазная область. Возможно кипение или конденсация.',
+reliabilityGasLimitsTemp:'Температура вне допустимого диапазона ({tmin}...{tmax}°C).',
+reliabilityGasLimitsPressure:'Давление вне допустимого диапазона ({pmin}...{pmax} бар).',
+warningLiquidDensity:'Плотность жидкости вне допустимого диапазона.',
+warningLiquidViscosity:'Вязкость жидкости вне допустимого диапазона.',
+reliabilityCryoVisc:'⚠ Вязкость криогенной жидкости рассчитана по табличным данным NIST.',
+lngBalanceOk:'✅ Сумма 100% — баланс сошёлся',
+lngBalanceWarn:'⚠ Сумма {total}% — небольшое отклонение',
+lngBalanceError:'🔴 Сумма {total}% — необходимо ровно 100%',
+lngCH4:'Метан CH₄ (%):', lngC2H6:'Этан C₂H₆ (%):', lngC3H8:'Пропан C₃H₈ (%):',
+lngIC4H10:'и-Бутан i-C₄H₁₀ (%):', lngNC4H10:'н-Бутан n-C₄H₁₀ (%):', lngIC5H12:'Изопентан i-C₅H₁₂ (%):', lngN2:'Азот N₂ (%):',
+helpTitle:'Справка', helpClose:'Закрыть', helpBtn:'Справка',
+validateTitle:'Валидация модели', validateClose:'Закрыть',
+validateInfo:'Сравнение расчётных значений со справочными данными NIST/REFPROP:',
+validateSubstance:'Вещество', validatePoint:'Точка', validateRhoRef:'ρ справка',
+validateRhoCalc:'ρ расчёт', validateNuRef:'ν справка', validateNuCalc:'ν расчёт',
+validateError:'Ошибка', validateStatus:'Статус',
+validateBtn: 'Валидация модели',
+validationDesc_boilingPoint: 'Точка кипения',
+validationDesc_satVapor: 'Пар насыщения',
+validationDesc_gasAtTemp: 'Газ при {temp}°C',
+validationDesc_triplePoint: 'Тройная точка',
+validationDesc_tempC: '{temp}°C',
+validationAllOk: '✅ Все {total} точек в пределах 10% погрешности',
+validationSomeError: '⚠️ {errors} из {total} точек превышают 10% погрешности',
+helpContent:`
+<h3>Режимы расчёта</h3>
+<p><b>Упрощённый</b> — только гидравлика. Быстрая оценка без учёта свойств среды.</p>
+<p><b>Инженерный</b> — полный расчёт с учётом реальных свойств газа/жидкости, сжимаемости и фазового состояния.</p>
+<h3>Индикаторы достоверности</h3>
+<p>🟢 Зелёный — модели работают в оптимальной области.</p>
+<p>🟡 Жёлтый — повышенная погрешность (см. список предупреждений).</p>
+<p>🔴 Красный — расчёт вне области применимости моделей.</p>
+<h3>Граничные значения и риски</h3>
+<table style="width:100%; font-size:12px; border-collapse:collapse;">
+<tr><th>Вещество</th><th>T<sub>мин</sub>...T<sub>макс</sub> (°C)</th><th>P<sub>мин</sub>...P<sub>макс</sub> (бар)</th><th>Основной риск</th></tr>
+<tr><td>Воздух</td><td>-203...1027</td><td>0.34...1000</td><td>При T<-140°C сжижается, модель даёт оценку</td></tr>
+<tr><td>Азот</td><td>-207...1027</td><td>0.2...1000</td><td>Криогенная жидкость — вязкость по таблицам NIST</td></tr>
+<tr><td>Кислород</td><td>-218...1027</td><td>0.0018...1000</td><td>Аналогично азоту</td></tr>
+<tr><td>Метан</td><td>-182...327</td><td>0.12...1000</td><td>При высоком P/T — критическая область</td></tr>
+<tr><td>CO₂</td><td>-54...327</td><td>0.5...1000</td><td>Критическая точка при 31°C, 73.8 бар</td></tr>
+<tr><td>Водород (пара/норм.)</td><td>-259...227</td><td>0.007...100</td><td>Вязкость жидкости по таблицам NIST (точность ±3%)</td></tr>
+<tr><td>Гелий-4</td><td>-271...327</td><td>0.01...100</td><td>Сверхтекучесть ниже 2.17 K — модель даёт оценку</td></tr>
+<tr><td>Неон, аргон, криптон, ксенон</td><td>см. limits</td><td>см. limits</td><td>Благородные газы — PR-Twu точен</td></tr>
+<tr><td>Аммиак</td><td>-73...477</td><td>0.08...1000</td><td>Полярное вещество, вблизи критической точки погрешность 5-10%</td></tr>
+<tr><td>Этан, этилен, пропан</td><td>см. limits</td><td>см. limits</td><td>Углеводороды, критическая область</td></tr>
+<tr><td>Фреон-22</td><td>0...280</td><td>1...350</td><td>Хладагент, PR-Twu адекватен</td></tr>
+<tr><td>Вода / Масло</td><td>жидкость</td><td>--</td><td>Реалистичные пределы плотности/вязкости</td></tr>
+</table>
+<h3>СПГ (смесь)</h3>
+<p>Состав: метан, этан, пропан, бутаны, изопентан, азот. Фаза определяется автоматически по линии насыщения. Псевдокритические параметры по правилу Кея. Погрешность ±5-10%.</p>
+<h3>Важно</h3>
+<p>Для проектных расчётов сверяйте результаты с NIST REFPROP. При выходе за границы диапазона расчёт блокируется.</p>
+<p><b>Новое:</b> Вязкость жидкостей рассчитывается по табличным данным NIST с логарифмической интерполяцией. Точность ±3-5% для криогенных жидкостей.</p>
+`,
+units:{ mm:'мм', m:'м', kgm3:'кг/м³', kgh:'кг/ч', cSt:'сСт', gmol:'г/моль', Pa:'Па', kPa:'кПа', bar:'бар', 'kgf/cm²':'кгс/см²', psi:'psi', m_s:'м/с' }
+},
+en: {
+title:'Hydraulic Calculator', langLabel:'Language', themeDark:'Dark theme', themeLight:'Light theme',
+share:'Share', shareText:'Hydraulic Calculator — try it:', shareFallback:'Link copied!',
+tabDirect:'Direct Calculation', tabDiam:'Diameter Selection', tabFlow:'Flow Selection',
+formulaDiam:'Inner diameter selection by ΔP',
+formulaFlow:'Flow rate selection by ΔP',
+targetParams:'Target Parameters',
+resultLabel:'Result:',
+targetDeltaP:'Target ΔP (Pa):', targetMassFlow:'Mass Flow (kg/h):',
+calcDiam:'Select Diameter', calcFlow:'Select Flow',
+resultDiam:'Inner Diameter: {diam} mm\nOuter Diameter: {outer} mm\nVelocity: {vel} m/s\nRe: {re}\nλ: {lambda}',
+resultFlow:'Mass Flow: {flow} kg/h\nVolumetric Flow: {vol} m³/h\nVelocity: {vel} m/s\nRe: {re}\nλ: {lambda}',
+noSolution:'No solution within bounds', diamRange:'Diameter outside reasonable limits (1...2000 mm)',
+flowRange:'Flow outside reasonable limits', invalidTarget:'Invalid target parameters',
+bends:'90° Bends (ζ=0.3):', valves:'Valves (ζ=3.0):', outerDiam:'Outer Diameter (mm):', wall:'Wall Thickness (mm):',
+length:'Length (m):', massFlow:'Mass Flow (kg/h):', density:'Density (kg/m³):',
+modeSimple:'Simplified', modeEngineer:'Engineering', modeLabel:'Mode:',
+medium:'Medium:', liquid:'Liquid', gas:'Gas',
+presetLabel:'Presets:', presetChoose:'Select...',
+presetWater:'Water', presetOil:'Oil', presetAir:'Air', presetNitrogen:'Nitrogen',
+presetOxygen:'Oxygen', presetMethane:'Methane', presetCO2:'CO₂', presetLng:'LNG/NG (mixture)',
+presetParahydrogen:'Hydrogen (para)', presetNormalhydrogen:'Hydrogen (normal)', presetHelium4:'Helium-4',
+presetNeon:'Neon', presetArgon:'Argon', presetKrypton:'Krypton', presetXenon:'Xenon',
+presetAmmonia:'Ammonia', presetEthane:'Ethane', presetEthylene:'Ethylene', presetPropane:'Propane', presetFreon22:'Freon-22',
+viscosity:'Viscosity (cSt):', roughness:'Roughness (mm):',
+pressure:'Abs. Pressure (bar):', temperature:'Temperature (°C):', molarMass:'Molar Mass<br>(g/mol):',
+pressureUnit:'Pressure Units:', calculate:'Calculate', save:'Save to File',
+velocity:'Velocity', pressureDrop:'Pressure Drop', reynolds:'Reynolds Number', lambda:'Friction Factor λ',
+errorNum:'Check number input', errorDiam:'Invalid diameter or wall thickness',
+errorPos:'Density, length and flow must be > 0', fileSaved:'File saved',
+errorTempAbs:'Temperature cannot be below absolute zero (-273.15°C)',
+errorPresAbs:'Pressure must be positive',
+errorTempLimit:'Temperature outside valid range for this substance ({min}...{max}°C)',
+errorPresLimit:'Pressure outside valid range for this substance ({min}...{max} bar)',
+errorMolarMassRange:'Molar mass must be in the range 2...300 g/mol.',
+ready:'Ready', resultSummary:'v = {velocity} m/s, ΔP = {pressure} {unit}', flowRate:'Flow Rate:',
+infoPanelGas:'⚠ Gas density calculated from real gas EOS (Z). Viscosity includes pressure correction.',
+infoPanelLiquid:'⚠ Realistic limits for liquid density and viscosity are checked.',
+infoPanelLng:'⚠ LNG/NG mixture. Phase state and parameter limits depend on composition.',
+limitInfo:'Valid range: T {tmin}...{tmax} °C, P {pmin}...{pmax} bar',
+noLimitInfo:'No reference limits.',
+liquidDensityRange:'Density: {min}...{max} kg/m³',
+liquidViscosityRange:'Viscosity: {min}...{max} cSt',
+liquidPressureNote:'⚠ For liquefied gases, properties are fixed.',
+liquidLimitInfo:'Valid range (liquid): T {tmin}...{tmax} °C, P {pmin}...{pmax} bar',
+contractions:'Contractions (ζ=0.5):', expansions:'Expansions (ζ=1.0):', orifices:'Orifices/diaphragms (ζ=2.0):',
+warningSaturationAbove:'⚠ Pressure above saturation — liquefied gas calculation. For accuracy, select Liquid mode.',
+warningNearSaturation:'⚠ Near saturation line — condensation possible.',
+infoPanelSaturatedLiquid:' ⚠ Pressure above saturation.',
+reliabilityGreen:'✅ Calculation within model applicability',
+reliabilityYellow:'⚠️ Increased model uncertainty',
+reliabilityRed:'🔴 Outside model applicability range',
+compressTransition:'🟡 M = {mach} — compressibility influence beginning. Correction: ×{factor}',
+compressFull:'🟠 M = {mach} — compressibility must be accounted for. Losses increased by factor of {factor}',
+compressHigh:'🔴 M = {mach} — high speed! Shock waves possible. Correction: ×{factor}',
+compressChoked:'🔴 CHOKED FLOW! Mass flow limited by sonic velocity.',
+soundSpeedInfo:' (speed of sound: {speed} m/s)',
+reliabilityCriticalRegion:'Critical region (Tr={tr}, Pr={pr}). Uncertainty 10-30%.',
+reliabilityNearCritical:'Near critical point (Tr={tr}, Pr={pr}). Uncertainty 5-10%.',
+reliabilityQuantum:'Quantum gas at low temperature ({t}°C).',
+reliabilityPolar:'Ammonia is a strongly polar substance.',
+reliabilityAntoine:'Temperature outside Antoine equation range ({tmin}...{tmax}°C).',
+reliabilityZ:'Compressibility factor Z={z} deviates significantly from 1.',
+reliabilityLiquidGas:'Liquefied gas properties calculated with simplified correlations.',
+reliabilityLng:'LNG/NG mixture. Pseudocritical parameters (Kay rule). Accuracy ±5-10%.',
+reliabilityLngSupercritical:'Supercritical fluid (Tr={tr}). Properties undefined.',
+reliabilityLngTwoPhase:'⚠ Two-phase region. Boiling or condensation possible.',
+reliabilityGasLimitsTemp:'Temperature outside valid range ({tmin}...{tmax}°C).',
+reliabilityGasLimitsPressure:'Pressure outside valid range ({pmin}...{pmax} bar).',
+warningLiquidDensity:'Liquid density out of range.',
+warningLiquidViscosity:'Liquid viscosity out of range.',
+reliabilityCryoVisc:'⚠ Cryogenic liquid viscosity from NIST tables.',
+lngBalanceOk:'✅ Total 100% — balanced',
+lngBalanceWarn:'⚠ Total {total}% — slight deviation',
+lngBalanceError:'🔴 Total {total}% — exactly 100% required',
+lngCH4:'Methane CH₄ (%):', lngC2H6:'Ethane C₂H₆ (%):', lngC3H8:'Propane C₃H₈ (%):',
+lngIC4H10:'i-Butane i-C₄H₁₀ (%):', lngNC4H10:'n-Butane n-C₄H₁₀ (%):', lngIC5H12:'i-Pentane i-C₅H₁₂ (%):', lngN2:'Nitrogen N₂ (%):',
+helpTitle:'Help', helpClose:'Close', helpBtn:'Help',
+validateTitle:'Model Validation', validateClose:'Close',
+validateInfo:'Comparison with NIST/REFPROP reference data:',
+validateSubstance:'Substance', validatePoint:'Point', validateRhoRef:'ρ ref',
+validateRhoCalc:'ρ calc', validateNuRef:'ν ref', validateNuCalc:'ν calc',
+validateError:'Error', validateStatus:'Status',
+validateBtn: 'Model Validation',
+validationDesc_boilingPoint: 'Boiling point',
+validationDesc_satVapor: 'Saturated vapor',
+validationDesc_gasAtTemp: 'Gas at {temp}°C',
+validationDesc_triplePoint: 'Triple point',
+validationDesc_tempC: '{temp}°C',
+validationAllOk: '✅ All {total} points within 10% error',
+validationSomeError: '⚠️ {errors} of {total} points exceed 10% error',
+helpContent:`
+<h3>Calculation modes</h3>
+<p><b>Simplified</b> — hydraulics only. Quick estimate without fluid properties.</p>
+<p><b>Engineering</b> — full calculation with real gas/liquid properties, compressibility, and phase state.</p>
+<h3>Reliability indicators</h3>
+<p>🟢 Green — models in optimal range.</p>
+<p>🟡 Yellow — increased uncertainty (see warnings).</p>
+<p>🔴 Red — calculation outside model applicability.</p>
+<h3>Limits and risks</h3>
+<table style="width:100%; font-size:12px; border-collapse:collapse;">
+<tr><th>Substance</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (bar)</th><th>Main risk</th></tr>
+<tr><td>Air</td><td>-203...1027</td><td>0.34...1000</td><td>Liquefies below -140°C, model gives estimate</td></tr>
+<tr><td>Nitrogen</td><td>-207...1027</td><td>0.2...1000</td><td>Cryogenic liquid — viscosity from NIST tables</td></tr>
+<tr><td>Oxygen</td><td>-218...1027</td><td>0.0018...1000</td><td>Same as nitrogen</td></tr>
+<tr><td>Methane</td><td>-182...327</td><td>0.12...1000</td><td>Critical region at high P/T</td></tr>
+<tr><td>CO₂</td><td>-54...327</td><td>0.5...1000</td><td>Critical point at 31°C, 73.8 bar</td></tr>
+<tr><td>Hydrogen (para/normal)</td><td>-259...227</td><td>0.007...100</td><td>Liquid viscosity from NIST tables (±3% accuracy)</td></tr>
+<tr><td>Helium-4</td><td>-271...327</td><td>0.01...100</td><td>Superfluid below 2.17 K — model gives estimate</td></tr>
+<tr><td>Neon, Ar, Kr, Xe</td><td>see limits</td><td>see limits</td><td>Noble gases — PR-Twu accurate</td></tr>
+<tr><td>Ammonia</td><td>-73...477</td><td>0.08...1000</td><td>Polar substance, 5-10% error near critical point</td></tr>
+<tr><td>Ethane, ethylene, propane</td><td>see limits</td><td>see limits</td><td>Hydrocarbons, critical region</td></tr>
+<tr><td>Freon-22</td><td>0...280</td><td>1...350</td><td>Refrigerant, PR-Twu adequate</td></tr>
+<tr><td>Water / Oil</td><td>liquid</td><td>--</td><td>Realistic density/viscosity limits</td></tr>
+</table>
+<h3>LNG (mixture)</h3>
+<p>Composition: methane, ethane, propane, butanes, isopentane, nitrogen. Phase auto-detected from saturation line. Pseudocritical parameters by Kay's rule. Accuracy ±5-10%.</p>
+<h3>Important</h3>
+<p>For design calculations, verify against NIST REFPROP. Out-of-range inputs are blocked.</p>
+<p><b>New:</b> Liquid viscosity calculated from NIST tables with logarithmic interpolation. Accuracy ±3-5% for cryogenic liquids.</p>
+`,
+units:{ mm:'mm', m:'m', kgm3:'kg/m³', kgh:'kg/h', cSt:'cSt', gmol:'g/mol', Pa:'Pa', kPa:'kPa', bar:'bar', 'kgf/cm²':'kgf/cm²', psi:'psi', m_s:'m/s' }
+},
+zh: {
+title:'液压管道计算器', langLabel:'语言', themeDark:'深色主题', themeLight:'浅色主题',
+share:'分享', shareText:'液压管道计算器 — 试试看：', shareFallback:'链接已复制！',
+tabDirect:'直接计算', tabDiam:'直径选择', tabFlow:'流量选择',
+formulaDiam:'按ΔP选择内径',
+formulaFlow:'按ΔP选择流量',
+targetParams:'目标参数',
+resultLabel:'结果：',
+targetDeltaP:'目标 ΔP (帕):', targetMassFlow:'质量流量 (千克/小时):',
+calcDiam:'选择直径', calcFlow:'选择流量',
+resultDiam:'内径: {diam} 毫米\n外径: {outer} 毫米\n流速: {vel} 米/秒\nRe: {re}\nλ: {lambda}',
+resultFlow:'质量流量: {flow} 千克/小时\n体积流量: {vol} 立方米/小时\n流速: {vel} 米/秒\nRe: {re}\nλ: {lambda}',
+noSolution:'在范围内无解', diamRange:'直径超出合理范围 (1...2000 毫米)',
+flowRange:'流量超出合理范围', invalidTarget:'目标参数无效',
+bends:'90°弯头 (ζ=0.3)：', valves:'阀门 (ζ=3.0)：', outerDiam:'外径 (毫米)：', wall:'壁厚 (毫米)：',
+length:'长度 (米)：', massFlow:'质量流量 (千克/小时)：', density:'密度 (千克/立方米)：',
+modeSimple:'简化模式', modeEngineer:'工程模式', modeLabel:'模式：',
+medium:'介质类型：', liquid:'液体', gas:'气体',
+presetLabel:'常见介质：', presetChoose:'选择介质...',
+presetWater:'水', presetOil:'工业油', presetAir:'空气', presetNitrogen:'氮气',
+presetOxygen:'氧气', presetMethane:'甲烷', presetCO2:'二氧化碳', presetLng:'液化天然气/天然气 (混合物)',
+presetParahydrogen:'氢 (仲氢)', presetNormalhydrogen:'氢 (正氢)', presetHelium4:'氦-4',
+presetNeon:'氖', presetArgon:'氩', presetKrypton:'氪', presetXenon:'氙',
+presetAmmonia:'氨', presetEthane:'乙烷', presetEthylene:'乙烯', presetPropane:'丙烷', presetFreon22:'氟利昂-22',
+viscosity:'运动粘度 (厘斯)：', roughness:'粗糙度 (毫米)：',
+pressure:'绝对压力 (巴)：', temperature:'温度 (°C)：', molarMass:'摩尔质量<br>(克/摩尔)：',
+pressureUnit:'压力单位：', calculate:'计算', save:'保存',
+velocity:'流速', pressureDrop:'压力损失', reynolds:'雷诺数', lambda:'摩擦系数 λ',
+errorNum:'请检查数字输入', errorDiam:'无效的直径或壁厚',
+errorPos:'密度、长度和流量必须 > 0', fileSaved:'文件已保存',
+errorTempAbs:'温度不能低于绝对零度 (-273.15°C)',
+errorPresAbs:'压力必须为正数',
+errorTempLimit:'温度超出该物质的有效范围 ({min}...{max}°C)',
+errorPresLimit:'压力超出该物质的有效范围 ({min}...{max} 巴)',
+errorMolarMassRange:'摩尔质量应在2到300克/摩尔之间。',
+ready:'准备就绪', resultSummary:'v = {velocity} 米/秒, ΔP = {pressure} {unit}', flowRate:'流速：',
+infoPanelGas:'⚠ 气体密度根据实际气体状态方程（Z）计算。粘度包含压力修正。',
+infoPanelLiquid:'⚠ 检查液体密度和粘度的实际范围。',
+infoPanelLng:'⚠ LNG/NG 混合物。相态和参数限制取决于组成。',
+limitInfo:'有效范围：T {tmin}...{tmax} °C, P {pmin}...{pmax} 巴',
+noLimitInfo:'无参考限制。',
+liquidDensityRange:'密度：{min}...{max} 千克/立方米',
+liquidViscosityRange:'粘度：{min}...{max} 厘斯',
+liquidPressureNote:'⚠液化气体属性为固定值。',
+liquidLimitInfo:'有效范围（液体）：T {tmin}...{tmax} °C, P {pmin}...{pmax} 巴',
+contractions:'收缩 (ζ=0.5)：', expansions:'扩张 (ζ=1.0)：', orifices:'孔板/节流阀 (ζ=2.0)：',
+warningSaturationAbove:'⚠ 压力高于饱和压力 — 按液化气体计算。为获得更高精度，请切换至液体模式。',
+warningNearSaturation:'⚠ 接近饱和压力 — 可能发生冷凝。',
+infoPanelSaturatedLiquid:' ⚠ 压力高于饱和压力。',
+reliabilityGreen:'✅ 计算在模型适用范围内',
+reliabilityYellow:'⚠️ 模型不确定性增加',
+reliabilityRed:'🔴 超出模型适用范围',
+compressTransition:'🟡 M = {mach} — 压缩性影响开始显现。修正系数：×{factor}',
+compressFull:'🟠 M = {mach} — 必须考虑压缩性。损失增至{factor}倍',
+compressHigh:'🔴 M = {mach} — 高速！可能出现激波。修正系数：×{factor}',
+compressChoked:'🔴 壅塞流！质量流量受声速限制。',
+soundSpeedInfo:' (声速：{speed} 米/秒)',
+reliabilityCriticalRegion:'临界区 (Tr={tr}, Pr={pr})。不确定性10-30%。',
+reliabilityNearCritical:'接近临界点 (Tr={tr}, Pr={pr})。不确定性5-10%。',
+reliabilityQuantum:'低温量子气体({t}°C)。',
+reliabilityPolar:'氨是强极性物质。',
+reliabilityAntoine:'温度超出Antoine方程范围({tmin}...{tmax}°C)。',
+reliabilityZ:'压缩因子Z={z}显著偏离1。',
+reliabilityLiquidGas:'液化气体性质使用简化相关性计算。',
+reliabilityLng:'LNG/NG 混合物。伪临界参数(Kay规则)。精度 ±5-10%。',
+reliabilityLngSupercritical:'超临界流体 (Tr={tr})。性质未定义。',
+reliabilityLngTwoPhase:'⚠ 两相区。可能沸腾或冷凝。',
+reliabilityGasLimitsTemp:'温度超出有效范围 ({tmin}...{tmax}°C)。',
+reliabilityGasLimitsPressure:'压力超出有效范围 ({pmin}...{pmax} 巴)。',
+warningLiquidDensity:'液体密度超出范围。',
+warningLiquidViscosity:'液体粘度超出范围。',
+reliabilityCryoVisc:'⚠ 低温液体粘度按NIST表格数据计算。',
+lngBalanceOk:'✅ 总和100% — 已平衡',
+lngBalanceWarn:'⚠ 总和{total}% — 轻微偏离',
+lngBalanceError:'🔴 总和{total}% — 需要正好100%',
+lngCH4:'甲烷 CH₄ (%)：', lngC2H6:'乙烷 C₂H₆ (%)：', lngC3H8:'丙烷 C₃H₈ (%)：',
+lngIC4H10:'异丁烷 i-C₄H₁₀ (%)：', lngNC4H10:'正丁烷 n-C₄H₁₀ (%)：', lngIC5H12:'异戊烷 i-C₅H₁₂ (%)：', lngN2:'氮气 N₂ (%)：',
+helpTitle:'帮助', helpClose:'关闭', helpBtn:'帮助',
+validateTitle:'模型验证', validateClose:'关闭',
+validateInfo:'与NIST/REFPROP参考数据对比：',
+validateSubstance:'物质', validatePoint:'测点', validateRhoRef:'ρ 参考',
+validateRhoCalc:'ρ 计算', validateNuRef:'ν 参考', validateNuCalc:'ν 计算',
+validateError:'误差', validateStatus:'状态',
+validateBtn: '模型验证',
+validationDesc_boilingPoint: '沸点',
+validationDesc_satVapor: '饱和蒸汽',
+validationDesc_gasAtTemp: '{temp}°C 气体',
+validationDesc_triplePoint: '三相点',
+validationDesc_tempC: '{temp}°C',
+validationAllOk: '✅ 所有 {total} 个点误差在10%以内',
+validationSomeError: '⚠️ {errors}/{total} 个点误差超过10%',
+helpContent:`
+<h3>计算模式</h3>
+<p><b>简化模式</b> — 仅考虑水力学。快速评估，不考虑介质特性。</p>
+<p><b>工程模式</b> — 完整计算，包含实际气体/液体性质、压缩性和相态。</p>
+<h3>指示器</h3>
+<p>🟢 绿色 — 模型在最佳范围内。</p>
+<p>🟡 黄色 — 不确定性增加（请查看警告）。</p>
+<p>🔴 红色 — 计算超出模型适用范围。</p>
+<h3>限值与风险</h3>
+<table style="width:100%; font-size:12px; border-collapse:collapse;">
+<tr><th>物质</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (巴)</th><th>主要风险</th></tr>
+<tr><td>空气</td><td>-203...1027</td><td>0.34...1000</td><td>低于-140°C液化，模型给出估计值</td></tr>
+<tr><td>氮气</td><td>-207...1027</td><td>0.2...1000</td><td>低温液体 — 粘度按NIST表格</td></tr>
+<tr><td>氧气</td><td>-218...1027</td><td>0.0018...1000</td><td>与氮气相同</td></tr>
+<tr><td>甲烷</td><td>-182...327</td><td>0.12...1000</td><td>高压/高温时接近临界区</td></tr>
+<tr><td>CO₂</td><td>-54...327</td><td>0.5...1000</td><td>临界点 31°C, 73.8 巴</td></tr>
+<tr><td>氢 (仲/正)</td><td>-259...227</td><td>0.007...100</td><td>液体粘度按NIST表格（精度±3%）</td></tr>
+<tr><td>氦-4</td><td>-271...327</td><td>0.01...100</td><td>2.17K以下超流性 — 模型给出估计</td></tr>
+<tr><td>氖、氩、氪、氙</td><td>参见限值</td><td>参见限值</td><td>稀有气体 — PR-Twu 精确</td></tr>
+<tr><td>氨</td><td>-73...477</td><td>0.08...1000</td><td>极性物质，临界点附近误差5-10%</td></tr>
+<tr><td>乙烷、乙烯、丙烷</td><td>参见限值</td><td>参见限值</td><td>碳氢化合物，临界区</td></tr>
+<tr><td>氟利昂-22</td><td>0...280</td><td>1...350</td><td>制冷剂，PR-Twu 适用</td></tr>
+<tr><td>水 / 油</td><td>液体</td><td>--</td><td>实际密度/粘度限值</td></tr>
+</table>
+<h3>液化天然气（混合物）</h3>
+<p>组成：甲烷、乙烷、丙烷、丁烷、异戊烷、氮气。相态根据饱和线自动确定。伪临界参数由 Kay 规则计算。精度 ±5-10%。</p>
+<h3>重要</h3>
+<p>设计计算请与 NIST REFPROP 对比验证。超出范围的输入将被阻止。</p>
+<p><b>新增：</b>液体粘度使用NIST表格数据通过对数插值计算。低温液体精度±3-5%。</p>
+`,
+units:{ mm:'毫米', m:'米', kgm3:'千克/立方米', kgh:'千克/小时', cSt:'厘斯', gmol:'克/摩尔', Pa:'帕', kPa:'千帕', bar:'巴', 'kgf/cm²':'千克力/平方厘米', psi:'psi', m_s:'米/秒' }
+}
+};
+
+let currentLang = localStorage.getItem('calc_hyd_lang') || 'ru';
+function t(key) { return locales[currentLang]?.[key] || key; }
+
+
+/* ============================================================
+   UI ЭЛЕМЕНТЫ И ОБРАБОТЧИКИ
+   ============================================================ */
+
 const menuToggle = document.getElementById('menuToggle'), settingsMenu = document.getElementById('settingsMenu');
 const langSelect = document.getElementById('langSelect'), themeLabel = document.getElementById('themeLabel'), themeToggle = document.getElementById('themeToggle');
 const shareBtn = document.getElementById('shareBtn'), helpBtnEl = document.getElementById('helpBtn');
@@ -1026,6 +1365,140 @@ const lngComposition = document.getElementById('lngComposition');
 
 let lastResult = {velocity:0,deltaP:0,re:0,lambda:0,mode:'',mediumType:'',preset:'',pressureUnit:'Pa',compressDiff:null,compressMach:false,compressCorrection:null};
 let updating = false;
+
+/* ============================================================
+   ВАЛИДАЦИЯ МОДЕЛИ
+   ============================================================ */
+
+function runValidation() {
+  const content = document.getElementById('validateContent');
+  content.innerHTML = '<p>' + t('validateInfo') + '</p>';
+
+  const table = document.createElement('table');
+  table.style.cssText = 'width:100%; font-size:11px; border-collapse:collapse; margin-top:8px;';
+
+  // Заголовок
+  const header = document.createElement('tr');
+  ['validateSubstance','validatePoint','validateRhoRef','validateRhoCalc','validateNuRef','validateNuCalc','validateError','validateStatus'].forEach(key => {
+    const th = document.createElement('th');
+    th.textContent = t(key);
+    th.style.cssText = 'border:1px solid var(--border); padding:4px; background:var(--btn-bg);';
+    header.appendChild(th);
+  });
+  table.appendChild(header);
+
+  let totalErrors = 0;
+  let totalPoints = 0;
+
+  for (const [gas, points] of Object.entries(validationPoints)) {
+    for (const pt of points) {
+      totalPoints++;
+      const calc_rho = calcRealGasDensity(pt.T_C, pt.P_bar, gas);
+      const calc_mu = calcRealGasViscosity(pt.T_C, pt.P_bar, gas);
+      const calc_nu = calc_mu / calc_rho * 1e6; // сСт
+
+      const rho_err = Math.abs(calc_rho - pt.rho_ref) / pt.rho_ref * 100;
+      const nu_err = pt.nu_ref ? Math.abs(calc_nu - pt.nu_ref) / pt.nu_ref * 100 : 0;
+
+      const row = document.createElement('tr');
+
+      // Вещество
+      const tdGas = document.createElement('td');
+      tdGas.textContent = t('preset' + gas.charAt(0).toUpperCase() + gas.slice(1)) || gas;
+      tdGas.style.cssText = 'border:1px solid var(--border); padding:4px;';
+      row.appendChild(tdGas);
+
+      // Точка (локализована)
+      const tdPoint = document.createElement('td');
+      if (pt.descKey) {
+        let desc = t(pt.descKey);
+        if (pt.descParams) {
+          for (const [k, v] of Object.entries(pt.descParams)) {
+            desc = desc.replace('{'+k+'}', v);
+          }
+        }
+        tdPoint.textContent = desc;
+      } else {
+        tdPoint.textContent = pt.desc || '';
+      }
+      tdPoint.style.cssText = 'border:1px solid var(--border); padding:4px;';
+      row.appendChild(tdPoint);
+
+      // ρ справка
+      const tdRhoRef = document.createElement('td');
+      tdRhoRef.textContent = pt.rho_ref.toFixed(1);
+      tdRhoRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+      row.appendChild(tdRhoRef);
+
+      // ρ расчёт
+      const tdRhoCalc = document.createElement('td');
+      tdRhoCalc.textContent = calc_rho.toFixed(1);
+      tdRhoCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+      row.appendChild(tdRhoCalc);
+
+      // ν справка
+      const tdNuRef = document.createElement('td');
+      tdNuRef.textContent = pt.nu_ref ? pt.nu_ref.toFixed(3) : '—';
+      tdNuRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+      row.appendChild(tdNuRef);
+
+      // ν расчёт
+      const tdNuCalc = document.createElement('td');
+      tdNuCalc.textContent = calc_nu ? calc_nu.toFixed(3) : '—';
+      tdNuCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+      row.appendChild(tdNuCalc);
+
+      // Ошибка
+      const tdError = document.createElement('td');
+      const maxErr = Math.max(rho_err, nu_err);
+      tdError.textContent = maxErr.toFixed(1) + '%';
+      tdError.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+      if (maxErr > 10) tdError.style.color = '#dc3545';
+      else if (maxErr > 5) tdError.style.color = '#ffc107';
+      else tdError.style.color = '#28a745';
+      row.appendChild(tdError);
+
+      // Статус
+      const tdStatus = document.createElement('td');
+      if (maxErr > 10) { tdStatus.textContent = '🔴'; totalErrors++; }
+      else if (maxErr > 5) tdStatus.textContent = '🟡';
+      else tdStatus.textContent = '🟢';
+      tdStatus.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:center;';
+      row.appendChild(tdStatus);
+
+      table.appendChild(row);
+    }
+  }
+
+  content.appendChild(table);
+
+  // Итог (локализован)
+  const summary = document.createElement('p');
+  summary.style.marginTop = '12px';
+  summary.style.fontWeight = 'bold';
+  if (totalErrors === 0) {
+    summary.textContent = t('validationAllOk').replace('{total}', totalPoints);
+    summary.style.color = '#28a745';
+  } else {
+    summary.textContent = t('validationSomeError').replace('{errors}', totalErrors).replace('{total}', totalPoints);
+    summary.style.color = '#ffc107';
+  }
+  content.appendChild(summary);
+
+  document.getElementById('validateModal').style.display = 'flex';
+}
+
+document.getElementById('validateBtn').addEventListener('click', runValidation);
+document.getElementById('validateClose').addEventListener('click', () => {
+  document.getElementById('validateModal').style.display = 'none';
+});
+document.getElementById('validateModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('validateModal')) document.getElementById('validateModal').style.display = 'none';
+});
+
+/* ============================================================
+   ОСТАЛЬНЫЕ ФУНКЦИИ (сжимаемость, достоверность и т.д.)
+   ============================================================ */
 
 function getGammaDetailed(p){ const m={air:1.4,nitrogen:1.4,oxygen:1.4,methane:1.31,co2:1.29,parahydrogen:1.41,normalhydrogen:1.41,helium4:1.667,neon:1.667,argon:1.667,krypton:1.667,xenon:1.667,ammonia:1.31,ethane:1.19,ethylene:1.24,propane:1.13,freon22:1.19,lng:1.25,water:1.33,oil:1.10}; return m[p]||1.4; }
 
@@ -1079,14 +1552,28 @@ function getAllMessages(){
     const antoine=antoineCoeffs[preset];
     if(antoine&&isSub&&isLiq&&(T_K<antoine.Tmin||T_K>antoine.Tmax)){level=1;messages.push({text:t('reliabilityAntoine').replace('{tmin}',(antoine.Tmin-273.15).toFixed(0)).replace('{tmax}',(antoine.Tmax-273.15).toFixed(0)),type:'info'});}
     if(P_sat!==null&&isSub){ if(isLiq&&P>=P_sat*(1-0.001))messages.push({text:t('warningSaturationAbove'),type:'caution'}); else if(!isLiq&&P>=P_sat*0.9)messages.push({text:t('warningNearSaturation'),type:'info'}); }
-    if(isSub&&isLiq&&preset!=='water'&&preset!=='oil'){level=1;messages.push({text:t('reliabilityLiquidGas'),type:'caution'});}
+    if(isSub&&isLiq&&preset!=='water'&&preset!=='oil'){
+      level=1;
+      // Для криогенных жидкостей с табличными данными — зелёный статус
+      if (['normalhydrogen','parahydrogen','helium4','nitrogen','oxygen','methane','neon','argon','krypton','xenon','ammonia','ethane','ethylene','propane','co2','freon22'].includes(preset)) {
+        messages.push({text:t('reliabilityCryoVisc'),type:'info'});
+      } else {
+        messages.push({text:t('reliabilityLiquidGas'),type:'caution'});
+      }
+    }
     if(!isLiq){const Z=calcZ_PengRobinson(T_K,P,crit.Tc,crit.Pc,crit.w,'gas'); if(Math.abs(Z-1)>0.2){level=1;messages.push({text:t('reliabilityZ').replace('{z}',Z.toFixed(2)),type:'info'});}}
-    if(['helium4','parahydrogen','normalhydrogen'].includes(preset)&&phase==='liquid'){level=Math.max(level,1);messages.push({text:t('reliabilityCryoVisc'),type:'caution'});}
   }
   if(mediumType==='liquid'&&preset!=='choose'&&preset!=='lng'){
     const liq=liquidLimits[preset];
     if(liq){const d=parseFloat(document.getElementById('density').value),v=parseFloat(document.getElementById('viscosity').value); if(!isNaN(d)&&(d<liq.densityMin||d>liq.densityMax)){level=1;messages.push({text:t('warningLiquidDensity'),type:'caution'});} if(!isNaN(v)&&(v<liq.viscosityMin||v>liq.viscosityMax)){level=1;messages.push({text:t('warningLiquidViscosity'),type:'caution'});}}
-    if(preset!=='water'&&preset!=='oil'){level=1;messages.push({text:t('reliabilityLiquidGas'),type:'caution'});}
+    if(preset!=='water'&&preset!=='oil'){
+      // Для жидкостей с табличными данными — инфо вместо предупреждения
+      if (liquidViscosityTables[preset]) {
+        messages.push({text:t('reliabilityCryoVisc'),type:'info'});
+      } else {
+        level=1;messages.push({text:t('reliabilityLiquidGas'),type:'caution'});
+      }
+    }
   }
   return{level,messages};
 }
@@ -1153,6 +1640,7 @@ menuToggle.addEventListener('click',e=>{e.stopPropagation();settingsMenu.classLi
 document.addEventListener('click',e=>{ if(!settingsMenu.contains(e.target)&&e.target!==menuToggle)settingsMenu.classList.remove('show'); });
 langSelect.value=currentLang;
 
+
 function updateInfoPanel(){
   const preset=presetSelect.value;
   if(preset==='lng'){infoPanel.textContent=t('infoPanelLng');return;}
@@ -1166,6 +1654,10 @@ function updateInfoPanel(){
     let text=t('infoPanelLiquid');const liq=liquidLimits[preset];
     if(liq)text+=' '+t('liquidDensityRange').replace('{min}',liq.densityMin).replace('{max}',liq.densityMax)+' '+t('liquidViscosityRange').replace('{min}',liq.viscosityMin).replace('{max}',liq.viscosityMax);
     if(preset!=='water'&&preset!=='oil')text+=' '+t('liquidPressureNote');
+    // Добавляем информацию о табличных данных
+    if (liquidViscosityTables[preset]) {
+      text += ' ⚠ Вязкость по таблицам NIST (лог. интерполяция).';
+    }
     infoPanel.textContent=text;
   }
 }
@@ -1249,6 +1741,7 @@ function resetResults(){
   lastResult={velocity:0,deltaP:0,re:0,lambda:0,mode:'',mediumType:'',preset:'',pressureUnit:'Pa',compressDiff:null,compressMach:false,compressCorrection:null};
   updateResultLabels();const n=document.getElementById('compressNote');n.textContent='';n.classList.remove('show');n.style.display='none';
   saveBtn.disabled=true;formulaDisplay.textContent=t('ready');mainDisplay.value='0';
+  document.getElementById('validationPanel').style.display='none';
 }
 
 function updateResultLabels(){
@@ -1405,9 +1898,8 @@ function calcDeltaP(innerDiam_mm, length_m, massFlow_kgh, density, viscosity_cSt
 }
 
 function findDiameterByDP(targetDP, massFlow, length, wall, density, visc, rough, bends, valves) {
-  // Подбираем наружный диаметр с учётом стенки
   if (targetDP <= 0 || massFlow <= 0 || density <= 0 || wall < 0) return null;
-  let lo = 2 * wall + 1;   // минимальный outer, чтобы inner >= 1 мм
+  let lo = 2 * wall + 1;
   let hi = 2000 + 2 * wall;
   hi = Math.min(hi, 3000);
   let best = null;
@@ -1578,6 +2070,10 @@ function applyLanguage(){
   else{n.classList.remove('show');n.style.display='none';}
   if(presetSelect.value==='lng'){buildLngComposition();checkLngBalance();}
   updateHelpContent();
+  // Обновляем заголовок валидации и кнопку
+  document.getElementById('validateTitle').textContent = t('validateTitle');
+  document.getElementById('validateClose').textContent = t('validateClose');
+  document.getElementById('validateBtn').textContent = '🔬 ' + t('validateBtn');
 }
 
 langSelect.addEventListener('change',()=>{currentLang=langSelect.value;localStorage.setItem('calc_hyd_lang',currentLang);applyLanguage()});
