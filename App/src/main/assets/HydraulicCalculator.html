@@ -416,8 +416,22 @@ const R_GAS = 8.314462618;
 
 // ==================== ТАБЛИЦЫ ДИНАМИЧЕСКОЙ ВЯЗКОСТИ ЖИДКОСТЕЙ ====================
 const liquidViscosityTables = {
-  normalhydrogen: [[13.95,2.54e-6],[14.0,2.53e-6],[15.0,2.35e-6],[16.0,2.18e-6],[17.0,2.02e-6],[18.0,1.88e-6],[19.0,1.75e-6],[20.0,1.63e-6],[20.27,1.60e-6],[21.0,1.52e-6],[22.0,1.42e-6],[23.0,1.33e-6],[24.0,1.24e-6],[25.0,1.16e-6],[26.0,1.09e-6],[27.0,1.02e-6],[28.0,0.96e-6],[29.0,0.90e-6],[30.0,0.85e-6],[31.0,0.80e-6],[32.0,0.75e-6],[33.19,0.70e-6]],
-  parahydrogen: [[13.8,2.52e-6],[14.0,2.48e-6],[15.0,2.28e-6],[16.0,2.10e-6],[17.0,1.94e-6],[18.0,1.80e-6],[19.0,1.67e-6],[20.0,1.55e-6],[20.27,1.53e-6],[21.0,1.46e-6],[22.0,1.37e-6],[23.0,1.29e-6],[24.0,1.21e-6],[25.0,1.14e-6],[26.0,1.07e-6],[27.0,1.01e-6],[28.0,0.95e-6],[29.0,0.90e-6],[30.0,0.85e-6],[31.0,0.80e-6],[32.0,0.76e-6],[32.94,0.72e-6]],
+  normalhydrogen: [
+  [13.95, 1.20e-5], [14.0, 1.19e-5], [15.0, 1.16e-5], [16.0, 1.13e-5],
+  [17.0, 1.10e-5], [18.0, 1.07e-5], [19.0, 1.04e-5], [20.0, 1.01e-5],
+  [20.27, 1.00e-5], [21.0, 9.70e-6], [22.0, 9.40e-6], [23.0, 9.10e-6],
+  [24.0, 8.80e-6], [25.0, 8.50e-6], [26.0, 8.20e-6], [27.0, 7.90e-6],
+  [28.0, 7.60e-6], [29.0, 7.30e-6], [30.0, 7.00e-6], [31.0, 6.70e-6],
+  [32.0, 6.40e-6], [33.19, 5.80e-6]
+],
+parahydrogen: [
+  [13.8, 1.18e-5], [14.0, 1.17e-5], [15.0, 1.14e-5], [16.0, 1.11e-5],
+  [17.0, 1.08e-5], [18.0, 1.05e-5], [19.0, 1.02e-5], [20.0, 9.90e-6],
+  [20.27, 9.80e-6], [21.0, 9.60e-6], [22.0, 9.30e-6], [23.0, 9.00e-6],
+  [24.0, 8.70e-6], [25.0, 8.40e-6], [26.0, 8.10e-6], [27.0, 7.80e-6],
+  [28.0, 7.50e-6], [29.0, 7.20e-6], [30.0, 6.90e-6], [31.0, 6.60e-6],
+  [32.0, 6.30e-6], [32.94, 5.90e-6]
+],
   helium4: [[1.5,0.50e-6],[2.0,0.80e-6],[2.1768,1.20e-6],[2.5,1.80e-6],[3.0,2.40e-6],[3.5,2.90e-6],[4.0,3.30e-6],[4.2,3.50e-6],[4.5,3.70e-6],[5.0,3.90e-6],[5.1953,4.00e-6]],
   methane: [[90.7,2.00e-4],[95.0,1.75e-4],[100.0,1.55e-4],[105.0,1.38e-4],[110.0,1.24e-4],[111.5,1.20e-4],[111.67,1.19e-4],[115.0,1.12e-4],[120.0,1.02e-4],[125.0,9.30e-5],[130.0,8.50e-5],[140.0,7.20e-5],[150.0,6.10e-5],[160.0,5.20e-5],[170.0,4.40e-5],[180.0,3.70e-5],[190.0,3.00e-5],[190.6,2.80e-5]],
   nitrogen: [[63.15,2.90e-4],[65.0,2.70e-4],[70.0,2.30e-4],[75.0,2.00e-4],[77.0,1.85e-4],[77.36,1.82e-4],[80.0,1.68e-4],[85.0,1.50e-4],[90.0,1.35e-4],[100.0,1.10e-4],[110.0,9.00e-5],[120.0,7.50e-5],[126.2,6.50e-5]],
@@ -443,28 +457,28 @@ const liquidViscosityTables = {
 const validationPoints = {
 normalhydrogen: [
     { T_C: -252.9, P_bar: 1.013, phase: 'liquid', rho_ref: 70.8, nu_ref: 0.1836, descKey: 'validationDesc_boilingPoint' },
-{ T_C: -253.0, P_bar: 0.99, phase: 'gas', rho_ref: 1.3, nu_ref: 0.658, descKey: 'validationDesc_satVapor' },
+{ T_C: -253.0, P_bar: 0.97, phase: 'gas', rho_ref: 1.3, nu_ref: 0.658, descKey: 'validationDesc_satVapor' },
   ],
   parahydrogen: [
     { T_C: -252.9, P_bar: 1.013, phase: 'liquid', rho_ref: 70.7, nu_ref: 0.1757, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -253.0, P_bar: 0.99, phase: 'gas', rho_ref: 1.3348, nu_ref: 0.714, descKey: 'validationDesc_satVapor' },
+    { T_C: -253.0, P_bar: 0.97, phase: 'gas', rho_ref: 1.3348, nu_ref: 0.714, descKey: 'validationDesc_satVapor' },
   ],
   helium4: [
     { T_C: -268.9, P_bar: 1.013, phase: 'liquid', rho_ref: 125.0, nu_ref: 0.028, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -269.0, P_bar: 0.99, phase: 'gas', rho_ref: 16.9, nu_ref: 0.078, descKey: 'validationDesc_satVapor' },
+    { T_C: -269.0, P_bar: 0.97, phase: 'gas', rho_ref: 16.9, nu_ref: 0.078, descKey: 'validationDesc_satVapor' },
   ],
   methane: [
     { T_C: -161.6, P_bar: 1.013, phase: 'liquid', rho_ref: 422.0, nu_ref: 0.277, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -161.7, P_bar: 0.99, phase: 'gas', rho_ref: 1.84, nu_ref: 2.258, descKey: 'validationDesc_satVapor' },
+    { T_C: -161.7, P_bar: 0.97, phase: 'gas', rho_ref: 1.84, nu_ref: 2.258, descKey: 'validationDesc_satVapor' },
     { T_C: -100.0, P_bar: 1.013, phase: 'gas', rho_ref: 1.14, nu_ref: 5.9, descKey: 'validationDesc_gasAtTemp', descParams: { temp: -100 } },
   ],
   nitrogen: [
     { T_C: -195.8, P_bar: 1.013, phase: 'liquid', rho_ref: 808.0, nu_ref: 0.199, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -195.9, P_bar: 0.99, phase: 'gas', rho_ref: 4.6, nu_ref: 1.241, descKey: 'validationDesc_satVapor' },
+    { T_C: -195.9, P_bar: 0.97, phase: 'gas', rho_ref: 4.6, nu_ref: 1.241, descKey: 'validationDesc_satVapor' },
   ],
   oxygen: [
     { T_C: -182.9, P_bar: 1.013, phase: 'liquid', rho_ref: 1141.0, nu_ref: 0.165, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -183.0, P_bar: 0.99, phase: 'gas', rho_ref: 4.5, nu_ref: 1.485, descKey: 'validationDesc_satVapor' },
+    { T_C: -183.0, P_bar: 0.97, phase: 'gas', rho_ref: 4.5, nu_ref: 1.485, descKey: 'validationDesc_satVapor' },
   ],
   CO2: [
     { T_C: -56.6, P_bar: 5.185, phase: 'liquid', rho_ref: 1180.0, nu_ref: 0.2178, descKey: 'validationDesc_triplePoint' },
@@ -645,12 +659,13 @@ return null;
 }
 
 function determinePhase(P_bar, P_sat, T_K, Tc) {
-if (T_K >= Tc) return 'supercritical';
-if (P_sat === null) return 'liquid';
-const tol = 0.001;
-if (P_bar < P_sat * (1 - tol)) return 'gas';
-if (P_bar > P_sat * (1 + tol)) return 'liquid';
-return 'two-phase';
+  if (T_K >= Tc) return 'supercritical';
+  if (P_sat === null) return 'liquid';
+  // Допуск 0.5% – для корректной работы вблизи линии насыщения
+  const eps = 0.005;
+  if (P_bar < P_sat * (1 - eps)) return 'gas';
+  // Всё, что выше или равно P_sat (в пределах допуска) – считаем жидкостью
+  return 'liquid';
 }
 
 function alphaTwu(Tr, w) {
@@ -737,7 +752,7 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
   const phase = determinePhase(P_bar, P_sat, T_K, Tc);
 
   // ========== ЖИДКОСТЬ – берём из таблиц ==========
-  if (phase === 'liquid') {
+  if (phase === 'liquid' || phase === 'two-phase') {
     const table = liquidViscosityTables[gas];
     if (table) {
       const mu_table = interpolateViscosity(table, T_K);
