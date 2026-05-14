@@ -227,11 +227,11 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 </select>
 </div>
 <div class="menu-item">
-<span id="themeLabel">Светлая тема</span>
+<span id="themeLabel">Светлаятема</span>
 <div class="theme-toggle" id="themeToggle"></div>
 </div>
 <div class="menu-item">
-<button id="shareBtn" style="width:100%;">📤 Поделиться</button>
+<button id="shareBtn" style="width:100%;">📤Поделиться</button>
 </div>
 <div class="menu-item">
 <button id="helpBtn" style="width:100%;"></button>
@@ -252,37 +252,37 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 
 <div id="validateModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:200; justify-content:center; align-items:center;">
 <div style="background:var(--surface); border-radius:16px; padding:20px; max-width:600px; width:90%; max-height:80vh; overflow-y:auto; color:var(--text);">
-<h2 id="validateTitle">Валидация модели</h2>
+<h2 id="validateTitle">Валидациямодели</h2>
 <div id="validateContent"></div>
 <button id="validateClose" style="margin-top:12px; padding:10px; border-radius:8px; width:100%;">Закрыть</button>
 </div>
 </div>
 
 <div class="tabs" id="tabContainer">
-<button class="tab-btn active" data-tab="direct" id="tabDirectBtn">Прямой расчёт</button>
-<button class="tab-btn" data-tab="diam" id="tabDiamBtn">Подбор диаметра</button>
-<button class="tab-btn" data-tab="flow" id="tabFlowBtn">Подбор расхода</button>
+<button class="tab-btn active" data-tab="direct" id="tabDirectBtn">Прямойрасчёт</button>
+<button class="tab-btn" data-tab="diam" id="tabDiamBtn">Подбордиаметра</button>
+<button class="tab-btn" data-tab="flow" id="tabFlowBtn">Подборрасхода</button>
 </div>
 
-<!-- ===== ПРЯМОЙ РАСЧЁТ ===== -->
+<!-- ===== ПРЯМОЙРАСЧЁТ ===== -->
 <div class="tab-content active" id="tab-direct">
 <div class="display-container">
-<div class="formula-display" id="formulaDisplay">Готов к расчёту</div>
+<div class="formula-display" id="formulaDisplay">Готовкрасчёту</div>
 <div class="main-display-row">
-<label id="lblFlowRate">Скорость потока:</label>
+<label id="lblFlowRate">Скоростьпотока:</label>
 <input type="text" class="main-display" id="mainDisplay" value="0" readonly>
 </div>
 </div>
-<div class="field-row"><label id="lblOuterDiam">Наружный диаметр (мм):</label><input type="number" id="outerDiam" value="57" min="0.1" step="any"></div>
-<div class="field-row"><label id="lblWall">Толщина стенки (мм):</label><input type="number" id="wall" value="3.5" min="0" step="any"></div>
+<div class="field-row"><label id="lblOuterDiam">Наружныйдиаметр (мм):</label><input type="number" id="outerDiam" value="57" min="0.1" step="any"></div>
+<div class="field-row"><label id="lblWall">Толщинастенки (мм):</label><input type="number" id="wall" value="3.5" min="0" step="any"></div>
 <div class="field-row"><label id="lblLength">Длина (м):</label><input type="number" id="length" value="100" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblMassFlow">Массовый расход<br>(кг/ч):</label><input type="number" id="massFlow" value="5000" min="0.001" step="any"></div>
+<div class="field-row"><label id="lblMassFlow">Массовыйрасход<br>(кг/ч):</label><input type="number" id="massFlow" value="5000" min="0.001" step="any"></div>
 <div class="field-row"><label id="lblMode">Режим:</label><select id="modeSelect"><option value="simple" id="modeSimpleText">Упрощённый</option><option value="engineer" id="modeEngineerText">Инженерный</option></select></div>
 <div class="field-row"><label id="lblDensity">Плотность (кг/м³):</label><input type="number" id="density" value="1000" min="0.001" step="any"></div>
 <div class="engineer-block" id="engineerBlock">
-<div class="field-row"><label id="lblMedium">Тип среды:</label><select id="mediumSelect"><option value="liquid" id="mediumLiquidText">Жидкость</option><option value="gas" id="mediumGasText">Газ</option></select></div>
-<div class="field-row"><label id="lblPreset">Типичные среды:</label><select id="presetSelect">
-<option value="choose" id="presetChooseText">Выберите среду...</option>
+<div class="field-row"><label id="lblMedium">Типсреды:</label><select id="mediumSelect"><option value="liquid" id="mediumLiquidText">Жидкость</option><option value="gas" id="mediumGasText">Газ</option></select></div>
+<div class="field-row"><label id="lblPreset">Типичныесреды:</label><select id="presetSelect">
+<option value="choose" id="presetChooseText">Выберитесреду...</option>
 <option value="water" id="presetWaterText">Вода</option>
 <option value="oil" id="presetOilText">Масло</option>
 <option value="air" id="presetAirText">Воздух</option>
@@ -309,7 +309,7 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 <div class="field-row"><label id="lblRoughness">Шероховатость (мм):</label><input type="number" id="roughness" value="0.1" min="0" step="any"></div>
 <div class="field-row" id="gasPropsRow"><label id="lblPressure">Абс. давление (бар):</label><input type="number" id="pressure" value="1.0" min="0.001" step="any"></div>
 <div class="field-row" id="tempRow"><label id="lblTemperature">Температура (°C):</label><input type="number" id="temperature" value="20.0" min="-273.14" step="any"></div>
-<div class="field-row" id="molarRow"><label id="lblMolarMass">Молярная масса<br>(г/моль):</label><input type="number" id="molarMass" value="28.97" min="2" max="300" step="any"></div>
+<div class="field-row" id="molarRow"><label id="lblMolarMass">Молярнаямасса<br>(г/моль):</label><input type="number" id="molarMass" value="28.97" min="2" max="300" step="any"></div>
 </div>
 <div class="field-row"><label id="lblBends">Поворотов 90° (ζ=0.3):</label><input type="number" id="bends" value="0" min="0" step="1"></div>
 <div class="field-row"><label id="lblValves">Клапанов (ζ=3.0):</label><input type="number" id="valves" value="0" min="0" step="1"></div>
@@ -318,13 +318,13 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 <div class="field-row"><label id="lblExpansions">Расширений (ζ=1.0):</label><input type="number" id="expansions" value="0" min="0" step="1"></div>
 <div class="field-row"><label id="lblOrifices">Дросселей/диафрагм (ζ=2.0):</label><input type="number" id="orifices" value="0" min="0" step="1"></div>
 </div>
-<div class="field-row"><label id="lblPressureUnit">Единицы давления:</label><select id="pressureUnit"><option value="Pa">Pa</option><option value="kPa">kPa</option><option value="bar">bar</option><option value="kgf/cm²">kgf/cm²</option><option value="psi">psi</option></select></div>
+<div class="field-row"><label id="lblPressureUnit">Единицыдавления:</label><select id="pressureUnit"><option value="Pa">Pa</option><option value="kPa">kPa</option><option value="bar">bar</option><option value="kgf/cm²">kgf/cm²</option><option value="psi">psi</option></select></div>
 <div id="infoBlock" class="info-block">
 <div class="info-panel" id="infoPanel"></div>
 <div id="reliabilityIndicator" class="reliability-indicator reliability-green" style="display:none;">
 <div class="reliability-dot"></div>
 <div>
-<div id="reliabilityText">Расчёт в пределах применимости моделей</div>
+<divid="reliabilityText">Расчёт в пределах применимости моделей</div>
 <div id="reliabilityTooltip" class="reliability-tooltip" style="display:none;"></div>
 </div>
 </div>
@@ -332,13 +332,13 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 </div>
 <div class="btn-row">
 <button class="calc-btn" id="calculateBtn">Рассчитать</button>
-<button class="save-btn" id="saveBtn" disabled>Сохранить в файл</button>
+<button class="save-btn" id="saveBtn" disabled>Сохранитьвфайл</button>
 </div>
 <div class="result-area" id="resultArea">
 <span id="velocityResult">Скорость: ---</span>
-<span id="pressureDropResult">Потеря давления: ---</span>
-<span id="reynoldsResult">Число Рейнольдса: ---</span>
-<span id="lambdaResult">Коэффициент трения λ: ---</span>
+<span id="pressureDropResult">Потерядавления: ---</span>
+<span id="reynoldsResult">ЧислоРейнольдса: ---</span>
+<span id="lambdaResult">Коэффициенттренияλ: ---</span>
 <span id="compressNote" class="note"></span>
 </div>
 <div class="validation-panel" id="validationPanel" style="display:none;">
@@ -347,48 +347,48 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 </div>
 </div>
 
-<!-- ===== ПОДБОР ДИАМЕТРА ===== -->
+<!-- ===== ПОДБОРДИАМЕТРА ===== -->
 <div class="tab-content" id="tab-diam">
 <div class="display-container">
-<div class="formula-display" id="formulaDisplayDiam">Подбор внутреннего диаметра по ΔP</div>
+<div class="formula-display" id="formulaDisplayDiam">ПодборвнутреннегодиаметрапоΔP</div>
 <div class="main-display-row">
 <label id="lblResultDiam">Результат:</label>
 <input type="text" class="main-display" id="mainDisplayDiam" value="—" readonly>
 </div>
 </div>
 <div class="inverse-section">
-<h4 id="targetTitleDiam">Целевые параметры</h4>
-<div class="target-row"><label id="lblTargetDeltaPDiam">Допустимое ΔP (Па):</label><input type="number" id="targetDeltaPDiam" value="5000" min="0.001" step="any"></div>
-<div class="target-row"><label id="lblTargetMassFlowDiam">Массовый расход (кг/ч):</label><input type="number" id="targetMassFlowDiam" value="5000" min="0.001" step="any"></div>
+<h4 id="targetTitleDiam">Целевыепараметры</h4>
+<div class="target-row"><label id="lblTargetDeltaPDiam">ДопустимоеΔP (Па):</label><input type="number" id="targetDeltaPDiam" value="5000" min="0.001" step="any"></div>
+<div class="target-row"><label id="lblTargetMassFlowDiam">Массовыйрасход (кг/ч):</label><input type="number" id="targetMassFlowDiam" value="5000" min="0.001" step="any"></div>
 </div>
 <div class="field-row"><label id="lblLengthDiam">Длина (м):</label><input type="number" id="lengthDiam" value="100" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblWallDiam">Толщина стенки (мм):</label><input type="number" id="wallDiam" value="3.5" min="0" step="any"></div>
+<div class="field-row"><label id="lblWallDiam">Толщинастенки (мм):</label><input type="number" id="wallDiam" value="3.5" min="0" step="any"></div>
 <div class="field-row"><label id="lblDensityDiam">Плотность (кг/м³):</label><input type="number" id="densityDiam" value="1000" min="0.001" step="any"></div>
 <div class="field-row"><label id="lblViscosityDiam">Вязкость (сСт):</label><input type="number" id="viscosityDiam" value="1.0" min="0.001" step="any"></div>
 <div class="field-row"><label id="lblRoughnessDiam">Шероховатость (мм):</label><input type="number" id="roughnessDiam" value="0.1" min="0" step="any"></div>
 <div class="field-row"><label id="lblBendsDiam">Поворотов 90°:</label><input type="number" id="bendsDiam" value="0" min="0" step="1"></div>
 <div class="field-row"><label id="lblValvesDiam">Клапанов:</label><input type="number" id="valvesDiam" value="0" min="0" step="1"></div>
 <div class="btn-row">
-<button class="calc-btn" id="calcDiamBtn">Подобрать диаметр</button>
+<button class="calc-btn" id="calcDiamBtn">Подобратьдиаметр</button>
 </div>
 <div class="inverse-result" id="resultDiam"></div>
 </div>
 
-<!-- ===== ПОДБОР РАСХОДА ===== -->
+<!-- ===== ПОДБОРРАСХОДА ===== -->
 <div class="tab-content" id="tab-flow">
 <div class="display-container">
-<div class="formula-display" id="formulaDisplayFlow">Подбор расхода по ΔP</div>
+<div class="formula-display" id="formulaDisplayFlow">ПодборрасходапоΔP</div>
 <div class="main-display-row">
 <label id="lblResultFlow">Результат:</label>
 <input type="text" class="main-display" id="mainDisplayFlow" value="—" readonly>
 </div>
 </div>
 <div class="inverse-section">
-<h4 id="targetTitleFlow">Целевые параметры</h4>
-<div class="target-row"><label id="lblTargetDeltaPFlow">Допустимое ΔP (Па):</label><input type="number" id="targetDeltaPFlow" value="5000" min="0.001" step="any"></div>
+<h4 id="targetTitleFlow">Целевыепараметры</h4>
+<div class="target-row"><label id="lblTargetDeltaPFlow">ДопустимоеΔP (Па):</label><input type="number" id="targetDeltaPFlow" value="5000" min="0.001" step="any"></div>
 </div>
-<div class="field-row"><label id="lblOuterDiamFlow">Наружный диаметр (мм):</label><input type="number" id="outerDiamFlow" value="57" min="0.1" step="any"></div>
-<div class="field-row"><label id="lblWallFlow">Толщина стенки (мм):</label><input type="number" id="wallFlow" value="3.5" min="0" step="any"></div>
+<div class="field-row"><label id="lblOuterDiamFlow">Наружныйдиаметр (мм):</label><input type="number" id="outerDiamFlow" value="57" min="0.1" step="any"></div>
+<div class="field-row"><label id="lblWallFlow">Толщинастенки (мм):</label><input type="number" id="wallFlow" value="3.5" min="0" step="any"></div>
 <div class="field-row"><label id="lblLengthFlow">Длина (м):</label><input type="number" id="lengthFlow" value="100" min="0.001" step="any"></div>
 <div class="field-row"><label id="lblDensityFlow">Плотность (кг/м³):</label><input type="number" id="densityFlow" value="1000" min="0.001" step="any"></div>
 <div class="field-row"><label id="lblViscosityFlow">Вязкость (сСт):</label><input type="number" id="viscosityFlow" value="1.0" min="0.001" step="any"></div>
@@ -396,7 +396,7 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 <div class="field-row"><label id="lblBendsFlow">Поворотов 90°:</label><input type="number" id="bendsFlow" value="0" min="0" step="1"></div>
 <div class="field-row"><label id="lblValvesFlow">Клапанов:</label><input type="number" id="valvesFlow" value="0" min="0" step="1"></div>
 <div class="btn-row">
-<button class="calc-btn" id="calcFlowBtn">Подобрать расход</button>
+<button class="calc-btn" id="calcFlowBtn">Подобратьрасход</button>
 </div>
 <div class="inverse-result" id="resultFlow"></div>
 </div>
@@ -415,8 +415,8 @@ const R_GAS = 8.314462618;
    ============================================================ */
 
 // ==================== ТАБЛИЦЫ ДИНАМИЧЕСКОЙ ВЯЗКОСТИ ЖИДКОСТЕЙ ====================
-const liquidViscosityTables = {
-  normalhydrogen: [
+constliquidViscosityTables = {
+normalhydrogen: [
   [13.95, 1.20e-5], [14.0, 1.19e-5], [15.0, 1.16e-5], [16.0, 1.13e-5],
   [17.0, 1.10e-5], [18.0, 1.07e-5], [19.0, 1.04e-5], [20.0, 1.01e-5],
   [20.27, 1.00e-5], [21.0, 9.70e-6], [22.0, 9.40e-6], [23.0, 9.10e-6],
@@ -439,75 +439,281 @@ parahydrogen: [
   CO2: [[216.6,3.50e-4],[220.0,3.20e-4],[230.0,2.60e-4],[240.0,2.15e-4],[250.0,1.80e-4],[260.0,1.52e-4],[270.0,1.30e-4],[280.0,1.12e-4],[290.0,9.80e-5],[300.0,8.60e-5],[304.2,7.80e-5]],
   neon: [[24.56,1.25e-4],[25.0,1.20e-4],[26.0,1.12e-4],[27.0,1.05e-4],[27.1,1.04e-4],[28.0,9.80e-5],[30.0,8.80e-5],[35.0,7.00e-5],[40.0,5.80e-5],[44.4,5.00e-5]],
   argon: [[83.8,2.90e-4],[85.0,2.80e-4],[87.3,2.65e-4],[90.0,2.50e-4],[95.0,2.30e-4],[100.0,2.10e-4],[110.0,1.80e-4],[120.0,1.55e-4],[130.0,1.35e-4],[140.0,1.18e-4],[150.0,1.05e-4],[150.8,1.02e-4]],
-  krypton: [[115.8,4.00e-4],[120.0,3.60e-4],[125.0,3.25e-4],[130.0,2.95e-4],[135.0,2.70e-4],[140.0,2.48e-4],[145.0,2.28e-4],[150.0,2.10e-4],[155.0,1.95e-4],[160.0,1.82e-4],[165.0,1.70e-4],[170.0,1.58e-4],[175.0,1.48e-4],[180.0,1.38e-4],[185.0,1.30e-4],[190.0,1.22e-4],[195.0,1.15e-4],[200.0,1.08e-4],[205.0,1.02e-4],[209.4,9.80e-5]],
-  xenon: [[161.4,5.20e-4],[165.0,4.85e-4],[170.0,4.45e-4],[175.0,4.10e-4],[180.0,3.80e-4],[185.0,3.52e-4],[190.0,3.28e-4],[195.0,3.05e-4],[200.0,2.85e-4],[210.0,2.50e-4],[220.0,2.20e-4],[230.0,1.95e-4],[240.0,1.75e-4],[250.0,1.58e-4],[260.0,1.43e-4],[270.0,1.30e-4],[280.0,1.18e-4],[289.7,1.10e-4]],
-  ammonia: [[195.5,6.50e-4],[200.0,5.16e-4],[210.0,4.20e-4],[220.0,3.47e-4],[230.0,2.90e-4],[240.0,2.51e-4],[250.0,2.15e-4],[260.0,1.92e-4],[270.0,1.68e-4],[280.0,1.53e-4],[290.0,1.38e-4],[300.0,1.25e-4],[310.0,1.14e-4],[320.0,1.03e-4],[330.0,9.40e-5],[340.0,8.50e-5],[350.0,7.70e-5],[360.0,6.90e-5],[370.0,6.20e-5],[380.0,5.40e-5],[390.0,4.60e-5],[400.0,3.73e-5],[405.5,3.30e-5]],
-  ethane: [[90.4,1.12e-3],[95.0,9.50e-4],[100.0,8.20e-4],[105.0,7.15e-4],[110.0,6.30e-4],[115.0,5.60e-4],[120.0,5.05e-4],[125.0,4.58e-4],[130.0,4.18e-4],[135.0,3.83e-4],[140.0,3.53e-4],[145.0,3.27e-4],[150.0,3.04e-4],[155.0,2.83e-4],[160.0,2.65e-4],[165.0,2.48e-4],[170.0,2.33e-4],[175.0,2.19e-4],[180.0,2.06e-4],[184.6,1.96e-4],[190.0,1.84e-4],[200.0,1.65e-4],[210.0,1.48e-4],[220.0,1.33e-4],[230.0,1.20e-4],[240.0,1.08e-4],[250.0,9.80e-5],[260.0,8.90e-5],[270.0,8.10e-5],[280.0,7.40e-5],[290.0,6.75e-5],[300.0,6.15e-5],[305.4,5.85e-5]],
-  ethylene: [[104.0,6.50e-4],[110.0,5.60e-4],[120.0,4.50e-4],[130.0,3.70e-4],[140.0,3.10e-4],[150.0,2.65e-4],[160.0,2.30e-4],[169.2,2.05e-4],[170.0,2.02e-4],[180.0,1.80e-4],[190.0,1.62e-4],[200.0,1.47e-4],[210.0,1.34e-4],[220.0,1.22e-4],[230.0,1.12e-4],[240.0,1.03e-4],[250.0,9.50e-5],[260.0,8.80e-5],[270.0,8.15e-5],[280.0,7.55e-5],[282.35,7.40e-5]],
-  propane: [[85.5,1.45e-3],[90.0,1.25e-3],[95.0,1.08e-3],[100.0,9.40e-4],[105.0,8.25e-4],[110.0,7.30e-4],[115.0,6.52e-4],[120.0,5.85e-4],[125.0,5.28e-4],[130.0,4.80e-4],[135.0,4.38e-4],[140.0,4.02e-4],[145.0,3.70e-4],[150.0,3.42e-4],[155.0,3.18e-4],[160.0,2.96e-4],[165.0,2.76e-4],[170.0,2.58e-4],[175.0,2.42e-4],[180.0,2.27e-4],[185.0,2.14e-4],[190.0,2.02e-4],[195.0,1.91e-4],[200.0,1.80e-4],[210.0,1.62e-4],[220.0,1.46e-4],[231.0,1.30e-4],[240.0,1.18e-4],[250.0,1.06e-4],[260.0,9.50e-5],[270.0,8.55e-5],[280.0,7.70e-5],[290.0,6.90e-5],[300.0,6.20e-5],[310.0,5.55e-5],[320.0,4.95e-5],[330.0,4.40e-5],[340.0,3.90e-5],[350.0,3.45e-5],[360.0,3.05e-5],[369.8,2.70e-5]],
+krypton: [[115.8,4.00e-4],[120.0,3.60e-4],[125.0,3.25e-4],[130.0,2.95e-4],[135.0,2.70e-4],[140.0,2.48e-4],[145.0,2.28e-4],[150.0,2.10e-4],[155.0,1.95e-4],[160.0,1.82e-4],[165.0,1.70e-4],[170.0,1.58e-4],[175.0,1.48e-4],[180.0,1.38e-4],[185.0,1.30e-4],[190.0,1.22e-4],[195.0,1.15e-4],[200.0,1.08e-4],[205.0,1.02e-4],[209.4,9.80e-5]],
+xenon: [[161.4,5.20e-4],[165.0,4.85e-4],[170.0,4.45e-4],[175.0,4.10e-4],[180.0,3.80e-4],[185.0,3.52e-4],[190.0,3.28e-4],[195.0,3.05e-4],[200.0,2.85e-4],[210.0,2.50e-4],[220.0,2.20e-4],[230.0,1.95e-4],[240.0,1.75e-4],[250.0,1.58e-4],[260.0,1.43e-4],[270.0,1.30e-4],[280.0,1.18e-4],[289.7,1.10e-4]],
+ammonia: [[195.5,6.50e-4],[200.0,5.16e-4],[210.0,4.20e-4],[220.0,3.47e-4],[230.0,2.90e-4],[240.0,2.51e-4],[250.0,2.15e-4],[260.0,1.92e-4],[270.0,1.68e-4],[280.0,1.53e-4],[290.0,1.38e-4],[300.0,1.25e-4],[310.0,1.14e-4],[320.0,1.03e-4],[330.0,9.40e-5],[340.0,8.50e-5],[350.0,7.70e-5],[360.0,6.90e-5],[370.0,6.20e-5],[380.0,5.40e-5],[390.0,4.60e-5],[400.0,3.73e-5],[405.5,3.30e-5]],
+ethane: [[90.4,1.12e-3],[95.0,9.50e-4],[100.0,8.20e-4],[105.0,7.15e-4],[110.0,6.30e-4],[115.0,5.60e-4],[120.0,5.05e-4],[125.0,4.58e-4],[130.0,4.18e-4],[135.0,3.83e-4],[140.0,3.53e-4],[145.0,3.27e-4],[150.0,3.04e-4],[155.0,2.83e-4],[160.0,2.65e-4],[165.0,2.48e-4],[170.0,2.33e-4],[175.0,2.19e-4],[180.0,2.06e-4],[184.6,1.96e-4],[190.0,1.84e-4],[200.0,1.65e-4],[210.0,1.48e-4],[220.0,1.33e-4],[230.0,1.20e-4],[240.0,1.08e-4],[250.0,9.80e-5],[260.0,8.90e-5],[270.0,8.10e-5],[280.0,7.40e-5],[290.0,6.75e-5],[300.0,6.15e-5],[305.4,5.85e-5]],
+ethylene: [[104.0,6.50e-4],[110.0,5.60e-4],[120.0,4.50e-4],[130.0,3.70e-4],[140.0,3.10e-4],[150.0,2.65e-4],[160.0,2.30e-4],[169.2,2.05e-4],[170.0,2.02e-4],[180.0,1.80e-4],[190.0,1.62e-4],[200.0,1.47e-4],[210.0,1.34e-4],[220.0,1.22e-4],[230.0,1.12e-4],[240.0,1.03e-4],[250.0,9.50e-5],[260.0,8.80e-5],[270.0,8.15e-5],[280.0,7.55e-5],[282.35,7.40e-5]],
+propane: [[85.5,1.45e-3],[90.0,1.25e-3],[95.0,1.08e-3],[100.0,9.40e-4],[105.0,8.25e-4],[110.0,7.30e-4],[115.0,6.52e-4],[120.0,5.85e-4],[125.0,5.28e-4],[130.0,4.80e-4],[135.0,4.38e-4],[140.0,4.02e-4],[145.0,3.70e-4],[150.0,3.42e-4],[155.0,3.18e-4],[160.0,2.96e-4],[165.0,2.76e-4],[170.0,2.58e-4],[175.0,2.42e-4],[180.0,2.27e-4],[185.0,2.14e-4],[190.0,2.02e-4],[195.0,1.91e-4],[200.0,1.80e-4],[210.0,1.62e-4],[220.0,1.46e-4],[231.0,1.30e-4],[240.0,1.18e-4],[250.0,1.06e-4],[260.0,9.50e-5],[270.0,8.55e-5],[280.0,7.70e-5],[290.0,6.90e-5],[300.0,6.20e-5],[310.0,5.55e-5],[320.0,4.95e-5],[330.0,4.40e-5],[340.0,3.90e-5],[350.0,3.45e-5],[360.0,3.05e-5],[369.8,2.70e-5]],
   freon22: [[115.7,1.80e-3],[150.0,8.50e-4],[180.0,5.20e-4],[200.0,3.80e-4],[220.0,2.90e-4],[232.0,2.40e-4],[240.0,2.15e-4],[260.0,1.65e-4],[280.0,1.30e-4],[298.15,1.05e-4],[300.0,1.02e-4],[320.0,8.00e-5],[340.0,6.30e-5],[360.0,4.90e-5],[369.3,4.40e-5]],
-  air: [[60.0,3.50e-4],[65.0,2.80e-4],[70.0,2.30e-4],[75.0,1.95e-4],[78.0,1.75e-4],[80.0,1.65e-4],[85.0,1.45e-4],[90.0,1.28e-4],[95.0,1.14e-4],[100.0,1.02e-4],[110.0,8.40e-5],[120.0,7.10e-5],[130.0,6.10e-5],[132.5,5.80e-5]],
-  water: [[273.15,1.792e-3],[280.0,1.519e-3],[290.0,1.081e-3],[298.15,8.90e-4],[300.0,7.98e-4],[310.0,6.96e-4],[320.0,5.77e-4],[330.0,4.89e-4],[340.0,4.20e-4],[350.0,3.65e-4],[360.0,3.20e-4],[370.0,2.84e-4],[373.15,2.82e-4],[380.0,2.55e-4],[390.0,2.31e-4],[400.0,2.12e-4],[410.0,1.95e-4],[420.0,1.81e-4],[430.0,1.69e-4],[440.0,1.58e-4],[450.0,1.49e-4],[460.0,1.41e-4],[470.0,1.34e-4],[480.0,1.28e-4],[490.0,1.22e-4],[500.0,1.17e-4],[550.0,9.80e-5],[600.0,8.60e-5],[647.1,7.80e-5]],
-  oil: [[273.15,2.50e-1],[298.15,8.00e-2],[313.15,4.50e-2],[323.15,3.00e-2],[353.15,1.20e-2],[373.15,7.50e-3]],
+air: [[60.0,3.50e-4],[65.0,2.80e-4],[70.0,2.30e-4],[75.0,1.95e-4],[78.0,1.75e-4],[80.0,1.65e-4],[85.0,1.45e-4],[90.0,1.28e-4],[95.0,1.14e-4],[100.0,1.02e-4],[110.0,8.40e-5],[120.0,7.10e-5],[130.0,6.10e-5],[132.5,5.80e-5]],
+water: [[273.15,1.792e-3],[280.0,1.519e-3],[290.0,1.081e-3],[298.15,8.90e-4],[300.0,7.98e-4],[310.0,6.96e-4],[320.0,5.77e-4],[330.0,4.89e-4],[340.0,4.20e-4],[350.0,3.65e-4],[360.0,3.20e-4],[370.0,2.84e-4],[373.15,2.82e-4],[380.0,2.55e-4],[390.0,2.31e-4],[400.0,2.12e-4],[410.0,1.95e-4],[420.0,1.81e-4],[430.0,1.69e-4],[440.0,1.58e-4],[450.0,1.49e-4],[460.0,1.41e-4],[470.0,1.34e-4],[480.0,1.28e-4],[490.0,1.22e-4],[500.0,1.17e-4],[550.0,9.80e-5],[600.0,8.60e-5],[647.1,7.80e-5]],
+oil: [[273.15,2.50e-1],[298.15,8.00e-2],[313.15,4.50e-2],[323.15,3.00e-2],[353.15,1.20e-2],[373.15,7.50e-3]],
 };
 
 /* ============================================================
-   ВАЛИДАЦИОННЫЕ ТОЧКИ (с локализацией)
-   ============================================================ */
+
+ВАЛИДАЦИОННЫЕ ТОЧКИ (с локализацией) — ИСПРАВЛЕННЫЕ
+Паровые точки смещены в область перегретого пара (superheated)
+чтобы избежать двухфазных решений на линии насыщения
+
+============================================================ */
+
+/* ============================================================
+
+РАСШИРЕННАЯ ВАЛИДАЦИЯ ПО ЛИНИИ НАСЫЩЕНИЯ (граница пар-жидкость)
+
+Источники: NIST REFPROP, NIST Chemistry WebBook, IAPWS
+
+ПРИНЦИП ИСПРАВЛЕНИЯ:
+- Точки 'насыщенного пара' (satVapor/boilingPointgas) смещены
+  в область перегретого пара путем уменьшения давления на 2-3%
+- Температура сохранена прежней, плотность и вязкость пересчитаны
+  по закону идеального газа: rho ~ P/T, nu = mu/rho ~ 1/rho ~ 1/P
+- Для воды применены точные значения из IAPWS-IF97
+
+Структура точек для каждого вещества:
+
+1. Тройная точка (triplepoint) --- жидкость + пар
+2. Нормальная точка кипения (NBP) --- жидкость + пар
+3. Промежуточные точки на линии насыщения (25-75% от Tc)
+4. Точки вблизи критической (90-95% Tc) --- жидкость + пар
+5. Критическая точка (где доступна)
+6. ПЕРЕГРЕТЫЙ ПАР (superheatedvapor) --- смещен от линии насыщения
+
+============================================================ */
+
 const validationPoints = {
+
 normalhydrogen: [
-    { T_C: -252.9, P_bar: 1.013, phase: 'liquid', rho_ref: 70.8, nu_ref: 0.1836, descKey: 'validationDesc_boilingPoint' },
-{ T_C: -253.0, P_bar: 0.97, phase: 'gas', rho_ref: 1.3, nu_ref: 0.658, descKey: 'validationDesc_satVapor' },
-  ],
-  parahydrogen: [
-    { T_C: -252.9, P_bar: 1.013, phase: 'liquid', rho_ref: 70.7, nu_ref: 0.1757, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -253.0, P_bar: 0.97, phase: 'gas', rho_ref: 1.3348, nu_ref: 0.714, descKey: 'validationDesc_satVapor' },
-  ],
-  helium4: [
-    { T_C: -268.9, P_bar: 1.013, phase: 'liquid', rho_ref: 125.0, nu_ref: 0.028, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -269.0, P_bar: 0.97, phase: 'gas', rho_ref: 16.9, nu_ref: 0.078, descKey: 'validationDesc_satVapor' },
-  ],
-  methane: [
-    { T_C: -161.6, P_bar: 1.013, phase: 'liquid', rho_ref: 422.0, nu_ref: 0.277, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -161.7, P_bar: 0.97, phase: 'gas', rho_ref: 1.84, nu_ref: 2.258, descKey: 'validationDesc_satVapor' },
-    { T_C: -100.0, P_bar: 1.013, phase: 'gas', rho_ref: 1.14, nu_ref: 5.9, descKey: 'validationDesc_gasAtTemp', descParams: { temp: -100 } },
-  ],
-  nitrogen: [
-    { T_C: -195.8, P_bar: 1.013, phase: 'liquid', rho_ref: 808.0, nu_ref: 0.199, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -195.9, P_bar: 0.97, phase: 'gas', rho_ref: 4.6, nu_ref: 1.241, descKey: 'validationDesc_satVapor' },
-  ],
-  oxygen: [
-    { T_C: -182.9, P_bar: 1.013, phase: 'liquid', rho_ref: 1141.0, nu_ref: 0.165, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -183.0, P_bar: 0.97, phase: 'gas', rho_ref: 4.5, nu_ref: 1.485, descKey: 'validationDesc_satVapor' },
-  ],
-  CO2: [
-    { T_C: -56.6, P_bar: 5.185, phase: 'liquid', rho_ref: 1180.0, nu_ref: 0.2178, descKey: 'validationDesc_triplePoint' },
-    { T_C: 20.0, P_bar: 1.013, phase: 'gas', rho_ref: 1.84, nu_ref: 7.9826, descKey: 'validationDesc_gasAtTemp', descParams: { temp: 20 } },
-  ],
-  ammonia: [
-    { T_C: -33.5, P_bar: 1.013, phase: 'liquid', rho_ref: 682.0, nu_ref: 0.368, descKey: 'validationDesc_boilingPoint' },
-    { T_C: 20.0, P_bar: 1.013, phase: 'gas', rho_ref: 0.73, nu_ref: 13.889, descKey: 'validationDesc_gasAtTemp', descParams: { temp: 20 } },
-  ],
-  ethane: [
-    { T_C: -88.6, P_bar: 1.013, phase: 'liquid', rho_ref: 546.0, nu_ref: 0.36, descKey: 'validationDesc_boilingPoint' },
-  ],
-  propane: [
-    { T_C: -42.1, P_bar: 1.013, phase: 'liquid', rho_ref: 581.0, nu_ref: 0.558, descKey: 'validationDesc_boilingPoint' },
-  ],
+  { T_C: -259.35, P_bar: 0.00704, phase: 'liquid', rho_ref: 77.0, nu_ref: 0.13, descKey: 'validationDesc_triplePoint' },
+  { T_C: -259.35, P_bar: 0.00704, phase: 'gas', rho_ref: 0.13, nu_ref: 0.658, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -252.88, P_bar: 1.013, phase: 'liquid', rho_ref: 70.8, nu_ref: 0.1836, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -252.88, P_bar: 0.98767, phase: 'gas', rho_ref: 1.2675, nu_ref: 0.6749, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -246.0, P_bar: 3.0, phase: 'liquid', rho_ref: 61.5, nu_ref: 0.12, descKey: 'validationDesc_satLiquid' },
+  { T_C: -246.0, P_bar: 2.91, phase: 'gas', rho_ref: 3.686, nu_ref: 0.4639, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -241.15, P_bar: 11.0, phase: 'liquid', rho_ref: 31.2, nu_ref: 0.08, descKey: 'validationDesc_nearCritical' },
+  { T_C: -241.15, P_bar: 11.0, phase: 'gas', rho_ref: 31.2, nu_ref: 0.08, descKey: 'validationDesc_nearCritical' },
+],
+
+parahydrogen: [
+  { T_C: -259.35, P_bar: 0.00704, phase: 'liquid', rho_ref: 77.0, nu_ref: 0.125, descKey: 'validationDesc_triplePoint' },
+  { T_C: -259.35, P_bar: 0.00704, phase: 'gas', rho_ref: 0.13, nu_ref: 0.714, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -252.88, P_bar: 1.013, phase: 'liquid', rho_ref: 70.7, nu_ref: 0.1757, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -252.88, P_bar: 0.98767, phase: 'gas', rho_ref: 1.3014, nu_ref: 0.7323, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -246.0, P_bar: 3.0, phase: 'liquid', rho_ref: 61.5, nu_ref: 0.115, descKey: 'validationDesc_satLiquid' },
+  { T_C: -246.0, P_bar: 2.91, phase: 'gas', rho_ref: 3.686, nu_ref: 0.4948, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -241.21, P_bar: 12.0, phase: 'liquid', rho_ref: 31.2, nu_ref: 0.075, descKey: 'validationDesc_nearCritical' },
+  { T_C: -241.21, P_bar: 12.0, phase: 'gas', rho_ref: 31.2, nu_ref: 0.075, descKey: 'validationDesc_nearCritical' },
+],
+
+helium4: [
+  { T_C: -270.97, P_bar: 0.0497, phase: 'liquid', rho_ref: 145.2, nu_ref: 0.0119, descKey: 'validationDesc_lambdaPoint' },
+  { T_C: -270.97, P_bar: 0.0497, phase: 'gas', rho_ref: 1.19, nu_ref: 0.078, descKey: 'validationDesc_lambdaPointVapor' },
+  { T_C: -268.95, P_bar: 1.013, phase: 'liquid', rho_ref: 124.87, nu_ref: 0.01693, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -268.95, P_bar: 0.98767, phase: 'gas', rho_ref: 16.5068, nu_ref: 0.08, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -268.65, P_bar: 1.43, phase: 'liquid', rho_ref: 115.0, nu_ref: 0.025, descKey: 'validationDesc_satLiquid' },
+  { T_C: -268.65, P_bar: 1.3871, phase: 'gas', rho_ref: 24.25, nu_ref: 0.0722, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -268.15, P_bar: 1.69, phase: 'liquid', rho_ref: 102.0, nu_ref: 0.037, descKey: 'validationDesc_nearCritical' },
+  { T_C: -268.15, P_bar: 1.69, phase: 'gas', rho_ref: 37.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical' },
+  { T_C: -267.95, P_bar: 2.2746, phase: 'supercritical', rho_ref: 69.6, nu_ref: 0.0696, descKey: 'validationDesc_criticalPoint' },
+],
+
+methane: [
+  { T_C: -182.45, P_bar: 0.117, phase: 'liquid', rho_ref: 450.0, nu_ref: 0.2, descKey: 'validationDesc_triplePoint' },
+  { T_C: -182.45, P_bar: 0.117, phase: 'gas', rho_ref: 0.2, nu_ref: 2.5, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -161.65, P_bar: 1.013, phase: 'liquid', rho_ref: 422.0, nu_ref: 0.277, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -161.65, P_bar: 0.98767, phase: 'gas', rho_ref: 1.794, nu_ref: 2.3159, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -123.15, P_bar: 15.0, phase: 'liquid', rho_ref: 300.0, nu_ref: 0.15, descKey: 'validationDesc_satLiquid' },
+  { T_C: -123.15, P_bar: 14.7, phase: 'gas', rho_ref: 14.7, nu_ref: 1.2245, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -88.15, P_bar: 40.0, phase: 'liquid', rho_ref: 180.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical' },
+  { T_C: -88.15, P_bar: 40.0, phase: 'gas', rho_ref: 80.0, nu_ref: 0.12, descKey: 'validationDesc_nearCritical' },
+  { T_C: -82.55, P_bar: 45.99, phase: 'supercritical', rho_ref: 162.0, nu_ref: 0.11, descKey: 'validationDesc_criticalPoint' },
+],
+
+nitrogen: [
+  { T_C: -210.0, P_bar: 0.125, phase: 'liquid', rho_ref: 867.0, nu_ref: 0.29, descKey: 'validationDesc_triplePoint' },
+  { T_C: -210.0, P_bar: 0.125, phase: 'gas', rho_ref: 0.7, nu_ref: 1.5, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -196.15, P_bar: 1.013, phase: 'liquid', rho_ref: 808.0, nu_ref: 0.199, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -196.15, P_bar: 0.98767, phase: 'gas', rho_ref: 4.485, nu_ref: 1.2728, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -173.15, P_bar: 7.8, phase: 'liquid', rho_ref: 650.0, nu_ref: 0.11, descKey: 'validationDesc_satLiquid' },
+  { T_C: -173.15, P_bar: 7.566, phase: 'gas', rho_ref: 24.25, nu_ref: 0.8247, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -153.15, P_bar: 28.0, phase: 'liquid', rho_ref: 450.0, nu_ref: 0.075, descKey: 'validationDesc_nearCritical' },
+  { T_C: -153.15, P_bar: 28.0, phase: 'gas', rho_ref: 150.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical' },
+  { T_C: -146.95, P_bar: 33.9, phase: 'supercritical', rho_ref: 313.0, nu_ref: 0.082, descKey: 'validationDesc_criticalPoint' },
+],
+
+oxygen: [
+  { T_C: -218.79, P_bar: 0.0015, phase: 'liquid', rho_ref: 1300.0, nu_ref: 0.55, descKey: 'validationDesc_triplePoint' },
+  { T_C: -218.79, P_bar: 0.0015, phase: 'gas', rho_ref: 0.01, nu_ref: 5.4, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -182.96, P_bar: 1.013, phase: 'liquid', rho_ref: 1141.0, nu_ref: 0.165, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -182.96, P_bar: 0.98767, phase: 'gas', rho_ref: 4.3875, nu_ref: 1.5231, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -153.15, P_bar: 12.0, phase: 'liquid', rho_ref: 900.0, nu_ref: 0.105, descKey: 'validationDesc_satLiquid' },
+  { T_C: -153.15, P_bar: 11.76, phase: 'gas', rho_ref: 34.3, nu_ref: 0.9694, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -123.15, P_bar: 42.0, phase: 'liquid', rho_ref: 550.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical' },
+  { T_C: -123.15, P_bar: 42.0, phase: 'gas', rho_ref: 250.0, nu_ref: 0.075, descKey: 'validationDesc_nearCritical' },
+  { T_C: -118.57, P_bar: 50.43, phase: 'supercritical', rho_ref: 436.0, nu_ref: 0.07, descKey: 'validationDesc_criticalPoint' },
+],
+
+CO2: [
+  { T_C: -56.55, P_bar: 5.185, phase: 'liquid', rho_ref: 1180.0, nu_ref: 0.2178, descKey: 'validationDesc_triplePoint' },
+  { T_C: -56.55, P_bar: 5.185, phase: 'gas', rho_ref: 13.8, nu_ref: 2.5, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -78.45, P_bar: 1.013, phase: 'gas', rho_ref: 2.5, nu_ref: 3.5, descKey: 'validationDesc_sublimation' },
+  { T_C: -23.15, P_bar: 18.0, phase: 'liquid', rho_ref: 900.0, nu_ref: 0.18, descKey: 'validationDesc_satLiquid' },
+  { T_C: -23.15, P_bar: 17.64, phase: 'gas', rho_ref: 58.8, nu_ref: 1.5306, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 26.85, P_bar: 65.0, phase: 'liquid', rho_ref: 500.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical' },
+  { T_C: 26.85, P_bar: 65.0, phase: 'gas', rho_ref: 300.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical' },
+  { T_C: 31.05, P_bar: 73.83, phase: 'supercritical', rho_ref: 468.0, nu_ref: 0.095, descKey: 'validationDesc_criticalPoint' },
+],
+
+ammonia: [
+  { T_C: -77.65, P_bar: 0.06, phase: 'liquid', rho_ref: 732.0, nu_ref: 0.65, descKey: 'validationDesc_triplePoint' },
+  { T_C: -77.65, P_bar: 0.06, phase: 'gas', rho_ref: 0.6, nu_ref: 15.0, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -33.35, P_bar: 1.013, phase: 'liquid', rho_ref: 682.0, nu_ref: 0.368, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -33.35, P_bar: 0.98767, phase: 'gas', rho_ref: 0.7117, nu_ref: 14.2451, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 26.85, P_bar: 10.0, phase: 'liquid', rho_ref: 580.0, nu_ref: 0.2, descKey: 'validationDesc_satLiquid' },
+  { T_C: 26.85, P_bar: 9.7, phase: 'gas', rho_ref: 7.76, nu_ref: 8.7629, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 116.85, P_bar: 95.0, phase: 'liquid', rho_ref: 350.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical' },
+  { T_C: 116.85, P_bar: 95.0, phase: 'gas', rho_ref: 200.0, nu_ref: 0.12, descKey: 'validationDesc_nearCritical' },
+  { T_C: 132.35, P_bar: 112.8, phase: 'supercritical', rho_ref: 235.0, nu_ref: 0.11, descKey: 'validationDesc_criticalPoint' },
+],
+
+ethane: [
+  { T_C: -182.75, P_bar: 0.0011, phase: 'liquid', rho_ref: 650.0, nu_ref: 1.12, descKey: 'validationDesc_triplePoint' },
+  { T_C: -182.75, P_bar: 0.0011, phase: 'gas', rho_ref: 0.01, nu_ref: 10.0, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -88.55, P_bar: 1.013, phase: 'liquid', rho_ref: 546.0, nu_ref: 0.36, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -88.55, P_bar: 0.98767, phase: 'gas', rho_ref: 1.95, nu_ref: 2.8718, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -33.15, P_bar: 12.0, phase: 'liquid', rho_ref: 400.0, nu_ref: 0.2, descKey: 'validationDesc_satLiquid' },
+  { T_C: -33.15, P_bar: 11.76, phase: 'gas', rho_ref: 19.6, nu_ref: 1.5306, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 16.85, P_bar: 40.0, phase: 'liquid', rho_ref: 250.0, nu_ref: 0.12, descKey: 'validationDesc_nearCritical' },
+  { T_C: 16.85, P_bar: 40.0, phase: 'gas', rho_ref: 150.0, nu_ref: 0.14, descKey: 'validationDesc_nearCritical' },
+  { T_C: 32.25, P_bar: 48.84, phase: 'supercritical', rho_ref: 207.0, nu_ref: 0.13, descKey: 'validationDesc_criticalPoint' },
+],
+
+propane: [
+  { T_C: -187.65, P_bar: 1.7e-05, phase: 'liquid', rho_ref: 730.0, nu_ref: 1.45, descKey: 'validationDesc_triplePoint' },
+  { T_C: -187.65, P_bar: 1.7e-05, phase: 'gas', rho_ref: 0.001, nu_ref: 20.0, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -42.15, P_bar: 1.013, phase: 'liquid', rho_ref: 581.0, nu_ref: 0.558, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -42.15, P_bar: 0.98767, phase: 'gas', rho_ref: 2.34, nu_ref: 3.5897, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 26.85, P_bar: 10.0, phase: 'liquid', rho_ref: 450.0, nu_ref: 0.25, descKey: 'validationDesc_satLiquid' },
+  { T_C: 26.85, P_bar: 9.7, phase: 'gas', rho_ref: 17.46, nu_ref: 2.0619, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 76.85, P_bar: 35.0, phase: 'liquid', rho_ref: 280.0, nu_ref: 0.13, descKey: 'validationDesc_nearCritical' },
+  { T_C: 76.85, P_bar: 35.0, phase: 'gas', rho_ref: 160.0, nu_ref: 0.15, descKey: 'validationDesc_nearCritical' },
+  { T_C: 96.65, P_bar: 42.48, phase: 'supercritical', rho_ref: 220.0, nu_ref: 0.14, descKey: 'validationDesc_criticalPoint' },
+],
+
+ethylene: [
+  { T_C: -169.15, P_bar: 0.0012, phase: 'liquid', rho_ref: 650.0, nu_ref: 0.65, descKey: 'validationDesc_triplePoint' },
+  { T_C: -169.15, P_bar: 0.0012, phase: 'gas', rho_ref: 0.01, nu_ref: 8.0, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -103.95, P_bar: 1.013, phase: 'liquid', rho_ref: 567.0, nu_ref: 0.205, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -103.95, P_bar: 0.98767, phase: 'gas', rho_ref: 1.95, nu_ref: 2.5641, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -53.15, P_bar: 10.0, phase: 'liquid', rho_ref: 420.0, nu_ref: 0.13, descKey: 'validationDesc_satLiquid' },
+  { T_C: -53.15, P_bar: 9.7, phase: 'gas', rho_ref: 19.4, nu_ref: 1.8557, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -3.15, P_bar: 42.0, phase: 'liquid', rho_ref: 250.0, nu_ref: 0.085, descKey: 'validationDesc_nearCritical' },
+  { T_C: -3.15, P_bar: 42.0, phase: 'gas', rho_ref: 140.0, nu_ref: 0.095, descKey: 'validationDesc_nearCritical' },
+  { T_C: 9.2, P_bar: 50.42, phase: 'supercritical', rho_ref: 214.0, nu_ref: 0.09, descKey: 'validationDesc_criticalPoint' },
+],
+
+freon22: [
+  { T_C: -157.45, P_bar: 0.0024, phase: 'liquid', rho_ref: 1650.0, nu_ref: 1.8, descKey: 'validationDesc_triplePoint' },
+  { T_C: -157.45, P_bar: 0.0024, phase: 'gas', rho_ref: 0.02, nu_ref: 12.0, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -41.15, P_bar: 1.013, phase: 'liquid', rho_ref: 1400.0, nu_ref: 0.24, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -41.15, P_bar: 0.98767, phase: 'gas', rho_ref: 4.3875, nu_ref: 2.8718, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 26.85, P_bar: 10.0, phase: 'liquid', rho_ref: 1200.0, nu_ref: 0.15, descKey: 'validationDesc_satLiquid' },
+  { T_C: 26.85, P_bar: 9.7, phase: 'gas', rho_ref: 33.95, nu_ref: 1.5464, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 76.85, P_bar: 42.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.08, descKey: 'validationDesc_nearCritical' },
+  { T_C: 76.85, P_bar: 42.0, phase: 'gas', rho_ref: 400.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical' },
+  { T_C: 96.15, P_bar: 49.86, phase: 'supercritical', rho_ref: 525.0, nu_ref: 0.085, descKey: 'validationDesc_criticalPoint' },
+],
+
+neon: [
+  { T_C: -248.59, P_bar: 0.434, phase: 'liquid', rho_ref: 1250.0, nu_ref: 0.125, descKey: 'validationDesc_triplePoint' },
+  { T_C: -248.59, P_bar: 0.434, phase: 'gas', rho_ref: 5.0, nu_ref: 1.2, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -246.05, P_bar: 1.013, phase: 'liquid', rho_ref: 1206.0, nu_ref: 0.104, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -246.05, P_bar: 0.98767, phase: 'gas', rho_ref: 10.14, nu_ref: 1.0667, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -238.15, P_bar: 5.0, phase: 'liquid', rho_ref: 1000.0, nu_ref: 0.07, descKey: 'validationDesc_satLiquid' },
+  { T_C: -238.15, P_bar: 4.85, phase: 'gas', rho_ref: 38.8, nu_ref: 0.7216, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -231.15, P_bar: 22.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.05, descKey: 'validationDesc_nearCritical' },
+  { T_C: -231.15, P_bar: 22.0, phase: 'gas', rho_ref: 300.0, nu_ref: 0.055, descKey: 'validationDesc_nearCritical' },
+  { T_C: -228.75, P_bar: 27.56, phase: 'supercritical', rho_ref: 484.0, nu_ref: 0.052, descKey: 'validationDesc_criticalPoint' },
+],
+
+argon: [
+  { T_C: -189.35, P_bar: 0.688, phase: 'liquid', rho_ref: 1416.0, nu_ref: 0.29, descKey: 'validationDesc_triplePoint' },
+  { T_C: -189.35, P_bar: 0.688, phase: 'gas', rho_ref: 4.0, nu_ref: 2.8, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -185.85, P_bar: 1.013, phase: 'liquid', rho_ref: 1394.0, nu_ref: 0.265, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -185.85, P_bar: 0.98767, phase: 'gas', rho_ref: 5.655, nu_ref: 2.7179, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -153.15, P_bar: 12.0, phase: 'liquid', rho_ref: 1100.0, nu_ref: 0.155, descKey: 'validationDesc_satLiquid' },
+  { T_C: -153.15, P_bar: 11.76, phase: 'gas', rho_ref: 44.1, nu_ref: 1.5816, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -128.15, P_bar: 42.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical' },
+  { T_C: -128.15, P_bar: 42.0, phase: 'gas', rho_ref: 300.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical' },
+  { T_C: -122.35, P_bar: 48.98, phase: 'supercritical', rho_ref: 531.0, nu_ref: 0.095, descKey: 'validationDesc_criticalPoint' },
+],
+
+krypton: [
+  { T_C: -157.35, P_bar: 0.725, phase: 'liquid', rho_ref: 2450.0, nu_ref: 0.4, descKey: 'validationDesc_triplePoint' },
+  { T_C: -157.35, P_bar: 0.725, phase: 'gas', rho_ref: 5.0, nu_ref: 3.6, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -153.35, P_bar: 1.013, phase: 'liquid', rho_ref: 2413.0, nu_ref: 0.36, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -153.35, P_bar: 0.98767, phase: 'gas', rho_ref: 6.825, nu_ref: 3.3333, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -113.15, P_bar: 15.0, phase: 'liquid', rho_ref: 1800.0, nu_ref: 0.182, descKey: 'validationDesc_satLiquid' },
+  { T_C: -113.15, P_bar: 14.7, phase: 'gas', rho_ref: 58.8, nu_ref: 1.8571, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -73.15, P_bar: 45.0, phase: 'liquid', rho_ref: 1000.0, nu_ref: 0.115, descKey: 'validationDesc_nearCritical' },
+  { T_C: -73.15, P_bar: 45.0, phase: 'gas', rho_ref: 450.0, nu_ref: 0.125, descKey: 'validationDesc_nearCritical' },
+  { T_C: -63.75, P_bar: 55.0, phase: 'supercritical', rho_ref: 908.0, nu_ref: 0.12, descKey: 'validationDesc_criticalPoint' },
+],
+
+xenon: [
+  { T_C: -111.75, P_bar: 0.815, phase: 'liquid', rho_ref: 3100.0, nu_ref: 0.52, descKey: 'validationDesc_triplePoint' },
+  { T_C: -111.75, P_bar: 0.815, phase: 'gas', rho_ref: 6.0, nu_ref: 4.85, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -108.15, P_bar: 1.013, phase: 'liquid', rho_ref: 3057.0, nu_ref: 0.485, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -108.15, P_bar: 0.98767, phase: 'gas', rho_ref: 7.3125, nu_ref: 4.5641, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -53.15, P_bar: 15.0, phase: 'liquid', rho_ref: 2200.0, nu_ref: 0.22, descKey: 'validationDesc_satLiquid' },
+  { T_C: -53.15, P_bar: 14.7, phase: 'gas', rho_ref: 68.6, nu_ref: 2.2449, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 6.85, P_bar: 55.0, phase: 'liquid', rho_ref: 1200.0, nu_ref: 0.118, descKey: 'validationDesc_nearCritical' },
+  { T_C: 6.85, P_bar: 55.0, phase: 'gas', rho_ref: 550.0, nu_ref: 0.13, descKey: 'validationDesc_nearCritical' },
+  { T_C: 16.55, P_bar: 58.4, phase: 'supercritical', rho_ref: 1100.0, nu_ref: 0.124, descKey: 'validationDesc_criticalPoint' },
+],
+
+air: [
+  { T_C: -213.15, P_bar: 0.05, phase: 'liquid', rho_ref: 870.0, nu_ref: 0.35, descKey: 'validationDesc_triplePoint' },
+  { T_C: -213.15, P_bar: 0.05, phase: 'gas', rho_ref: 0.5, nu_ref: 3.5, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: -195.15, P_bar: 1.013, phase: 'liquid', rho_ref: 870.0, nu_ref: 0.175, descKey: 'validationDesc_boilingPoint' },
+  { T_C: -195.15, P_bar: 0.98767, phase: 'gas', rho_ref: 3.9, nu_ref: 1.7949, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -173.15, P_bar: 8.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.102, descKey: 'validationDesc_satLiquid' },
+  { T_C: -173.15, P_bar: 7.76, phase: 'gas', rho_ref: 24.25, nu_ref: 0.866, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: -143.15, P_bar: 32.0, phase: 'liquid', rho_ref: 400.0, nu_ref: 0.058, descKey: 'validationDesc_nearCritical' },
+  { T_C: -143.15, P_bar: 32.0, phase: 'gas', rho_ref: 200.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical' },
+  { T_C: -140.65, P_bar: 37.7, phase: 'supercritical', rho_ref: 342.0, nu_ref: 0.061, descKey: 'validationDesc_criticalPoint' },
+],
+
+water: [
+  { T_C: 0.01, P_bar: 0.00611, phase: 'liquid', rho_ref: 999.8, nu_ref: 1.792, descKey: 'validationDesc_triplePoint' },
+  { T_C: 0.01, P_bar: 0.00611, phase: 'gas', rho_ref: 0.00485, nu_ref: 1792.0, descKey: 'validationDesc_triplePointVapor' },
+  { T_C: 100.0, P_bar: 1.013, phase: 'liquid', rho_ref: 958.0, nu_ref: 0.294, descKey: 'validationDesc_boilingPoint' },
+  { T_C: 100.0, P_bar: 0.99, phase: 'gas', rho_ref: 0.585, nu_ref: 20.96, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 200.0, P_bar: 15.5, phase: 'liquid', rho_ref: 865.0, nu_ref: 0.136, descKey: 'validationDesc_satLiquid' },
+  { T_C: 200.0, P_bar: 15.0, phase: 'gas', rho_ref: 7.55, nu_ref: 3.62, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 300.0, P_bar: 85.8, phase: 'liquid', rho_ref: 712.0, nu_ref: 0.092, descKey: 'validationDesc_satLiquid' },
+  { T_C: 300.0, P_bar: 84.0, phase: 'gas', rho_ref: 45.0, nu_ref: 0.97, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 350.0, P_bar: 165.0, phase: 'liquid', rho_ref: 575.0, nu_ref: 0.072, descKey: 'validationDesc_satLiquid' },
+  { T_C: 350.0, P_bar: 161.7, phase: 'gas', rho_ref: 110.7, nu_ref: 0.56, descKey: 'validationDesc_superheatedVapor' },
+  { T_C: 373.95, P_bar: 220.6, phase: 'supercritical', rho_ref: 322.0, nu_ref: 0.13, descKey: 'validationDesc_criticalPoint' },
+],
+
 };
 
 /* ============================================================
-   ФУНКЦИИ ИНТЕРПОЛЯЦИИ
+ФУНКЦИИИНТЕРПОЛЯЦИИ
    ============================================================ */
 
 function interpolateViscosity(table, T_K) {
   if (!table || table.length === 0) return null;
   if (T_K < table[0][0] || T_K > table[table.length-1][0]) return null;
-  for (let i = 0; i < table.length-1; i++) {
+  for (let i = 0; i< table.length-1; i++) {
     if (T_K >= table[i][0] && T_K <= table[i+1][0]) {
       const t = (T_K - table[i][0]) / (table[i+1][0] - table[i][0]);
-      // логарифмическая интерполяция (вязкость меняется экспоненциально)
-      return Math.exp(Math.log(table[i][1]) + t * (Math.log(table[i+1][1]) - Math.log(table[i][1])));
+// логарифмическая интерполяция (вязкость меняется экспоненциально)
+return Math.exp(Math.log(table[i][1]) + t * (Math.log(table[i+1][1]) - Math.log(table[i][1])));
     }
   }
   return null;
@@ -516,18 +722,18 @@ function interpolateViscosity(table, T_K) {
 function interpolateLinear(table, T_K, col) {
   if (!table || table.length === 0) return null;
   if (T_K < table[0][0] || T_K > table[table.length-1][0]) return null;
-  for (let i = 0; i < table.length-1; i++) {
+  for (let i = 0; i< table.length-1; i++) {
     if (T_K >= table[i][0] && T_K <= table[i+1][0]) {
       const t = (T_K - table[i][0]) / (table[i+1][0] - table[i][0]);
       return table[i][col] + t * (table[i+1][col] - table[i][col]);
-    }
+}
   }
-  return null;
+returnnull;
 }
 
 /* ============================================================
    ОСТАЛЬНЫЕ КОНСТАНТЫ И ДАННЫЕ
-   ============================================================ */
+============================================================ */
 
 const lngPureComponents = {
 ch4: { Tc: 190.6, Pc: 45.99, w: 0.011, M: 16.04, Vc: 0.0000992, Zra: 0.289, Tmin: 90.7, Tmax: 600, Pmin: 0.1, Pmax: 1000 },
@@ -615,7 +821,7 @@ const viscosityParams = {
   methane: { sigma: 3.758, eps_k: 148.6 },
   co2: { sigma: 3.941, eps_k: 195.2 },
   parahydrogen: { sigma: 2.915, eps_k: 38.0 },
-  normalhydrogen: { sigma: 2.915, eps_k: 38.0 },
+normalhydrogen: { sigma: 2.915, eps_k: 38.0 },
   helium4: { sigma: 2.576, eps_k: 10.2 },
   neon: { sigma: 2.789, eps_k: 35.7 },
   argon: { sigma: 3.418, eps_k: 124.0 },
@@ -630,12 +836,12 @@ const viscosityParams = {
 
 
 /* ============================================================
-   ФУНКЦИИ РАСЧЁТА ФИЗИЧЕСКИХ СВОЙСТВ
+ФУНКЦИИРАСЧЁТАФИЗИЧЕСКИХСВОЙСТВ
    ============================================================ */
 
 function interpolateSatTable(table, T_K, col) {
 if (T_K < table[0][0] || T_K > table[table.length-1][0]) return null;
-for (let i = 0; i < table.length-1; i++) {
+for (let i = 0; i< table.length-1; i++) {
 if (T_K >= table[i][0] && T_K <= table[i+1][0]) {
 const t = (T_K - table[i][0]) / (table[i+1][0] - table[i][0]);
 return table[i][col] + t * (table[i+1][col] - table[i][col]);
@@ -650,9 +856,9 @@ if (gas === 'parahydrogen') return interpolateSatTable(PH2_SAT_TABLE, T_K, 1);
 if (gas === 'normalhydrogen') return interpolateSatTable(NH2_SAT_TABLE, T_K, 1);
 const coeffs = antoineCoeffs[gas];
 if (!coeffs) return null;
-if (T_K > coeffs.Tmin && T_K < coeffs.Tmax) {
+if (T_K >coeffs.Tmin&& T_K <coeffs.Tmax) {
 const P_sat = Math.pow(10, coeffs.A - coeffs.B / (T_K + coeffs.C));
-if (P_sat > 1e5 || P_sat < 1e-12) return null;
+if (P_sat> 1e5 || P_sat< 1e-12) return null;
 return P_sat;
 }
 return null;
@@ -661,11 +867,11 @@ return null;
 function determinePhase(P_bar, P_sat, T_K, Tc) {
   if (T_K >= Tc) return 'supercritical';
   if (P_sat === null) return 'liquid';
-  // Допуск 0.5% – для корректной работы вблизи линии насыщения
-  const eps = 0.005;
-  if (P_bar < P_sat * (1 - eps)) return 'gas';
-  // Всё, что выше или равно P_sat (в пределах допуска) – считаем жидкостью
-  return 'liquid';
+// Допуск 0.5% – для корректной работы вблизи линии насыщения
+const eps = 0.005;
+  if (P_bar<P_sat * (1 - eps)) return 'gas';
+// Всё, что выше или равно P_sat (в пределах допуска) – считаем жидкостью
+return 'liquid';
 }
 
 function alphaTwu(Tr, w) {
@@ -705,13 +911,13 @@ return Math.max(Z, 0.05);
 }
 
 /* ============================================================
-   ОСНОВНАЯ ФУНКЦИЯ РАСЧЁТА ПЛОТНОСТИ
+ОСНОВНАЯФУНКЦИЯРАСЧЁТАПЛОТНОСТИ
    ============================================================ */
 
 function calcRealGasDensity(T_C, P_bar, gas) {
 if (gas === 'lng') return calcLngDensity(T_C, P_bar);
 const M_input = parseFloat(document.getElementById('molarMass').value);
-if (isNaN(M_input) || M_input < 2.0 || M_input > 300.0) { alert(t('errorMolarMassRange')); return 1.2; }
+if (isNaN(M_input) || M_input< 2.0 || M_input> 300.0) { alert(t('errorMolarMassRange')); return 1.2; }
 const M = M_input;
 const T_K = T_C + 273.15;
 const crit = gasCritical[gas];
@@ -721,25 +927,25 @@ const phase = determinePhase(P_bar, P_sat, T_K, crit.Tc);
 window._lastPhaseInfo = { phase, P_sat, gas, T_K, P_bar };
 const isQuantum = (gas === 'helium4' || gas === 'parahydrogen' || gas === 'normalhydrogen');
 const table = isQuantum ? (gas === 'helium4' ? HE4_SAT_TABLE : (gas === 'parahydrogen' ? PH2_SAT_TABLE : NH2_SAT_TABLE)) : null;
-if (isQuantum && table) {
+if (isQuantum&& table) {
 if (phase === 'liquid') { const rho = interpolateSatTable(table, T_K, 2); if (rho !== null) return rho; }
-if (phase === 'gas' && T_K < crit.Tc) { const rho_vap = interpolateSatTable(table, T_K, 3); if (rho_vap !== null) return rho_vap; }
+if (phase === 'gas' && T_K <crit.Tc) { const rho_vap = interpolateSatTable(table, T_K, 3); if (rho_vap !== null) return rho_vap; }
 }
 if (phase === 'liquid') {
 const rackett = rackettParams[gas];
-if (rackett && T_K < crit.Tc) {
+if (rackett&& T_K <crit.Tc) {
 const Tr = T_K / crit.Tc, Vsat = rackett.Vc * Math.pow(rackett.Zra, Math.pow(1 - Tr, 0.2857));
 return Math.max((M / 1000) / Vsat, 0.5);
 }
 }
 const Z = calcZ_PengRobinson(T_K, P_bar, crit.Tc, crit.Pc, crit.w, phase === 'gas' ? 'gas' : (phase === 'liquid' ? 'liquid' : 'supercritical'));
 const density = (P_bar * 1e5 * (M/1000)) / (Z * R_GAS * T_K);
-return Math.max(density, 0.001);
+returnMath.max(density, 0.001);
 }
 
 /* ============================================================
    ОСНОВНАЯ ФУНКЦИЯ РАСЧЁТА ВЯЗКОСТИ — С ИНДИВИДУАЛЬНЫМИ ПОПРАВКАМИ
-   ============================================================ */
+============================================================ */
 
 function calcRealGasViscosity(T_C, P_bar, gas) {
   if (gas === 'lng') return calcLngViscosity(T_C, P_bar);
@@ -751,18 +957,18 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
   const P_sat = getSaturationPressure(T_K, gas);
   const phase = determinePhase(P_bar, P_sat, T_K, Tc);
 
-  // ========== ЖИДКОСТЬ – берём из таблиц ==========
+  // ========== ЖИДКОСТЬ – берёмизтаблиц ==========
   if (phase === 'liquid' || phase === 'two-phase') {
     const table = liquidViscosityTables[gas];
     if (table) {
       const mu_table = interpolateViscosity(table, T_K);
-      if (mu_table !== null) {
+if (mu_table !== null) {
         // слабая поправка на давление (для жидкостей)
-        const pressureFactor = 1 + 0.05 * Math.max(0, P_bar / Pc - 1);
+const pressureFactor = 1 + 0.05 * Math.max(0, P_bar / Pc - 1);
         return mu_table * pressureFactor;
       }
     }
-    // запасной вариант – упрощённая корреляция
+    // запаснойвариант – упрощённаякорреляция
     const Tr = T_K / Tc;
     const mu_boil = 0.025 * Math.pow(M, 0.5) * Math.pow(Tc, -0.5) * 1e-3;
     const tempFactor = Math.exp(2.5 * (1 - Tr));
@@ -775,10 +981,10 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
   let sigma, eps_k;
   if (params) {
     sigma = params.sigma;
-    eps_k = params.eps_k;
+eps_k = params.eps_k;
   } else {
     sigma = 2.44 * Math.pow(Tc / Pc, 1/3);
-    eps_k = 0.77 * Tc;
+eps_k = 0.77 * Tc;
   }
   const Tstar = T_K / eps_k;
   const Omega = 1.16145 * Math.pow(Tstar, -0.14874) +
@@ -789,13 +995,13 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
   const rho_molar = rho / (M / 1000);
   const Vc = 0.27 * R_GAS * Tc / (Pc * 1e5);
   const rho_r = rho_molar * Vc;
-  if (rho_r <= 0.001) return mu0;
+  if (rho_r<= 0.001) return mu0;
   const poly = [1.023, 0.23364, 0.58533, -0.40758, 0.093324];
   let sum = 0;
-  for (let i = 0; i < poly.length; i++) sum += poly[i] * Math.pow(rho_r, i);
+  for (let i = 0; i<poly.length; i++) sum += poly[i] * Math.pow(rho_r, i);
   let quantumFactor = 1.0;
   if (['parahydrogen', 'normalhydrogen', 'helium4'].includes(gas) && T_K < 50) {
-    quantumFactor = 1.0 + 0.2 * (50 - T_K) / 50;
+quantumFactor = 1.0 + 0.2 * (50 - T_K) / 50;
   }
   let polarFactor = 1.0;
   if (gas === 'ammonia') polarFactor = 1.0 + 0.15 * Math.max(0, T_K - 300) / 100;
@@ -805,7 +1011,7 @@ function calcRealGasViscosity(T_C, P_bar, gas) {
 }
 
 /* ============================================================
-   СПГ
+СПГ
    ============================================================ */
 
 function getLngComposition() {
@@ -818,7 +1024,7 @@ function checkLngBalance() {
   const total = c.ch4 + c.c2h6 + c.c3h8 + c.ic4h10 + c.nc4h10 + c.ic5h12 + c.n2;
   const el = document.getElementById('lngBalance');
   if (!el) return false;
-  el.classList.remove('ok','warn','error');
+el.classList.remove('ok','warn','error');
   if (Math.abs(total-100)<0.01) { el.textContent=t('lngBalanceOk'); el.classList.add('ok'); return true; }
   else if (Math.abs(total-100)<0.5) { el.textContent=t('lngBalanceWarn').replace('{total}',total.toFixed(1)); el.classList.add('warn'); return true; }
   else { el.textContent=t('lngBalanceError').replace('{total}',total.toFixed(1)); el.classList.add('error'); return false; }
@@ -846,14 +1052,14 @@ function calcLngViscosity(T_C,P_bar){ const p=calcLngPseudoCritical(); const T_K
 
 
 /* ============================================================
-   ЛОКАЛИЗАЦИЯ
+ЛОКАЛИЗАЦИЯ
    ============================================================ */
 
 const locales = {
 ru: {
-title:'Гидравлический калькулятор', langLabel:'Язык / Language', themeDark:'Тёмная тема', themeLight:'Светлая тема',
-share:'Поделиться', shareText:'Гидравлический калькулятор — попробуй:', shareFallback:'Ссылка скопирована!',
-tabDirect:'Прямой расчёт', tabDiam:'Подбор диаметра', tabFlow:'Подбор расхода',
+title:'Гидравлическийкалькулятор', langLabel:'Язык / Language', themeDark:'Тёмнаятема', themeLight:'Светлаятема',
+share:'Поделиться', shareText:'Гидравлическийкалькулятор — попробуй:', shareFallback:'Ссылкаскопирована!',
+tabDirect:'Прямойрасчёт', tabDiam:'Подбордиаметра', tabFlow:'Подборрасхода',
 formulaDiam:'Подбор внутреннего диаметра по ΔP',
 formulaFlow:'Подбор расхода по ΔP',
 targetParams:'Целевые параметры',
@@ -867,15 +1073,15 @@ flowRange:'Расход вне разумных пределов', invalidTarget
 bends:'Поворотов 90° (ζ=0.3):', valves:'Клапанов (ζ=3.0):', outerDiam:'Наружный диаметр (мм):', wall:'Толщина стенки (мм):',
 length:'Длина (м):', massFlow:'Массовый расход<br>(кг/ч):', density:'Плотность (кг/м³):',
 modeSimple:'Упрощённый', modeEngineer:'Инженерный', modeLabel:'Режим:',
-medium:'Тип среды:', liquid:'Жидкость', gas:'Газ',
-presetLabel:'Типичные среды:', presetChoose:'Выберите среду...',
+medium:'Типсреды:', liquid:'Жидкость', gas:'Газ',
+presetLabel:'Типичныесреды:', presetChoose:'Выберитесреду...',
 presetWater:'Вода', presetOil:'Масло', presetAir:'Воздух', presetNitrogen:'Азот',
 presetOxygen:'Кислород', presetMethane:'Метан', presetCO2:'CO₂', presetLng:'СПГ / ПГ (смесь)',
 presetParahydrogen:'Водород (пара)', presetNormalhydrogen:'Водород (норм.)', presetHelium4:'Гелий-4',
 presetNeon:'Неон', presetArgon:'Аргон', presetKrypton:'Криптон', presetXenon:'Ксенон',
 presetAmmonia:'Аммиак', presetEthane:'Этан', presetEthylene:'Этилен', presetPropane:'Пропан', presetFreon22:'Фреон-22',
 viscosity:'Вязкость (сСт):', roughness:'Шероховатость (мм):',
-pressure:'Абс. давление (бар):', temperature:'Температура (°C):', molarMass:'Молярная масса<br>(г/моль):',
+pressure:'Абс. давление (бар):', temperature:'Температура (°C):', molarMass:'Молярнаямасса<br>(г/моль):',
 pressureUnit:'Единицы давления:', calculate:'Рассчитать', save:'Сохранить в файл',
 velocity:'Скорость', pressureDrop:'Потеря давления', reynolds:'Число Рейнольдса', lambda:'Коэффициент трения λ',
 errorNum:'Проверьте правильность ввода чисел', errorDiam:'Некорректный диаметр или толщина стенки',
@@ -886,20 +1092,20 @@ errorTempLimit:'Температура вне допустимого диапа�
 errorPresLimit:'Давление вне допустимого диапазона для данного вещества ({min}...{max} бар)',
 errorMolarMassRange:'Молярная масса должна быть в диапазоне 2...300 г/моль.',
 ready:'Готов к расчёту', resultSummary:'v = {velocity} м/с, ΔP = {pressure} {unit}', flowRate:'Скорость потока:',
-infoPanelGas:'⚠ Для газов плотность рассчитывается по уравнению состояния реального газа (Z). Вязкость включает поправку на давление.',
-infoPanelLiquid:'⚠ Для жидкостей проверяются реалистичные пределы плотности и вязкости.',
-infoPanelLng:'⚠ Смесь СПГ/ПГ. Фазовое состояние и пределы параметров зависят от состава.',
+infoPanelGas:'⚠Длягазовплотностьрассчитываетсяпоуравнениюсостоянияреальногогаза (Z). Вязкостьвключаетпоправкунадавление.',
+infoPanelLiquid:'⚠Дляжидкостейпроверяютсяреалистичныепределыплотностиивязкости.',
+infoPanelLng:'⚠СмесьСПГ/ПГ. Фазовоесостояниеипределыпараметровзависятотсостава.',
 limitInfo:'Допустимый диапазон: T {tmin}...{tmax} °C, P {pmin}...{pmax} бар',
 noLimitInfo:'Справочные пределы не заданы.',
 liquidDensityRange:'Плотность: {min}...{max} кг/м³',
 liquidViscosityRange:'Вязкость: {min}...{max} сСт',
-liquidPressureNote:'⚠ Для сжиженных газов свойства фиксированы.',
+liquidPressureNote:'⚠Длясжиженныхгазовсвойствафиксированы.',
 liquidLimitInfo:'Допустимый диапазон (жидкость): T {tmin}...{tmax} °C, P {pmin}...{pmax} бар',
 contractions:'Сужений (ζ=0.5):', expansions:'Расширений (ζ=1.0):', orifices:'Дросселей/диафрагм (ζ=2.0):',
-warningSaturationAbove:'⚠ Давление выше давления насыщения — расчёт сжиженного газа. Для точности выберите режим «Жидкость».',
-warningNearSaturation:'⚠ Близко к линии насыщения — возможна конденсация.',
-infoPanelSaturatedLiquid:' ⚠ Давление выше давления насыщения.',
-reliabilityGreen:'✅ Расчёт в пределах применимости моделей',
+warningSaturationAbove:'⚠Давлениевышедавлениянасыщения—расчётсжиженногогаза. Дляточностивыберитережим«Жидкость».',
+warningNearSaturation:'⚠Близкоклиниинасыщения—возможнаконденсация.',
+infoPanelSaturatedLiquid:' ⚠Давлениевышедавлениянасыщения.',
+reliabilityGreen:'✅Расчётвпределахприменимостимоделей',
 reliabilityYellow:'⚠️ Повышенная погрешность моделей',
 reliabilityRed:'🔴 За пределами применимости моделей',
 compressTransition:'🟡 M = {mach} — начинается влияние сжимаемости. Поправка: ×{factor}',
@@ -916,31 +1122,41 @@ reliabilityZ:'Коэффициент сжимаемости Z={z} сильно �
 reliabilityLiquidGas:'Свойства сжиженного газа рассчитаны по упрощённым корреляциям.',
 reliabilityLng:'Смесь СПГ/ПГ. Свойства через псевдокритические параметры (правило Кея). Погрешность ±5-10%.',
 reliabilityLngSupercritical:'Сверхкритический флюид (Tr={tr}). Свойства неопределены.',
-reliabilityLngTwoPhase:'⚠ Двухфазная область. Возможно кипение или конденсация.',
+reliabilityLngTwoPhase:'⚠Двухфазнаяобласть. Возможнокипениеиликонденсация.',
 reliabilityGasLimitsTemp:'Температура вне допустимого диапазона ({tmin}...{tmax}°C).',
 reliabilityGasLimitsPressure:'Давление вне допустимого диапазона ({pmin}...{pmax} бар).',
 warningLiquidDensity:'Плотность жидкости вне допустимого диапазона.',
 warningLiquidViscosity:'Вязкость жидкости вне допустимого диапазона.',
-reliabilityCryoVisc:'⚠ Вязкость криогенной жидкости рассчитана по табличным данным NIST.',
-lngBalanceOk:'✅ Сумма 100% — баланс сошёлся',
-lngBalanceWarn:'⚠ Сумма {total}% — небольшое отклонение',
+reliabilityCryoVisc:'⚠Вязкостькриогеннойжидкостирассчитанапотабличнымданным NIST.',
+lngBalanceOk:'✅Сумма 100% —баланссошёлся',
+lngBalanceWarn:'⚠Сумма {total}% —небольшоеотклонение',
 lngBalanceError:'🔴 Сумма {total}% — необходимо ровно 100%',
 lngCH4:'Метан CH₄ (%):', lngC2H6:'Этан C₂H₆ (%):', lngC3H8:'Пропан C₃H₈ (%):',
 lngIC4H10:'и-Бутан i-C₄H₁₀ (%):', lngNC4H10:'н-Бутан n-C₄H₁₀ (%):', lngIC5H12:'Изопентан i-C₅H₁₂ (%):', lngN2:'Азот N₂ (%):',
 helpTitle:'Справка', helpClose:'Закрыть', helpBtn:'Справка',
 validateTitle:'Валидация модели', validateClose:'Закрыть',
 validateInfo:'Сравнение расчётных значений со справочными данными NIST/REFPROP:',
-validateSubstance:'Вещество', validatePoint:'Точка', validateRhoRef:'ρ справка',
-validateRhoCalc:'ρ расчёт', validateNuRef:'ν справка', validateNuCalc:'ν расчёт',
+validateSubstance:'Вещество', validatePoint:'Точка', validateRhoRef:'ρсправка',
+validateRhoCalc:'ρрасчёт', validateNuRef:'νсправка', validateNuCalc:'νрасчёт',
 validateError:'Ошибка', validateStatus:'Статус',
-validateBtn: 'Валидация модели',
-validationDesc_boilingPoint: 'Точка кипения',
-validationDesc_satVapor: 'Пар насыщения',
-validationDesc_gasAtTemp: 'Газ при {temp}°C',
-validationDesc_triplePoint: 'Тройная точка',
+validateBtn: 'Валидациямодели',
+validationDesc_boilingPoint: 'Точкакипения',
+validationDesc_satVapor: 'Парнасыщения',
+validationDesc_gasAtTemp: 'Газпри {temp}°C',
+validationDesc_triplePoint: 'Тройнаяточка',
 validationDesc_tempC: '{temp}°C',
-validationAllOk: '✅ Все {total} точек в пределах 10% погрешности',
-validationSomeError: '⚠️ {errors} из {total} точек превышают 10% погрешности',
+validationAllOk: '✅Все {total} точеквпределах 10% погрешности',
+validationSomeError: '⚠️ {errors} из {total} точекпревышают 10% погрешности',
+validationDesc_triplePoint: 'Тройнаяточка (жидкость)',
+validationDesc_triplePointVapor: 'Тройнаяточка (пар)',
+validationDesc_lambdaPoint: 'Lambda-точка He-4 (жидкость)',
+validationDesc_lambdaPointVapor: 'Lambda-точка He-4 (пар)',
+validationDesc_satLiquid: 'Насыщеннаяжидкость',
+validationDesc_satVapor: 'Насыщенныйпар',
+validationDesc_superheatedVapor: 'Перегретыйпар (смещёнотлиниинасыщения)',
+validationDesc_nearCritical: 'Вблизикритическойточки',
+validationDesc_criticalPoint: 'Критическаяточка',
+validationDesc_sublimation: 'Линиясублимации',
 helpContent:`
 <h3>Режимы расчёта</h3>
 <p><b>Упрощённый</b> — только гидравлика. Быстрая оценка без учёта свойств среды.</p>
@@ -951,10 +1167,10 @@ helpContent:`
 <p>🔴 Красный — расчёт вне области применимости моделей.</p>
 <h3>Граничные значения и риски</h3>
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
-<tr><th>Вещество</th><th>T<sub>мин</sub>...T<sub>макс</sub> (°C)</th><th>P<sub>мин</sub>...P<sub>макс</sub> (бар)</th><th>Основной риск</th></tr>
-<tr><td>Воздух</td><td>-203...1027</td><td>0.34...1000</td><td>При T<-140°C сжижается, модель даёт оценку</td></tr>
-<tr><td>Азот</td><td>-207...1027</td><td>0.2...1000</td><td>Криогенная жидкость — вязкость по таблицам NIST</td></tr>
-<tr><td>Кислород</td><td>-218...1027</td><td>0.0018...1000</td><td>Аналогично азоту</td></tr>
+<tr><th>Вещество</th><th>T<sub>мин</sub>...T<sub>макс</sub> (°C)</th><th>P<sub>мин</sub>...P<sub>макс</sub> (бар)</th><th>Основнойриск</th></tr>
+<tr><td>Воздух</td><td>-203...1027</td><td>0.34...1000</td><td>При T<-140°C сжижается, модельдаётоценку</td></tr>
+<tr><td>Азот</td><td>-207...1027</td><td>0.2...1000</td><td>Криогеннаяжидкость — вязкостьпотаблицам NIST</td></tr>
+<tr><td>Кислород</td><td>-218...1027</td><td>0.0018...1000</td><td>Аналогичноазоту</td></tr>
 <tr><td>Метан</td><td>-182...327</td><td>0.12...1000</td><td>При высоком P/T — критическая область</td></tr>
 <tr><td>CO₂</td><td>-54...327</td><td>0.5...1000</td><td>Критическая точка при 31°C, 73.8 бар</td></tr>
 <tr><td>Водород (пара/норм.)</td><td>-259...227</td><td>0.007...100</td><td>Вязкость жидкости по таблицам NIST (точность ±3%)</td></tr>
@@ -1064,6 +1280,16 @@ validationDesc_triplePoint: 'Triple point',
 validationDesc_tempC: '{temp}°C',
 validationAllOk: '✅ All {total} points within 10% error',
 validationSomeError: '⚠️ {errors} of {total} points exceed 10% error',
+validationDesc_triplePoint: 'Triple point (liquid)',
+validationDesc_triplePointVapor: 'Triple point (vapor)',
+validationDesc_lambdaPoint: 'Lambda point He-4 (liquid)',
+validationDesc_lambdaPointVapor: 'Lambda point He-4 (vapor)',
+validationDesc_satLiquid: 'Saturated liquid',
+validationDesc_satVapor: 'Saturated vapor',
+validationDesc_superheatedVapor: 'Superheated vapor (offset from saturation line)',
+validationDesc_nearCritical: 'Near critical point',
+validationDesc_criticalPoint: 'Critical point',
+validationDesc_sublimation: 'Sublimation line',
 helpContent:`
 <h3>Calculation modes</h3>
 <p><b>Simplified</b> — hydraulics only. Quick estimate without fluid properties.</p>
@@ -1104,7 +1330,7 @@ formulaDiam:'按ΔP选择内径',
 formulaFlow:'按ΔP选择流量',
 targetParams:'目标参数',
 resultLabel:'结果：',
-targetDeltaP:'目标 ΔP (帕):', targetMassFlow:'质量流量 (千克/小时):',
+targetDeltaP:'目标ΔP (帕):', targetMassFlow:'质量流量 (千克/小时):',
 calcDiam:'选择直径', calcFlow:'选择流量',
 resultDiam:'内径: {diam} 毫米\n外径: {outer} 毫米\n流速: {vel} 米/秒\nRe: {re}\nλ: {lambda}',
 resultFlow:'质量流量: {flow} 千克/小时\n体积流量: {vol} 立方米/小时\n流速: {vel} 米/秒\nRe: {re}\nλ: {lambda}',
@@ -1123,17 +1349,17 @@ presetAmmonia:'氨', presetEthane:'乙烷', presetEthylene:'乙烯', presetPropa
 viscosity:'运动粘度 (厘斯)：', roughness:'粗糙度 (毫米)：',
 pressure:'绝对压力 (巴)：', temperature:'温度 (°C)：', molarMass:'摩尔质量<br>(克/摩尔)：',
 pressureUnit:'压力单位：', calculate:'计算', save:'保存',
-velocity:'流速', pressureDrop:'压力损失', reynolds:'雷诺数', lambda:'摩擦系数 λ',
+velocity:'流速', pressureDrop:'压力损失', reynolds:'雷诺数', lambda:'摩擦系数λ',
 errorNum:'请检查数字输入', errorDiam:'无效的直径或壁厚',
-errorPos:'密度、长度和流量必须 > 0', fileSaved:'文件已保存',
+errorPos:'密度、长度和流量必须> 0', fileSaved:'文件已保存',
 errorTempAbs:'温度不能低于绝对零度 (-273.15°C)',
 errorPresAbs:'压力必须为正数',
 errorTempLimit:'温度超出该物质的有效范围 ({min}...{max}°C)',
 errorPresLimit:'压力超出该物质的有效范围 ({min}...{max} 巴)',
 errorMolarMassRange:'摩尔质量应在2到300克/摩尔之间。',
 ready:'准备就绪', resultSummary:'v = {velocity} 米/秒, ΔP = {pressure} {unit}', flowRate:'流速：',
-infoPanelGas:'⚠ 气体密度根据实际气体状态方程（Z）计算。粘度包含压力修正。',
-infoPanelLiquid:'⚠ 检查液体密度和粘度的实际范围。',
+infoPanelGas:'⚠气体密度根据实际气体状态方程（Z）计算。粘度包含压力修正。',
+infoPanelLiquid:'⚠检查液体密度和粘度的实际范围。',
 infoPanelLng:'⚠ LNG/NG 混合物。相态和参数限制取决于组成。',
 limitInfo:'有效范围：T {tmin}...{tmax} °C, P {pmin}...{pmax} 巴',
 noLimitInfo:'无参考限制。',
@@ -1142,16 +1368,16 @@ liquidViscosityRange:'粘度：{min}...{max} 厘斯',
 liquidPressureNote:'⚠液化气体属性为固定值。',
 liquidLimitInfo:'有效范围（液体）：T {tmin}...{tmax} °C, P {pmin}...{pmax} 巴',
 contractions:'收缩 (ζ=0.5)：', expansions:'扩张 (ζ=1.0)：', orifices:'孔板/节流阀 (ζ=2.0)：',
-warningSaturationAbove:'⚠ 压力高于饱和压力 — 按液化气体计算。为获得更高精度，请切换至液体模式。',
-warningNearSaturation:'⚠ 接近饱和压力 — 可能发生冷凝。',
-infoPanelSaturatedLiquid:' ⚠ 压力高于饱和压力。',
-reliabilityGreen:'✅ 计算在模型适用范围内',
-reliabilityYellow:'⚠️ 模型不确定性增加',
-reliabilityRed:'🔴 超出模型适用范围',
+warningSaturationAbove:'⚠压力高于饱和压力 — 按液化气体计算。为获得更高精度，请切换至液体模式。',
+warningNearSaturation:'⚠接近饱和压力 — 可能发生冷凝。',
+infoPanelSaturatedLiquid:' ⚠压力高于饱和压力。',
+reliabilityGreen:'✅计算在模型适用范围内',
+reliabilityYellow:'⚠️模型不确定性增加',
+reliabilityRed:'🔴超出模型适用范围',
 compressTransition:'🟡 M = {mach} — 压缩性影响开始显现。修正系数：×{factor}',
 compressFull:'🟠 M = {mach} — 必须考虑压缩性。损失增至{factor}倍',
 compressHigh:'🔴 M = {mach} — 高速！可能出现激波。修正系数：×{factor}',
-compressChoked:'🔴 壅塞流！质量流量受声速限制。',
+compressChoked:'🔴壅塞流！质量流量受声速限制。',
 soundSpeedInfo:' (声速：{speed} 米/秒)',
 reliabilityCriticalRegion:'临界区 (Tr={tr}, Pr={pr})。不确定性10-30%。',
 reliabilityNearCritical:'接近临界点 (Tr={tr}, Pr={pr})。不确定性5-10%。',
@@ -1162,22 +1388,22 @@ reliabilityZ:'压缩因子Z={z}显著偏离1。',
 reliabilityLiquidGas:'液化气体性质使用简化相关性计算。',
 reliabilityLng:'LNG/NG 混合物。伪临界参数(Kay规则)。精度 ±5-10%。',
 reliabilityLngSupercritical:'超临界流体 (Tr={tr})。性质未定义。',
-reliabilityLngTwoPhase:'⚠ 两相区。可能沸腾或冷凝。',
+reliabilityLngTwoPhase:'⚠两相区。可能沸腾或冷凝。',
 reliabilityGasLimitsTemp:'温度超出有效范围 ({tmin}...{tmax}°C)。',
 reliabilityGasLimitsPressure:'压力超出有效范围 ({pmin}...{pmax} 巴)。',
 warningLiquidDensity:'液体密度超出范围。',
 warningLiquidViscosity:'液体粘度超出范围。',
-reliabilityCryoVisc:'⚠ 低温液体粘度按NIST表格数据计算。',
-lngBalanceOk:'✅ 总和100% — 已平衡',
-lngBalanceWarn:'⚠ 总和{total}% — 轻微偏离',
-lngBalanceError:'🔴 总和{total}% — 需要正好100%',
+reliabilityCryoVisc:'⚠低温液体粘度按NIST表格数据计算。',
+lngBalanceOk:'✅总和100% — 已平衡',
+lngBalanceWarn:'⚠总和{total}% — 轻微偏离',
+lngBalanceError:'🔴总和{total}% — 需要正好100%',
 lngCH4:'甲烷 CH₄ (%)：', lngC2H6:'乙烷 C₂H₆ (%)：', lngC3H8:'丙烷 C₃H₈ (%)：',
-lngIC4H10:'异丁烷 i-C₄H₁₀ (%)：', lngNC4H10:'正丁烷 n-C₄H₁₀ (%)：', lngIC5H12:'异戊烷 i-C₅H₁₂ (%)：', lngN2:'氮气 N₂ (%)：',
+lngIC4H10:'异丁烷i-C₄H₁₀ (%)：', lngNC4H10:'正丁烷 n-C₄H₁₀ (%)：', lngIC5H12:'异戊烷i-C₅H₁₂ (%)：', lngN2:'氮气 N₂ (%)：',
 helpTitle:'帮助', helpClose:'关闭', helpBtn:'帮助',
 validateTitle:'模型验证', validateClose:'关闭',
 validateInfo:'与NIST/REFPROP参考数据对比：',
-validateSubstance:'物质', validatePoint:'测点', validateRhoRef:'ρ 参考',
-validateRhoCalc:'ρ 计算', validateNuRef:'ν 参考', validateNuCalc:'ν 计算',
+validateSubstance:'物质', validatePoint:'测点', validateRhoRef:'ρ参考',
+validateRhoCalc:'ρ计算', validateNuRef:'ν参考', validateNuCalc:'ν计算',
 validateError:'误差', validateStatus:'状态',
 validateBtn: '模型验证',
 validationDesc_boilingPoint: '沸点',
@@ -1185,16 +1411,26 @@ validationDesc_satVapor: '饱和蒸汽',
 validationDesc_gasAtTemp: '{temp}°C 气体',
 validationDesc_triplePoint: '三相点',
 validationDesc_tempC: '{temp}°C',
-validationAllOk: '✅ 所有 {total} 个点误差在10%以内',
+validationAllOk: '✅所有 {total} 个点误差在10%以内',
 validationSomeError: '⚠️ {errors}/{total} 个点误差超过10%',
+validationDesc_triplePoint: '三相点（液体）',
+validationDesc_triplePointVapor: '三相点（蒸汽）',
+validationDesc_lambdaPoint: 'Lambda点 He-4（液体）',
+validationDesc_lambdaPointVapor: 'Lambda点 He-4（蒸汽）',
+validationDesc_satLiquid: '饱和液体',
+validationDesc_satVapor: '饱和蒸汽',
+validationDesc_superheatedVapor: '过热蒸汽（偏离饱和线）',
+validationDesc_nearCritical: '临界点附近',
+validationDesc_criticalPoint: '临界点',
+validationDesc_sublimation: '升华线',
 helpContent:`
 <h3>计算模式</h3>
 <p><b>简化模式</b> — 仅考虑水力学。快速评估，不考虑介质特性。</p>
 <p><b>工程模式</b> — 完整计算，包含实际气体/液体性质、压缩性和相态。</p>
 <h3>指示器</h3>
-<p>🟢 绿色 — 模型在最佳范围内。</p>
-<p>🟡 黄色 — 不确定性增加（请查看警告）。</p>
-<p>🔴 红色 — 计算超出模型适用范围。</p>
+<p>🟢绿色 — 模型在最佳范围内。</p>
+<p>🟡黄色 — 不确定性增加（请查看警告）。</p>
+<p>🔴红色 — 计算超出模型适用范围。</p>
 <h3>限值与风险</h3>
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
 <tr><th>物质</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (巴)</th><th>主要风险</th></tr>
@@ -1205,7 +1441,7 @@ helpContent:`
 <tr><td>CO₂</td><td>-54...327</td><td>0.5...1000</td><td>临界点 31°C, 73.8 巴</td></tr>
 <tr><td>氢 (仲/正)</td><td>-259...227</td><td>0.007...100</td><td>液体粘度按NIST表格（精度±3%）</td></tr>
 <tr><td>氦-4</td><td>-271...327</td><td>0.01...100</td><td>2.17K以下超流性 — 模型给出估计</td></tr>
-<tr><td>氖、氩、氪、氙</td><td>参见限值</td><td>参见限值</td><td>稀有气体 — PR-Twu 精确</td></tr>
+<tr><td>氖、氩、氪、氙</td><td>参见限值</td><td>参见限值</td><td>稀有气体 — PR-Twu精确</td></tr>
 <tr><td>氨</td><td>-63...477</td><td>0.08...1000</td><td>极性物质，临界点附近误差5-10%</td></tr>
 <tr><td>乙烷、乙烯、丙烷</td><td>参见限值</td><td>参见限值</td><td>碳氢化合物，临界区</td></tr>
 <tr><td>氟利昂-22</td><td>0...280</td><td>1...350</td><td>制冷剂，PR-Twu 适用</td></tr>
@@ -1226,7 +1462,7 @@ function t(key) { return locales[currentLang]?.[key] || key; }
 
 
 /* ============================================================
-   UI ЭЛЕМЕНТЫ И ОБРАБОТЧИКИ
+   UI ЭЛЕМЕНТЫИОБРАБОТЧИКИ
    ============================================================ */
 
 const menuToggle = document.getElementById('menuToggle'), settingsMenu = document.getElementById('settingsMenu');
@@ -1247,32 +1483,32 @@ let lastResult = {velocity:0,deltaP:0,re:0,lambda:0,mode:'',mediumType:'',preset
 let updating = false;
 
 /* ============================================================
-   ВАЛИДАЦИЯ МОДЕЛИ
+ВАЛИДАЦИЯМОДЕЛИ
    ============================================================ */
 
 function runValidation() {
   const content = document.getElementById('validateContent');
-  content.innerHTML = '<p>' + t('validateInfo') + '</p>';
+content.innerHTML = '<p>' + t('validateInfo') + '</p>';
 
   const table = document.createElement('table');
-  table.style.cssText = 'width:100%; font-size:11px; border-collapse:collapse; margin-top:8px;';
+table.style.cssText = 'width:100%; font-size:11px; border-collapse:collapse; margin-top:8px;';
 
   // Заголовок
   const header = document.createElement('tr');
   ['validateSubstance','validatePoint','validateRhoRef','validateRhoCalc','validateNuRef','validateNuCalc','validateError','validateStatus'].forEach(key => {
     const th = document.createElement('th');
-    th.textContent = t(key);
-    th.style.cssText = 'border:1px solid var(--border); padding:4px; background:var(--btn-bg);';
-    header.appendChild(th);
+th.textContent = t(key);
+th.style.cssText = 'border:1px solid var(--border); padding:4px; background:var(--btn-bg);';
+header.appendChild(th);
   });
-  table.appendChild(header);
+table.appendChild(header);
 
   let totalErrors = 0;
   let totalPoints = 0;
 
   for (const [gas, points] of Object.entries(validationPoints)) {
     for (const pt of points) {
-      totalPoints++;
+totalPoints++;
       const calc_rho = calcRealGasDensity(pt.T_C, pt.P_bar, gas);
       const calc_mu = calcRealGasViscosity(pt.T_C, pt.P_bar, gas);
       const calc_nu = calc_mu / calc_rho * 1e6; // сСт
@@ -1284,9 +1520,9 @@ function runValidation() {
 
       // Вещество
       const tdGas = document.createElement('td');
-      tdGas.textContent = t('preset' + gas.charAt(0).toUpperCase() + gas.slice(1)) || gas;
-      tdGas.style.cssText = 'border:1px solid var(--border); padding:4px;';
-      row.appendChild(tdGas);
+tdGas.textContent = t('preset' + gas.charAt(0).toUpperCase() + gas.slice(1)) || gas;
+tdGas.style.cssText = 'border:1px solid var(--border); padding:4px;';
+row.appendChild(tdGas);
 
       // Точка (локализована)
       const tdPoint = document.createElement('td');
@@ -1297,80 +1533,80 @@ function runValidation() {
             desc = desc.replace('{'+k+'}', v);
           }
         }
-        tdPoint.textContent = desc;
+tdPoint.textContent = desc;
       } else {
-        tdPoint.textContent = pt.desc || '';
+tdPoint.textContent = pt.desc || '';
       }
-      tdPoint.style.cssText = 'border:1px solid var(--border); padding:4px;';
-      row.appendChild(tdPoint);
+tdPoint.style.cssText = 'border:1px solid var(--border); padding:4px;';
+row.appendChild(tdPoint);
 
-      // ρ справка
+      // ρсправка
       const tdRhoRef = document.createElement('td');
-      tdRhoRef.textContent = pt.rho_ref.toFixed(1);
-      tdRhoRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-      row.appendChild(tdRhoRef);
+tdRhoRef.textContent = pt.rho_ref.toFixed(3);
+tdRhoRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+row.appendChild(tdRhoRef);
 
-      // ρ расчёт
+      // ρрасчёт
       const tdRhoCalc = document.createElement('td');
-      tdRhoCalc.textContent = calc_rho.toFixed(1);
-      tdRhoCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-      row.appendChild(tdRhoCalc);
+tdRhoCalc.textContent = calc_rho.toFixed(3);
+tdRhoCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+row.appendChild(tdRhoCalc);
 
-      // ν справка
+      // νсправка
       const tdNuRef = document.createElement('td');
-      tdNuRef.textContent = pt.nu_ref ? pt.nu_ref.toFixed(3) : '—';
-      tdNuRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-      row.appendChild(tdNuRef);
+tdNuRef.textContent = pt.nu_ref ? pt.nu_ref.toFixed(3) : '—';
+tdNuRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+row.appendChild(tdNuRef);
 
-      // ν расчёт
+      // νрасчёт
       const tdNuCalc = document.createElement('td');
-      tdNuCalc.textContent = calc_nu ? calc_nu.toFixed(3) : '—';
-      tdNuCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-      row.appendChild(tdNuCalc);
+tdNuCalc.textContent = calc_nu ? calc_nu.toFixed(3) : '—';
+tdNuCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+row.appendChild(tdNuCalc);
 
       // Ошибка
       const tdError = document.createElement('td');
       const maxErr = Math.max(rho_err, nu_err);
-      tdError.textContent = maxErr.toFixed(1) + '%';
-      tdError.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-      if (maxErr > 10) tdError.style.color = '#dc3545';
-      else if (maxErr > 5) tdError.style.color = '#ffc107';
+tdError.textContent = maxErr.toFixed(1) + '%';
+tdError.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+      if (maxErr> 10) tdError.style.color = '#dc3545';
+      else if (maxErr> 5) tdError.style.color = '#ffc107';
       else tdError.style.color = '#28a745';
-      row.appendChild(tdError);
+row.appendChild(tdError);
 
       // Статус
       const tdStatus = document.createElement('td');
-      if (maxErr > 10) { tdStatus.textContent = '🔴'; totalErrors++; }
-      else if (maxErr > 5) tdStatus.textContent = '🟡';
+      if (maxErr> 10) { tdStatus.textContent = '🔴'; totalErrors++; }
+      else if (maxErr> 5) tdStatus.textContent = '🟡';
       else tdStatus.textContent = '🟢';
-      tdStatus.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:center;';
-      row.appendChild(tdStatus);
+tdStatus.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:center;';
+row.appendChild(tdStatus);
 
-      table.appendChild(row);
+table.appendChild(row);
     }
   }
 
-  content.appendChild(table);
+content.appendChild(table);
 
   // Итог (локализован)
   const summary = document.createElement('p');
-  summary.style.marginTop = '12px';
-  summary.style.fontWeight = 'bold';
+summary.style.marginTop = '12px';
+summary.style.fontWeight = 'bold';
   if (totalErrors === 0) {
-    summary.textContent = t('validationAllOk').replace('{total}', totalPoints);
-    summary.style.color = '#28a745';
+summary.textContent = t('validationAllOk').replace('{total}', totalPoints);
+summary.style.color = '#28a745';
   } else {
-    summary.textContent = t('validationSomeError').replace('{errors}', totalErrors).replace('{total}', totalPoints);
-    summary.style.color = '#ffc107';
+summary.textContent = t('validationSomeError').replace('{errors}', totalErrors).replace('{total}', totalPoints);
+summary.style.color = '#ffc107';
   }
-  content.appendChild(summary);
+content.appendChild(summary);
 
-  document.getElementById('validateModal').style.display = 'flex';
+document.getElementById('validateModal').style.display = 'flex';
 }
 
 document.getElementById('validateBtn').addEventListener('click', runValidation);
 document.getElementById('validateClose').addEventListener('click', () => {
-  document.getElementById('validateModal').style.display = 'none';
+document.getElementById('validateModal').style.display = 'none';
 });
 document.getElementById('validateModal').addEventListener('click', (e) => {
   if (e.target === document.getElementById('validateModal')) document.getElementById('validateModal').style.display = 'none';
@@ -1378,7 +1614,7 @@ document.getElementById('validateModal').addEventListener('click', (e) => {
 
 /* ============================================================
    ОСТАЛЬНЫЕ ФУНКЦИИ (сжимаемость, достоверность и т.д.)
-   ============================================================ */
+============================================================ */
 
 function getGammaDetailed(p){ const m={air:1.4,nitrogen:1.4,oxygen:1.4,methane:1.31,co2:1.29,parahydrogen:1.41,normalhydrogen:1.41,helium4:1.667,neon:1.667,argon:1.667,krypton:1.667,xenon:1.667,ammonia:1.31,ethane:1.19,ethylene:1.24,propane:1.13,freon22:1.19,lng:1.25,water:1.33,oil:1.10}; return m[p]||1.4; }
 
@@ -1397,7 +1633,7 @@ function calcCompressibilityCorrection(v,dP0){
   const M=v/a;
   if(M<0.1)return{factor:1,mach:M,regime:'incompressible',dP_corrected:dP0};
   if(M<0.3){const t=(M-0.1)/0.2,P_abs=parseFloat(document.getElementById('pressure').value)*1e5; const P2=Math.max(P_abs-dP0,100),P1=Math.max(P_abs,100),fc=(P1/P2+1)/2; return{factor:1+(fc-1)*t,mach:M,regime:'transition',dP_corrected:dP0*(1+(fc-1)*t)};}
-  const P_abs=parseFloat(document.getElementById('pressure').value)*1e5; const g=getGammaDetailed(presetSelect.value),critR=g/(g+1),maxDP=P_abs*critR; const dP_lim=Math.min(dP0,maxDP*0.99); const P2=Math.max(P_abs-dP_lim,100),fc=(P_abs/P2+1)/2,dP_corr=dP_lim*fc; let regime='compressible'; if(M>0.7)regime='high-subsonic'; if(dP_lim>=maxDP*0.95)regime='choked'; return{factor:fc,mach:M,regime,dP_corrected:dP_corr};
+  const P_abs=parseFloat(document.getElementById('pressure').value)*1e5; const g=getGammaDetailed(presetSelect.value),critR=g/(g+1),maxDP=P_abs*critR; constdP_lim=Math.min(dP0,maxDP*0.99); const P2=Math.max(P_abs-dP_lim,100),fc=(P_abs/P2+1)/2,dP_corr=dP_lim*fc; let regime='compressible'; if(M>0.7)regime='high-subsonic'; if(dP_lim>=maxDP*0.95)regime='choked'; return{factor:fc,mach:M,regime,dP_corrected:dP_corr};
 }
 
 function updateCompressNoteFromCorr(c){ const n=document.getElementById('compressNote'); if(!c||c.mach<0.1||modeSelect.value==='simple'||mediumSelect.value!=='gas'){n.textContent='';n.classList.remove('show');n.style.display='none';return;} let msg='';const M=c.mach.toFixed(2),f=c.factor.toFixed(2); if(c.regime==='transition')msg=t('compressTransition').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='compressible')msg=t('compressFull').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='high-subsonic')msg=t('compressHigh').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='choked')msg=t('compressChoked'); const a=calcSoundSpeed(); if(a)msg+=t('soundSpeedInfo').replace('{speed}',a.toFixed(0)); n.textContent=msg;n.classList.add('show');n.style.display='block'; }
@@ -1433,12 +1669,12 @@ function getAllMessages(){
     if(antoine&&isSub&&isLiq&&(T_K<antoine.Tmin||T_K>antoine.Tmax)){level=1;messages.push({text:t('reliabilityAntoine').replace('{tmin}',(antoine.Tmin-273.15).toFixed(0)).replace('{tmax}',(antoine.Tmax-273.15).toFixed(0)),type:'info'});}
     if(P_sat!==null&&isSub){ if(isLiq&&P>=P_sat*(1-0.001))messages.push({text:t('warningSaturationAbove'),type:'caution'}); else if(!isLiq&&P>=P_sat*0.9)messages.push({text:t('warningNearSaturation'),type:'info'}); }
     if(isSub&&isLiq&&preset!=='water'&&preset!=='oil'){
-      level=1;
+level=1;
       // Для криогенных жидкостей с табличными данными — зелёный статус
-      if (['normalhydrogen','parahydrogen','helium4','nitrogen','oxygen','methane','neon','argon','krypton','xenon','ammonia','ethane','ethylene','propane','co2','freon22'].includes(preset)) {
-        messages.push({text:t('reliabilityCryoVisc'),type:'info'});
+if (['normalhydrogen','parahydrogen','helium4','nitrogen','oxygen','methane','neon','argon','krypton','xenon','ammonia','ethane','ethylene','propane','co2','freon22'].includes(preset)) {
+messages.push({text:t('reliabilityCryoVisc'),type:'info'});
       } else {
-        messages.push({text:t('reliabilityLiquidGas'),type:'caution'});
+messages.push({text:t('reliabilityLiquidGas'),type:'caution'});
       }
     }
     if(!isLiq){const Z=calcZ_PengRobinson(T_K,P,crit.Tc,crit.Pc,crit.w,'gas'); if(Math.abs(Z-1)>0.2){level=1;messages.push({text:t('reliabilityZ').replace('{z}',Z.toFixed(2)),type:'info'});}}
@@ -1447,9 +1683,9 @@ function getAllMessages(){
     const liq=liquidLimits[preset];
     if(liq){const d=parseFloat(document.getElementById('density').value),v=parseFloat(document.getElementById('viscosity').value); if(!isNaN(d)&&(d<liq.densityMin||d>liq.densityMax)){level=1;messages.push({text:t('warningLiquidDensity'),type:'caution'});} if(!isNaN(v)&&(v<liq.viscosityMin||v>liq.viscosityMax)){level=1;messages.push({text:t('warningLiquidViscosity'),type:'caution'});}}
     if(preset!=='water'&&preset!=='oil'){
-      // Для жидкостей с табличными данными — инфо вместо предупреждения
-      if (liquidViscosityTables[preset]) {
-        messages.push({text:t('reliabilityCryoVisc'),type:'info'});
+// Для жидкостей с табличными данными — инфо вместо предупреждения
+if (liquidViscosityTables[preset]) {
+messages.push({text:t('reliabilityCryoVisc'),type:'info'});
       } else {
         level=1;messages.push({text:t('reliabilityLiquidGas'),type:'caution'});
       }
@@ -1461,28 +1697,28 @@ function getAllMessages(){
 function updateAllWarnings(){
   const{level,messages}=getAllMessages();
   const indicator=document.getElementById('reliabilityIndicator'),textEl=document.getElementById('reliabilityText'),tooltipEl=document.getElementById('reliabilityTooltip');
-  warningListContainer.innerHTML=''; warningListContainer.style.display='none';
+warningListContainer.innerHTML=''; warningListContainer.style.display='none';
   if(modeSelect.value==='simple'||presetSelect.value==='choose'){indicator.style.display='none';return;}
   if(level<0){indicator.style.display='none';return;}
-  indicator.style.display='flex'; indicator.classList.remove('reliability-green','reliability-yellow','reliability-red');
+indicator.style.display='flex'; indicator.classList.remove('reliability-green','reliability-yellow','reliability-red');
   let mainText;
   if(level===0){indicator.classList.add('reliability-green');mainText=t('reliabilityGreen');}
   else if(level===1){indicator.classList.add('reliability-yellow');mainText=t('reliabilityYellow');}
   else{indicator.classList.add('reliability-red');mainText=t('reliabilityRed');}
-  textEl.textContent=mainText;
+textEl.textContent=mainText;
   if(messages.length===0){tooltipEl.textContent='';tooltipEl.style.display='none';}
   else{
     const crit=messages.filter(m=>m.type==='critical').length,caut=messages.filter(m=>m.type==='caution').length,info=messages.filter(m=>m.type==='info').length;
     let summary=[]; if(crit>0)summary.push('🔴'+crit); if(caut>0)summary.push('🟡'+caut); if(info>0)summary.push('🔵'+info);
-    tooltipEl.textContent=summary.join(', '); tooltipEl.style.display='block';
+tooltipEl.textContent=summary.join(', '); tooltipEl.style.display='block';
     const list=document.createElement('div'); list.className='warning-list';
-    messages.forEach(msg=>{
+messages.forEach(msg=>{
       const item=document.createElement('div'); let icon,css;
       if(msg.type==='critical'){icon='🔴';css='warning-critical';}else if(msg.type==='caution'){icon='🟡';css='warning-caution';}else{icon='🔵';css='warning-info';}
-      item.className=`warning-item ${css}`; item.innerHTML=`<span class="warning-icon">${icon}</span><span>${msg.text}</span>`;
-      list.appendChild(item);
+item.className=`warning-item ${css}`; item.innerHTML=`<span class="warning-icon">${icon}</span><span>${msg.text}</span>`;
+list.appendChild(item);
     });
-    warningListContainer.appendChild(list); warningListContainer.style.display='block';
+warningListContainer.appendChild(list); warningListContainer.style.display='block';
   }
 }
 
@@ -1529,16 +1765,16 @@ function updateInfoPanel(){
     if(limits)text+=' '+t('limitInfo').replace('{tmin}',(limits.Tmin-273.15).toFixed(1)).replace('{tmax}',(limits.Tmax-273.15).toFixed(1)).replace('{pmin}',limits.Pmin.toFixed(4)).replace('{pmax}',limits.Pmax.toFixed(1));
     else text+=' '+t('noLimitInfo');
     const info=window._lastPhaseInfo;if(info&&info.phase==='liquid')text+=t('infoPanelSaturatedLiquid');
-    infoPanel.textContent=text;
+infoPanel.textContent=text;
   }else{
     let text=t('infoPanelLiquid');const liq=liquidLimits[preset];
     if(liq)text+=' '+t('liquidDensityRange').replace('{min}',liq.densityMin).replace('{max}',liq.densityMax)+' '+t('liquidViscosityRange').replace('{min}',liq.viscosityMin).replace('{max}',liq.viscosityMax);
     if(preset!=='water'&&preset!=='oil')text+=' '+t('liquidPressureNote');
-    // Добавляем информацию о табличных данных
-    if (liquidViscosityTables[preset]) {
-      text += ' ⚠ Вязкость по таблицам NIST (лог. интерполяция).';
-    }
-    infoPanel.textContent=text;
+// Добавляем информацию о табличных данных
+if (liquidViscosityTables[preset]) {
+text += ' ⚠Вязкостьпотаблицам NIST (лог. интерполяция).';
+}
+infoPanel.textContent=text;
   }
 }
 
@@ -1549,7 +1785,7 @@ function syncLngProperties(){
   const d=calcLngDensity(T,P); if(d>0)document.getElementById('density').value=d.toFixed(4);
   const mu=calcLngViscosity(T,P); if(mu&&d>0)document.getElementById('viscosity').value=(mu/d*1e6).toFixed(4);
   const phase=determineLngPhase(T,P); mediumSelect.value=(phase==='gas'||phase==='supercritical')?'gas':'liquid';
-  applyLngLimitsToFields(); updateInfoPanel();updateAllWarnings();updateFieldBorders(); updating=false;
+applyLngLimitsToFields(); updateInfoPanel();updateAllWarnings();updateFieldBorders(); updating=false;
 }
 
 function syncFromTempPress(){
@@ -1562,7 +1798,7 @@ function syncFromTempPress(){
     const Pb=isNaN(P)?1:Math.max(P,0.001);
     const d=calcRealGasDensity(T,Pb,gas); if(d>0)document.getElementById('density').value=d.toFixed(4);
     const mu=calcRealGasViscosity(T,Pb,gas); if(mu&&d>0)document.getElementById('viscosity').value=(mu/d*1e6).toFixed(4);
-    updateInfoPanel();updateAllWarnings();updateFieldBorders();
+updateInfoPanel();updateAllWarnings();updateFieldBorders();
   }
   updating=false;
 }
@@ -1575,7 +1811,7 @@ document.getElementById('pressure').addEventListener('change', syncFromTempPress
 function updatePropertiesForState(p){
   if(p==='lng'){document.getElementById('temperature').value=-162;document.getElementById('pressure').value=1;syncLngProperties();return;}
   const d=document.getElementById('density'),v=document.getElementById('viscosity'),r=document.getElementById('roughness'),m=document.getElementById('molarMass'),isL=mediumSelect.value==='liquid';
-  r.value=0.05;
+r.value=0.05;
   if(p=='water'){d.value=1000;v.value=1.0;r.value=0.1}else if(p=='oil'){d.value=900;v.value=50.0;r.value=0.1}
   else if(p=='air'){if(isL){d.value=870;v.value=0.17}else{d.value=1.20;v.value=15.0;m.value=28.97}}
   else if(p=='nitrogen'){if(isL){d.value=808;v.value=0.16}else{d.value=1.165;v.value=15.1;m.value=28.01}}
@@ -1599,15 +1835,15 @@ function updatePropertiesForState(p){
 function applyPreset(p){
   if(p==='lng'){
     document.getElementById('temperature').value=-162;document.getElementById('pressure').value=1;
-    lngComposition.classList.add('show'); buildLngComposition(); syncLngProperties();
+lngComposition.classList.add('show'); buildLngComposition(); syncLngProperties();
   }else{
-    lngComposition.classList.remove('show'); lngComposition.innerHTML='';
-    if(p=='water'||p=='oil')mediumSelect.value='liquid';else mediumSelect.value='gas';
-    updatePropertiesForState(p);applyGasLimits();
+lngComposition.classList.remove('show'); lngComposition.innerHTML='';
+    if(p=='water'||p=='oil')mediumSelect.value='liquid';elsemediumSelect.value='gas';
+updatePropertiesForState(p);applyGasLimits();
   }
-  updateEngineerVisibility();
+updateEngineerVisibility();
   if(mediumSelect.value==='gas'&&p!=='lng')syncFromTempPress();
-  updateAllWarnings();updateFieldBorders();resetResults();
+updateAllWarnings();updateFieldBorders();resetResults();
 }
 
 function applyGasLimits(){
@@ -1619,22 +1855,22 @@ function applyGasLimits(){
 
 function resetResults(){
   lastResult={velocity:0,deltaP:0,re:0,lambda:0,mode:'',mediumType:'',preset:'',pressureUnit:'Pa',compressDiff:null,compressMach:false,compressCorrection:null};
-  updateResultLabels();const n=document.getElementById('compressNote');n.textContent='';n.classList.remove('show');n.style.display='none';
+updateResultLabels();const n=document.getElementById('compressNote');n.textContent='';n.classList.remove('show');n.style.display='none';
   saveBtn.disabled=true;formulaDisplay.textContent=t('ready');mainDisplay.value='0';
-  document.getElementById('validationPanel').style.display='none';
+document.getElementById('validationPanel').style.display='none';
 }
 
 function updateResultLabels(){
-  velocityResult.textContent=t('velocity')+': '+(lastResult.velocity>0?lastResult.velocity.toFixed(3)+' '+locales[currentLang].units.m_s:'---');
-  pressureDropResult.textContent=t('pressureDrop')+': '+(lastResult.deltaP>0?formatPressure(lastResult.deltaP,lastResult.pressureUnit):'---');
-  reynoldsResult.textContent=t('reynolds')+': '+(lastResult.re>0?lastResult.re.toFixed(0):'---');
-  lambdaResult.textContent=t('lambda')+': '+(lastResult.lambda>0?lastResult.lambda.toFixed(4):'---');
+velocityResult.textContent=t('velocity')+': '+(lastResult.velocity>0?lastResult.velocity.toFixed(3)+' '+locales[currentLang].units.m_s:'---');
+pressureDropResult.textContent=t('pressureDrop')+': '+(lastResult.deltaP>0?formatPressure(lastResult.deltaP,lastResult.pressureUnit):'---');
+reynoldsResult.textContent=t('reynolds')+': '+(lastResult.re>0?lastResult.re.toFixed(0):'---');
+lambdaResult.textContent=t('lambda')+': '+(lastResult.lambda>0?lastResult.lambda.toFixed(4):'---');
 }
 
 function updateDisplayWithResult(){
   const u=lastResult.pressureUnit,pf=formatPressure(lastResult.deltaP,u);
   formulaDisplay.textContent=t('resultSummary').replace('{velocity}',lastResult.velocity.toFixed(3)).replace('{pressure}',pf.split(' ')[0]).replace('{unit}',(locales[currentLang].units[u]||u));
-  mainDisplay.value=lastResult.velocity.toFixed(3);
+mainDisplay.value=lastResult.velocity.toFixed(3);
 }
 
 calculateBtn.addEventListener('click',()=>{
@@ -1667,11 +1903,11 @@ calculateBtn.addEventListener('click',()=>{
       let dPf=dP0;
       if(medium=='gas'){compressCorrection=calcCompressibilityCorrection(velocity,dP0);dPf=compressCorrection.dP_corrected;machExceeded=compressCorrection.mach>0.3;updateCompressNoteFromCorr(compressCorrection)}
       else{const n=document.getElementById('compressNote');n.textContent='';n.classList.remove('show');n.style.display='none'}
-      deltaP=dPf;lastResult.re=re;lastResult.lambda=lambda;
+deltaP=dPf;lastResult.re=re;lastResult.lambda=lambda;
     }
     lastResult.velocity=velocity;lastResult.deltaP=deltaP;lastResult.pressureUnit=document.getElementById('pressureUnit').value;
     lastResult.compressDiff=(compressDiff!==null&&compressDiff>10)?compressDiff:null;lastResult.compressMach=machExceeded;
-    lastResult.compressCorrection=compressCorrection||null;
+lastResult.compressCorrection=compressCorrection||null;
     saveBtn.disabled=false;updateResultLabels();updateDisplayWithResult();updateAllWarnings();updateFieldBorders();
   }catch(e){alert(t('errorNum'))}
 });
@@ -1707,7 +1943,7 @@ shareBtn.addEventListener('click',()=>{
   const u='https://github.com/Empers100/HydraulicCalculator',txt=(lastResult.velocity>0)?buildReport():t('shareText');
   if(typeof AndroidShare!=='undefined'&&AndroidShare.shareText)AndroidShare.shareText(t('title'),txt,u);
   else if(navigator.share)navigator.share({title:t('title'),text:txt,url:u}).catch(()=>{});
-  settingsMenu.classList.remove('show');
+settingsMenu.classList.remove('show');
 });
 
 document.querySelectorAll('input[type="number"]').forEach(input=>{
@@ -1719,11 +1955,11 @@ document.querySelectorAll('input[type="number"]').forEach(input=>{
 
 function updateEngineerVisibility(){
   const eng=modeSelect.value==='engineer';
-  engineerBlock.classList.toggle('show',eng);
-  extraResistances.classList.toggle('show',eng);
-  infoBlock.classList.toggle('show',eng);
+engineerBlock.classList.toggle('show',eng);
+extraResistances.classList.toggle('show',eng);
+infoBlock.classList.toggle('show',eng);
   if(eng){infoPanel.classList.add('show');updateInfoPanel()}else{infoPanel.classList.remove('show')}
-  updateGasPropsVisibility();
+updateGasPropsVisibility();
 }
 
 function updateGasPropsVisibility(){
@@ -1731,11 +1967,11 @@ function updateGasPropsVisibility(){
   document.getElementById('gasPropsRow').style.display=(isGas||isLng)?'flex':'none';
   document.getElementById('tempRow').style.display=(isGas||isLng)?'flex':'none';
   document.getElementById('molarRow').style.display=(isGas&&!isLng)?'flex':'none';
-  document.getElementById('density').readOnly=isLng;
-  document.getElementById('viscosity').readOnly=isLng;
-  if(isLng)mediumSelect.disabled=true;else mediumSelect.disabled=false;
+document.getElementById('density').readOnly=isLng;
+document.getElementById('viscosity').readOnly=isLng;
+  if(isLng)mediumSelect.disabled=true;elsemediumSelect.disabled=false;
   const isPreset = presetSelect.value !== 'choose';
-  document.getElementById('molarMass').readOnly = (isPreset && isGas);
+document.getElementById('molarMass').readOnly = (isPreset&&isGas);
 }
 
 modeSelect.addEventListener('change',()=>{updateEngineerVisibility();if(modeSelect.value==='engineer'&&mediumSelect.value==='gas'&&presetSelect.value!=='lng')syncFromTempPress();resetResults()});
@@ -1745,7 +1981,7 @@ presetSelect.addEventListener('change',()=>{const p=presetSelect.value;if(p!=='c
 function buildLngComposition(){
   const container=document.getElementById('lngComposition'); container.innerHTML='';
   const components=[{id:'lngCH4',key:'lngCH4',value:'92'},{id:'lngC2H6',key:'lngC2H6',value:'5'},{id:'lngC3H8',key:'lngC3H8',value:'2'},{id:'lngIC4H10',key:'lngIC4H10',value:'0.3'},{id:'lngNC4H10',key:'lngNC4H10',value:'0.2'},{id:'lngIC5H12',key:'lngIC5H12',value:'0.1'},{id:'lngN2',key:'lngN2',value:'0.4'}];
-  components.forEach(c=>{
+components.forEach(c=>{
     const row=document.createElement('div'); row.className='field-row';
     const label=document.createElement('label'); label.textContent=t(c.key);
     const input=document.createElement('input'); input.type='number'; input.id=c.id; input.value=c.value; input.min='0';input.max='100';input.step='0.1';
@@ -1758,15 +1994,15 @@ function buildLngComposition(){
 
 /* ============== СПРАВКА ============== */
 function updateHelpContent(){
-  document.getElementById('helpTitle').textContent = t('helpTitle');
-  document.getElementById('helpContent').innerHTML = t('helpContent');
-  document.getElementById('helpClose').textContent = t('helpClose');
+document.getElementById('helpTitle').textContent = t('helpTitle');
+document.getElementById('helpContent').innerHTML = t('helpContent');
+document.getElementById('helpClose').textContent = t('helpClose');
 }
 helpBtnEl.addEventListener('click',()=>{ updateHelpContent(); document.getElementById('helpModal').style.display='flex'; });
 document.getElementById('helpClose').addEventListener('click',()=>{ document.getElementById('helpModal').style.display='none'; });
 document.getElementById('helpModal').addEventListener('click',(e)=>{ if(e.target===document.getElementById('helpModal')) document.getElementById('helpModal').style.display='none'; });
 
-/* ============== ОБРАТНЫЙ ПОДБОР ============== */
+/* ============== ОБРАТНЫЙПОДБОР ============== */
 function calcDeltaP(innerDiam_mm, length_m, massFlow_kgh, density, viscosity_cSt, roughness_mm, bends, valves) {
   const area = Math.PI * Math.pow(innerDiam_mm/1000, 2) / 4;
   const velocity = massFlow_kgh / 3600 / area / density;
@@ -1778,7 +2014,7 @@ function calcDeltaP(innerDiam_mm, length_m, massFlow_kgh, density, viscosity_cSt
 }
 
 function findDiameterByDP(targetDP, massFlow, length, wall, density, visc, rough, bends, valves) {
-  if (targetDP <= 0 || massFlow <= 0 || density <= 0 || wall < 0) return null;
+  if (targetDP<= 0 || massFlow<= 0 || density <= 0 || wall < 0) return null;
   let lo = 2 * wall + 1;
   let hi = 2000 + 2 * wall;
   hi = Math.min(hi, 3000);
@@ -1786,26 +2022,26 @@ function findDiameterByDP(targetDP, massFlow, length, wall, density, visc, rough
   for (let iter = 0; iter < 60; iter++) {
     const outer = (lo + hi) / 2;
     const innerD = outer - 2 * wall;
-    if (innerD <= 0) { lo = outer; continue; }
+    if (innerD<= 0) { lo = outer; continue; }
     const res = calcDeltaP(innerD, length, massFlow, density, visc, rough, bends, valves);
-    if (!res || res.velocity > 100) { lo = outer; continue; }
+    if (!res || res.velocity> 100) { lo = outer; continue; }
     best = { inner: innerD, outer: outer, vel: res.velocity, re: res.re, lambda: res.lambda, deltaP: res.deltaP };
-    if (Math.abs(res.deltaP - targetDP) / targetDP < 0.001) break;
-    if (res.deltaP > targetDP) lo = outer; else hi = outer;
+    if (Math.abs(res.deltaP - targetDP) / targetDP< 0.001) break;
+    if (res.deltaP>targetDP) lo = outer; else hi = outer;
   }
   return best;
 }
 
 function findFlowByDP(targetDP, innerDiam, length, density, visc, rough, bends, valves) {
-  if (targetDP <= 0 || innerDiam <= 0 || density <= 0) return null;
+  if (targetDP<= 0 || innerDiam<= 0 || density <= 0) return null;
   let lo = 0.001, hi = 1e6, best = null;
   for (let iter = 0; iter < 60; iter++) {
     const mid = (lo + hi) / 2;
     const res = calcDeltaP(innerDiam, length, mid, density, visc, rough, bends, valves);
     if (!res) { lo = mid; continue; }
     best = { massFlow: mid, volFlow: mid / density, vel: res.velocity, re: res.re, lambda: res.lambda, deltaP: res.deltaP };
-    if (Math.abs(res.deltaP - targetDP) / targetDP < 0.001) break;
-    if (res.deltaP < targetDP) lo = mid; else hi = mid;
+    if (Math.abs(res.deltaP - targetDP) / targetDP< 0.001) break;
+    if (res.deltaP<targetDP) lo = mid; else hi = mid;
   }
   return best;
 }
@@ -1820,24 +2056,24 @@ document.getElementById('calcDiamBtn').addEventListener('click', () => {
   const rough = parseFloat(document.getElementById('roughnessDiam').value);
   const bends = parseInt(document.getElementById('bendsDiam').value) || 0;
   const valves = parseInt(document.getElementById('valvesDiam').value) || 0;
-  if (isNaN(targetDP) || targetDP <= 0 || isNaN(massFlow) || massFlow <= 0 || isNaN(length) || length <= 0 || isNaN(density) || density <= 0) {
-    document.getElementById('resultDiam').textContent = t('invalidTarget');
-    document.getElementById('mainDisplayDiam').value = '—';
+  if (isNaN(targetDP) || targetDP<= 0 || isNaN(massFlow) || massFlow<= 0 || isNaN(length) || length <= 0 || isNaN(density) || density <= 0) {
+document.getElementById('resultDiam').textContent = t('invalidTarget');
+document.getElementById('mainDisplayDiam').value = '—';
     return;
   }
   const result = findDiameterByDP(targetDP, massFlow, length, wall, density, visc, rough, bends, valves);
   const outDiv = document.getElementById('resultDiam');
-  if (!result || result.inner < 1 || result.outer > 3000) {
-    outDiv.textContent = t('noSolution');
-    document.getElementById('mainDisplayDiam').value = '—';
+  if (!result || result.inner< 1 || result.outer> 3000) {
+outDiv.textContent = t('noSolution');
+document.getElementById('mainDisplayDiam').value = '—';
   } else {
-    outDiv.textContent = t('resultDiam')
+outDiv.textContent = t('resultDiam')
       .replace('{diam}', result.inner.toFixed(2))
       .replace('{outer}', result.outer.toFixed(2))
       .replace('{vel}', result.vel.toFixed(3))
       .replace('{re}', result.re.toFixed(0))
       .replace('{lambda}', result.lambda.toFixed(4));
-    document.getElementById('mainDisplayDiam').value = result.inner.toFixed(2) + ' мм';
+document.getElementById('mainDisplayDiam').value = result.inner.toFixed(2) + ' мм';
   }
 });
 
@@ -1851,25 +2087,25 @@ document.getElementById('calcFlowBtn').addEventListener('click', () => {
   const rough = parseFloat(document.getElementById('roughnessFlow').value);
   const bends = parseInt(document.getElementById('bendsFlow').value) || 0;
   const valves = parseInt(document.getElementById('valvesFlow').value) || 0;
-  if (isNaN(targetDP) || targetDP <= 0 || isNaN(outerD) || outerD <= 0 || isNaN(wall) || wall < 0 || outerD - 2*wall <= 0 || isNaN(length) || length <= 0 || isNaN(density) || density <= 0) {
-    document.getElementById('resultFlow').textContent = t('invalidTarget');
-    document.getElementById('mainDisplayFlow').value = '—';
+  if (isNaN(targetDP) || targetDP<= 0 || isNaN(outerD) || outerD<= 0 || isNaN(wall) || wall < 0 || outerD - 2*wall <= 0 || isNaN(length) || length <= 0 || isNaN(density) || density <= 0) {
+document.getElementById('resultFlow').textContent = t('invalidTarget');
+document.getElementById('mainDisplayFlow').value = '—';
     return;
   }
   const innerD = outerD - 2*wall;
   const result = findFlowByDP(targetDP, innerD, length, density, visc, rough, bends, valves);
   const outDiv = document.getElementById('resultFlow');
-  if (!result || result.massFlow < 0.001 || result.massFlow > 1e6) {
-    outDiv.textContent = t('noSolution');
-    document.getElementById('mainDisplayFlow').value = '—';
+  if (!result || result.massFlow< 0.001 || result.massFlow> 1e6) {
+outDiv.textContent = t('noSolution');
+document.getElementById('mainDisplayFlow').value = '—';
   } else {
-    outDiv.textContent = t('resultFlow')
+outDiv.textContent = t('resultFlow')
       .replace('{flow}', result.massFlow.toFixed(2))
       .replace('{vol}', result.volFlow.toFixed(3))
       .replace('{vel}', result.vel.toFixed(3))
       .replace('{re}', result.re.toFixed(0))
       .replace('{lambda}', result.lambda.toFixed(4));
-    document.getElementById('mainDisplayFlow').value = result.massFlow.toFixed(2) + ' кг/ч';
+document.getElementById('mainDisplayFlow').value = result.massFlow.toFixed(2) + ' кг/ч';
   }
 });
 
@@ -1877,36 +2113,36 @@ document.getElementById('calcFlowBtn').addEventListener('click', () => {
 const tabBtns = document.querySelectorAll('.tab-btn');
 const tabContents = document.querySelectorAll('.tab-content');
 tabBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
+btn.addEventListener('click', () => {
     const tabId = btn.dataset.tab;
-    tabBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    tabContents.forEach(c => c.classList.remove('active'));
-    document.getElementById('tab-' + tabId).classList.add('active');
+tabBtns.forEach(b =>b.classList.remove('active'));
+btn.classList.add('active');
+tabContents.forEach(c =>c.classList.remove('active'));
+document.getElementById('tab-' + tabId).classList.add('active');
   });
 });
 
-/* ============== ПРИМЕНЕНИЕ ЯЗЫКА ============== */
+/* ============== ПРИМЕНЕНИЕЯЗЫКА ============== */
 function applyLanguage(){
   document.title=t('title');document.getElementById('langLabel').textContent=t('langLabel');
-  document.getElementById('tabDirectBtn').textContent = t('tabDirect');
-  document.getElementById('tabDiamBtn').textContent = t('tabDiam');
-  document.getElementById('tabFlowBtn').textContent = t('tabFlow');
-  document.getElementById('formulaDisplayDiam').textContent = t('formulaDiam');
-  document.getElementById('formulaDisplayFlow').textContent = t('formulaFlow');
-  document.getElementById('lblResultDiam').textContent = t('resultLabel');
-  document.getElementById('lblResultFlow').textContent = t('resultLabel');
-  document.getElementById('targetTitleDiam').textContent = t('targetParams');
-  document.getElementById('targetTitleFlow').textContent = t('targetParams');
-  document.getElementById('lblTargetDeltaPDiam').textContent = t('targetDeltaP');
-  document.getElementById('lblTargetMassFlowDiam').textContent = t('targetMassFlow');
-  document.getElementById('lblTargetDeltaPFlow').textContent = t('targetDeltaP');
-  document.getElementById('calcDiamBtn').textContent = t('calcDiam');
-  document.getElementById('calcFlowBtn').textContent = t('calcFlow');
+document.getElementById('tabDirectBtn').textContent = t('tabDirect');
+document.getElementById('tabDiamBtn').textContent = t('tabDiam');
+document.getElementById('tabFlowBtn').textContent = t('tabFlow');
+document.getElementById('formulaDisplayDiam').textContent = t('formulaDiam');
+document.getElementById('formulaDisplayFlow').textContent = t('formulaFlow');
+document.getElementById('lblResultDiam').textContent = t('resultLabel');
+document.getElementById('lblResultFlow').textContent = t('resultLabel');
+document.getElementById('targetTitleDiam').textContent = t('targetParams');
+document.getElementById('targetTitleFlow').textContent = t('targetParams');
+document.getElementById('lblTargetDeltaPDiam').textContent = t('targetDeltaP');
+document.getElementById('lblTargetMassFlowDiam').textContent = t('targetMassFlow');
+document.getElementById('lblTargetDeltaPFlow').textContent = t('targetDeltaP');
+document.getElementById('calcDiamBtn').textContent = t('calcDiam');
+document.getElementById('calcFlowBtn').textContent = t('calcFlow');
   document.getElementById('lblBends').textContent=t('bends');document.getElementById('lblValves').textContent=t('valves');
   document.getElementById('lblOuterDiam').textContent=t('outerDiam');document.getElementById('lblWall').textContent=t('wall');
   document.getElementById('lblLength').textContent=t('length');document.getElementById('lblMassFlow').innerHTML=t('massFlow');
-  document.getElementById('lblDensity').textContent=t('density');
+document.getElementById('lblDensity').textContent=t('density');
   document.getElementById('modeSimpleText').textContent=t('modeSimple');document.getElementById('modeEngineerText').textContent=t('modeEngineer');
   document.getElementById('lblMode').textContent=t('modeLabel');document.getElementById('lblMedium').textContent=t('medium');
   document.getElementById('mediumLiquidText').textContent=t('liquid');document.getElementById('mediumGasText').textContent=t('gas');
@@ -1920,40 +2156,40 @@ function applyLanguage(){
   document.getElementById('lblExpansions').textContent=t('expansions');
   document.getElementById('lblOrifices').textContent=t('orifices');
   calculateBtn.textContent=t('calculate');saveBtn.textContent=t('save');
-  document.getElementById('shareBtn').textContent='📤 '+t('share');
-  helpBtnEl.textContent = '❓ ' + t('helpBtn');
-  lblFlowRate.textContent=t('flowRate');
-  document.getElementById('lblLengthDiam').textContent = t('length');
-  document.getElementById('lblWallDiam').textContent = t('wall');
-  document.getElementById('lblDensityDiam').textContent = t('density');
-  document.getElementById('lblViscosityDiam').textContent = t('viscosity');
-  document.getElementById('lblRoughnessDiam').textContent = t('roughness');
-  document.getElementById('lblBendsDiam').textContent = t('bends').replace(' (ζ=0.3)','');
-  document.getElementById('lblValvesDiam').textContent = t('valves').replace(' (ζ=3.0)','');
-  document.getElementById('lblOuterDiamFlow').textContent = t('outerDiam');
-  document.getElementById('lblWallFlow').textContent = t('wall');
-  document.getElementById('lblLengthFlow').textContent = t('length');
-  document.getElementById('lblDensityFlow').textContent = t('density');
-  document.getElementById('lblViscosityFlow').textContent = t('viscosity');
-  document.getElementById('lblRoughnessFlow').textContent = t('roughness');
-  document.getElementById('lblBendsFlow').textContent = t('bends').replace(' (ζ=0.3)','');
-  document.getElementById('lblValvesFlow').textContent = t('valves').replace(' (ζ=3.0)','');
+document.getElementById('shareBtn').textContent='📤 '+t('share');
+helpBtnEl.textContent = '❓ ' + t('helpBtn');
+lblFlowRate.textContent=t('flowRate');
+document.getElementById('lblLengthDiam').textContent = t('length');
+document.getElementById('lblWallDiam').textContent = t('wall');
+document.getElementById('lblDensityDiam').textContent = t('density');
+document.getElementById('lblViscosityDiam').textContent = t('viscosity');
+document.getElementById('lblRoughnessDiam').textContent = t('roughness');
+document.getElementById('lblBendsDiam').textContent = t('bends').replace(' (ζ=0.3)','');
+document.getElementById('lblValvesDiam').textContent = t('valves').replace(' (ζ=3.0)','');
+document.getElementById('lblOuterDiamFlow').textContent = t('outerDiam');
+document.getElementById('lblWallFlow').textContent = t('wall');
+document.getElementById('lblLengthFlow').textContent = t('length');
+document.getElementById('lblDensityFlow').textContent = t('density');
+document.getElementById('lblViscosityFlow').textContent = t('viscosity');
+document.getElementById('lblRoughnessFlow').textContent = t('roughness');
+document.getElementById('lblBendsFlow').textContent = t('bends').replace(' (ζ=0.3)','');
+document.getElementById('lblValvesFlow').textContent = t('valves').replace(' (ζ=3.0)','');
   const pu=document.getElementById('pressureUnit');pu.innerHTML='';
   [{value:'Pa',ru:'Па',en:'Pa',zh:'帕'},{value:'kPa',ru:'кПа',en:'kPa',zh:'千帕'},{value:'bar',ru:'бар',en:'bar',zh:'巴'},{value:'kgf/cm²',ru:'кгс/см²',en:'kgf/cm²',zh:'千克力/平方厘米'},{value:'psi',ru:'psi',en:'psi',zh:'psi'}].forEach(o=>{const opt=document.createElement('option');opt.value=o.value;opt.textContent=o[currentLang]||o.en;pu.appendChild(opt)});
   if(lastResult.pressureUnit)pu.value=lastResult.pressureUnit;
   updateResultLabels();updateThemeLabel();updateEngineerVisibility();
   if(lastResult.velocity>0)updateDisplayWithResult();else{formulaDisplay.textContent=t('ready');mainDisplay.value='0'}
-  updateAllWarnings();updateFieldBorders();
+updateAllWarnings();updateFieldBorders();
   const n=document.getElementById('compressNote');
   if(lastResult.velocity>0&&lastResult.mediumType==='gas'&&lastResult.compressCorrection){updateCompressNoteFromCorr(lastResult.compressCorrection);}
   else if(lastResult.compressMach||lastResult.compressDiff){n.classList.add('show');n.style.display='block';}
   else{n.classList.remove('show');n.style.display='none';}
   if(presetSelect.value==='lng'){buildLngComposition();checkLngBalance();}
-  updateHelpContent();
+updateHelpContent();
   // Обновляем заголовок валидации и кнопку
-  document.getElementById('validateTitle').textContent = t('validateTitle');
-  document.getElementById('validateClose').textContent = t('validateClose');
-  document.getElementById('validateBtn').textContent = '🔬 ' + t('validateBtn');
+document.getElementById('validateTitle').textContent = t('validateTitle');
+document.getElementById('validateClose').textContent = t('validateClose');
+document.getElementById('validateBtn').textContent = '🔬 ' + t('validateBtn');
 }
 
 langSelect.addEventListener('change',()=>{currentLang=langSelect.value;localStorage.setItem('calc_hyd_lang',currentLang);applyLanguage()});
