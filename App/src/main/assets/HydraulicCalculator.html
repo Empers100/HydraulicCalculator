@@ -410,7 +410,7 @@ const T_K_DEFAULT = 293.15;
 const R_GAS = 8.314462618;
 
 /* ============================================================
-ТАБЛИЦЫ ДИНАМИЧЕСКОЙ ВЯЗКОСТИ ЖИДКОСТЕЙ (Па·с)
+ТАБЛИЦЫ ДИНАМИЧЕСКОЙ ВЯЗКОСТИ ЖИДКОСТЕЙ (Па•с)
 ============================================================ */
 
 const liquidViscosityTables = {
@@ -450,7 +450,7 @@ oil: [[273.15,2.50e-1],[298.15,8.00e-2],[313.15,4.50e-2],[323.15,3.00e-2],[353.1
 };
 
 /* ============================================================
-ТАБЛИЦЫ ВЯЗКОСТИ ГАЗА ДЛЯ КВАНТОВЫХ ГАЗОВ (мкПа·с)
+ТАБЛИЦЫ ВЯЗКОСТИ ГАЗА ДЛЯ КВАНТОВЫХ ГАЗОВ (мкПа•с)
 ============================================================ */
 
 const gasViscosityTables = {
@@ -705,20 +705,7 @@ air: [
 { T_C: -143.15, P_bar: 32.0, phase: 'liquid', rho_ref: 400.0, nu_ref: 0.058, descKey: 'validationDesc_nearCritical' },
 { T_C: -143.15, P_bar: 32.0, phase: 'gas', rho_ref: 200.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical' },
 { T_C: -140.65, P_bar: 37.7, phase: 'supercritical', rho_ref: 342.0, nu_ref: 0.061, descKey: 'validationDesc_criticalPoint' },
-],
-water: [
-{ T_C: 0.01, P_bar: 0.00611, phase: 'liquid', rho_ref: 999.8, nu_ref: 1.792, descKey: 'validationDesc_triplePoint' },
-{ T_C: 0.01, P_bar: 0.00611, phase: 'gas', rho_ref: 0.00485, nu_ref: 1792.0, descKey: 'validationDesc_triplePointVapor' },
-{ T_C: 100.0, P_bar: 1.013, phase: 'liquid', rho_ref: 958.0, nu_ref: 0.294, descKey: 'validationDesc_boilingPoint' },
-{ T_C: 100.0, P_bar: 0.99, phase: 'gas', rho_ref: 0.585, nu_ref: 20.96, descKey: 'validationDesc_superheatedVapor' },
-{ T_C: 200.0, P_bar: 15.5, phase: 'liquid', rho_ref: 865.0, nu_ref: 0.136, descKey: 'validationDesc_satLiquid' },
-{ T_C: 200.0, P_bar: 15.0, phase: 'gas', rho_ref: 7.55, nu_ref: 3.62, descKey: 'validationDesc_superheatedVapor' },
-{ T_C: 300.0, P_bar: 85.8, phase: 'liquid', rho_ref: 712.0, nu_ref: 0.092, descKey: 'validationDesc_satLiquid' },
-{ T_C: 300.0, P_bar: 84.0, phase: 'gas', rho_ref: 45.0, nu_ref: 0.97, descKey: 'validationDesc_superheatedVapor' },
-{ T_C: 350.0, P_bar: 165.0, phase: 'liquid', rho_ref: 575.0, nu_ref: 0.072, descKey: 'validationDesc_satLiquid' },
-{ T_C: 350.0, P_bar: 161.7, phase: 'gas', rho_ref: 110.7, nu_ref: 0.56, descKey: 'validationDesc_superheatedVapor' },
-{ T_C: 373.95, P_bar: 220.6, phase: 'supercritical', rho_ref: 322.0, nu_ref: 0.13, descKey: 'validationDesc_criticalPoint' },
-],
+]
 };
 
 /* ============================================================
