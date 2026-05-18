@@ -2168,7 +2168,7 @@ document.getElementById('calcDiamBtn').addEventListener('click', () => {
       .replace('{vel}', result.vel.toFixed(3))
       .replace('{re}', result.re.toFixed(0))
       .replace('{lambda}', result.lambda.toFixed(4));
-    document.getElementById('mainDisplayDiam').value = result.inner.toFixed(2) + ' мм';
+document.getElementById('mainDisplayDiam').value = result.inner.toFixed(2) + ' ' + locales[currentLang].units.mm;
   }
 });
 
@@ -2200,7 +2200,7 @@ document.getElementById('calcFlowBtn').addEventListener('click', () => {
       .replace('{vel}', result.vel.toFixed(3))
       .replace('{re}', result.re.toFixed(0))
       .replace('{lambda}', result.lambda.toFixed(4));
-    document.getElementById('mainDisplayFlow').value = result.massFlow.toFixed(2) + ' кг/ч';
+    document.getElementById('mainDisplayFlow').value = result.massFlow.toFixed(2) + ' ' + locales[currentLang].units.kgh;
   }
 });
 
@@ -2281,6 +2281,19 @@ function applyLanguage(){
   else{n.classList.remove('show');n.style.display='none';}
   if(presetSelect.value==='lng'){buildLngComposition();checkLngBalance();}
   updateHelpContent();
+
+// Обновить уже выведенные результаты в обратных задачах
+const diamField = document.getElementById('mainDisplayDiam');
+const flowField = document.getElementById('mainDisplayFlow');
+if (diamField && diamField.value !== '---') {
+    let num = parseFloat(diamField.value);
+    if (!isNaN(num)) diamField.value = num.toFixed(2) + ' ' + locales[currentLang].units.mm;
+}
+if (flowField && flowField.value !== '---') {
+    let num = parseFloat(flowField.value);
+    if (!isNaN(num)) flowField.value = num.toFixed(2) + ' ' + locales[currentLang].units.kgh;
+}
+
   // Обновляем заголовок валидации и кнопку
   document.getElementById('validateTitle').textContent = t('validateTitle');
   document.getElementById('validateClose').textContent = t('validateClose');
