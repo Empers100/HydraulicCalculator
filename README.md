@@ -50,8 +50,3 @@
 ## Развитие
 
 Предложения и баг-репорты принимаются в Issues (English/Russian). Pull requests приветствуются.
-
-## 📖 Detailed Description
-
-Read about the calculator's operating principles, advantages, and limitations in the article on Yandex Zen:
-[Link to article] (Гидравлический калькулятор расчёта скорости потока и потери давления | NEUNDORF | Дзен)
