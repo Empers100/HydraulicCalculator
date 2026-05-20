@@ -311,7 +311,7 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 </select></div>
 <div id="lngComposition" class="lng-composition"></div>
 <div class="field-row"><label id="lblViscosity">Вязкость (сСт):</label><input type="number" id="viscosity" value="1.0" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblRoughness">Шероховатость (мм):</label><input type="number" id="roughness" value="0.1" min="0" step="any"></div>
+<div class="field-row"><label id="lblRoughness">Шероховатость (мм):</label><input type="number" id="roughness" value="0.1" min="0.01" max="1.0" step="0.01"></div>
 <div class="field-row" id="gasPropsRow"><label id="lblPressure">Абс. давление (бар):</label><input type="number" id="pressure" value="1.0" min="0.001" step="any"></div>
 <div class="field-row" id="tempRow"><label id="lblTemperature">Температура (°C):</label><input type="number" id="temperature" value="20.0" min="-273.14" step="any"></div>
 <div class="field-row" id="molarRow"><label id="lblMolarMass">Молярная масса<br>(г/моль):</label><input type="number" id="molarMass" value="28.97" min="2" max="300" step="any"></div>
@@ -354,59 +354,103 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 
 <!-- ===== ПОДБОР ДИАМЕТРА ===== -->
 <div class="tab-content" id="tab-diam">
-<div class="display-container">
-<div class="formula-display" id="formulaDisplayDiam">Подбор внутреннего диаметра по ΔP</div>
-<div class="main-display-row">
-<label id="lblResultDiam">Результат:</label>
-<input type="text" class="main-display" id="mainDisplayDiam" value="—" readonly>
-</div>
-</div>
-<div class="inverse-section">
-<h4 id="targetTitleDiam">Целевые параметры</h4>
-<div class="target-row"><label id="lblTargetDeltaPDiam">Перепад-- ΔP (Па):</label><input type="number" id="targetDeltaPDiam" value="5000" min="0.001" step="any"></div>
-<div class="target-row"><label id="lblTargetMassFlowDiam">Массовый расход (кг/ч):</label><input type="number" id="targetMassFlowDiam" value="5000" min="0.001" step="any"></div>
-</div>
-<div class="field-row"><label id="lblLengthDiam">Длина (м):</label><input type="number" id="lengthDiam" value="100" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblWallDiam">Толщина стенки (мм):</label><input type="number" id="wallDiam" value="3.5" min="0" step="any"></div>
-<div class="field-row"><label id="lblDensityDiam">Плотность (кг/м³):</label><input type="number" id="densityDiam" value="1000" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblViscosityDiam">Вязкость (сСт):</label><input type="number" id="viscosityDiam" value="1.0" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblRoughnessDiam">Шероховатость (мм):</label><input type="number" id="roughnessDiam" value="0.1" min="0" step="any"></div>
-<div class="field-row"><label id="lblBendsDiam">Поворотов 90°:</label><input type="number" id="bendsDiam" value="0" min="0" step="1"></div>
-<div class="field-row"><label id="lblValvesDiam">Клапанов:</label><input type="number" id="valvesDiam" value="0" min="0" step="1"></div>
-<div class="btn-row">
-<button class="calc-btn" id="calcDiamBtn">Подобрать диаметр</button>
-</div>
-<div class="inverse-result" id="resultDiam"></div>
+    <div class="display-container">
+        <div class="formula-display" id="formulaDisplayDiam">Подбор внутреннего диаметра по ΔP</div>
+        <div class="main-display-row">
+            <label id="lblResultDiam">Результат:</label>
+            <input type="text" class="main-display" id="mainDisplayDiam" value="---" readonly>
+        </div>
+    </div>
+
+    <div class="inverse-section">
+        <h4 id="targetTitleDiam">Целевые параметры</h4>
+        <div class="target-row"><label id="lblTargetDeltaPDiam">Перепад ΔP (Па):</label><input type="number" id="targetDeltaPDiam" value="5000" min="0.001" step="any"></div>
+        <div class="target-row"><label id="lblTargetMassFlowDiam">Массовый расход (кг/ч):</label><input type="number" id="targetMassFlowDiam" value="5000" min="0.001" step="any"></div>
+    </div>
+
+    <div class="field-row"><label id="lblLengthDiam">Длина (м):</label><input type="number" id="lengthDiam" value="100" min="0.001" step="any"></div>
+    <div class="field-row"><label id="lblWallDiam">Толщина стенки (мм):</label><input type="number" id="wallDiam" value="3.5" min="0" step="any"></div>
+
+    <!-- Выбор среды с температурой -->
+    <div class="field-row">
+        <label id="lblMediumDiam">Среда:</label>
+        <select id="mediumSelectDiam">
+            <option value="water">Вода</option>
+            <option value="oil">Масло</option>
+        </select>
+    </div>
+    <div class="field-row">
+        <label id="lblDensityDiam">Плотность (кг/м³):</label>
+        <input type="text" id="densityDiam" readonly value="1000">
+    </div>
+    <div class="field-row">
+        <label id="lblViscosityDiam">Вязкость (сСт):</label>
+        <input type="text" id="viscosityDiam" readonly value="1.0">
+    </div>
+    <div class="field-row" id="tempRowDiam" style="display: flex;">
+        <label id="lblTempDiam">Температура (°C):</label>
+        <input type="number" id="tempDiam" value="20" min="0" max="100" step="1">
+    </div>
+
+    <div class="field-row"><label id="lblRoughnessDiam">Шероховатость (мм):</label><input type="number" id="roughnessDiam" value="0.1" min="0.01" max="1.0" step="0.01"></div>
+    <div class="field-row"><label id="lblBendsDiam">Поворотов 90°:</label><input type="number" id="bendsDiam" value="0" min="0" step="1"></div>
+    <div class="field-row"><label id="lblValvesDiam">Клапанов:</label><input type="number" id="valvesDiam" value="0" min="0" step="1"></div>
+
+    <div class="btn-row">
+        <button class="calc-btn" id="calcDiamBtn">Подобрать диаметр</button>
+    </div>
+    <div class="inverse-result" id="resultDiam"></div>
 </div>
 
 <!-- ===== ПОДБОР РАСХОДА ===== -->
 <div class="tab-content" id="tab-flow">
-<div class="display-container">
-<div class="formula-display" id="formulaDisplayFlow">Подбор расхода по ΔP</div>
-<div class="main-display-row">
-<label id="lblResultFlow">Результат:</label>
-<input type="text" class="main-display" id="mainDisplayFlow" value="—" readonly>
-</div>
-</div>
-<div class="inverse-section">
-<h4 id="targetTitleFlow">Целевые параметры</h4>
-<div class="target-row"><label id="lblTargetDeltaPFlow">Перепад-- ΔP (Па):</label><input type="number" id="targetDeltaPFlow" value="5000" min="0.001" step="any"></div>
-</div>
-<div class="field-row"><label id="lblOuterDiamFlow">Наружный диаметр (мм):</label><input type="number" id="outerDiamFlow" value="57" min="0.1" step="any"></div>
-<div class="field-row"><label id="lblWallFlow">Толщина стенки (мм):</label><input type="number" id="wallFlow" value="3.5" min="0" step="any"></div>
-<div class="field-row"><label id="lblLengthFlow">Длина (м):</label><input type="number" id="lengthFlow" value="100" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblDensityFlow">Плотность (кг/м³):</label><input type="number" id="densityFlow" value="1000" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblViscosityFlow">Вязкость (сСт):</label><input type="number" id="viscosityFlow" value="1.0" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblRoughnessFlow">Шероховатость (мм):</label><input type="number" id="roughnessFlow" value="0.1" min="0" step="any"></div>
-<div class="field-row"><label id="lblBendsFlow">Поворотов 90°:</label><input type="number" id="bendsFlow" value="0" min="0" step="1"></div>
-<div class="field-row"><label id="lblValvesFlow">Клапанов:</label><input type="number" id="valvesFlow" value="0" min="0" step="1"></div>
-<div class="btn-row">
-<button class="calc-btn" id="calcFlowBtn">Подобрать расход</button>
-</div>
-<div class="inverse-result" id="resultFlow"></div>
-</div>
-</div>
+    <div class="display-container">
+        <div class="formula-display" id="formulaDisplayFlow">Подбор расхода по ΔP</div>
+        <div class="main-display-row">
+            <label id="lblResultFlow">Результат:</label>
+            <input type="text" class="main-display" id="mainDisplayFlow" value="---" readonly>
+        </div>
+    </div>
 
+    <div class="inverse-section">
+        <h4 id="targetTitleFlow">Целевые параметры</h4>
+        <div class="target-row"><label id="lblTargetDeltaPFlow">Перепад ΔP (Па):</label><input type="number" id="targetDeltaPFlow" value="5000" min="0.001" step="any"></div>
+    </div>
+
+    <div class="field-row"><label id="lblOuterDiamFlow">Наружный диаметр (мм):</label><input type="number" id="outerDiamFlow" value="57" min="0.1" step="any"></div>
+    <div class="field-row"><label id="lblWallFlow">Толщина стенки (мм):</label><input type="number" id="wallFlow" value="3.5" min="0" step="any"></div>
+    <div class="field-row"><label id="lblLengthFlow">Длина (м):</label><input type="number" id="lengthFlow" value="100" min="0.001" step="any"></div>
+
+    <!-- Выбор среды с температурой -->
+    <div class="field-row">
+        <label id="lblMediumFlow">Среда:</label>
+        <select id="mediumSelectFlow">
+            <option value="water">Вода</option>
+            <option value="oil">Масло</option>
+        </select>
+    </div>
+    <div class="field-row">
+        <label id="lblDensityFlow">Плотность (кг/м³):</label>
+        <input type="text" id="densityFlow" readonly value="1000">
+    </div>
+    <div class="field-row">
+        <label id="lblViscosityFlow">Вязкость (сСт):</label>
+        <input type="text" id="viscosityFlow" readonly value="1.0">
+    </div>
+    <div class="field-row" id="tempRowFlow" style="display: flex;">
+        <label id="lblTempFlow">Температура (°C):</label>
+        <input type="number" id="tempFlow" value="20" min="0" max="100" step="1">
+    </div>
+
+    <div class="field-row"><label id="lblRoughnessFlow">Шероховатость (мм):</label><input type="number" id="roughnessFlow" value="0.1" min="0.01" max="1.0" step="0.01"></div>
+    <div class="field-row"><label id="lblBendsFlow">Поворотов 90°:</label><input type="number" id="bendsFlow" value="0" min="0" step="1"></div>
+    <div class="field-row"><label id="lblValvesFlow">Клапанов:</label><input type="number" id="valvesFlow" value="0" min="0" step="1"></div>
+
+    <div class="btn-row">
+        <button class="calc-btn" id="calcFlowBtn">Подобрать расход</button>
+    </div>
+    <div class="inverse-result" id="resultFlow"></div>
+</div>
 
 <script>
 (function() {
@@ -810,8 +854,8 @@ freon22: { Tmin:273,Tmax:553,Pmin:1,Pmax:350 }, water:null, oil:null
 };
 
 const liquidLimits = {
-water: { densityMin:900,densityMax:1050,viscosityMin:0.5,viscosityMax:1.5 },
-oil: { densityMin:800,densityMax:950,viscosityMin:20,viscosityMax:200 },
+water: { densityMin:900,densityMax:1050,viscosityMin:0.2,viscosityMax:2.0 },
+oil: { densityMin:800,densityMax:950,viscosityMin:15,viscosityMax:250 },
 air: { densityMin:800,densityMax:950,viscosityMin:0.1,viscosityMax:0.3 },
 nitrogen: { densityMin:700,densityMax:900,viscosityMin:0.1,viscosityMax:0.3 },
 oxygen: { densityMin:900,densityMax:1200,viscosityMin:0.1,viscosityMax:0.5 },
@@ -1241,6 +1285,10 @@ validationDesc_superheatedVapor: 'Перегретый пар (смещён от
 validationDesc_nearCritical: 'Вблизи критической точки',
 validationDesc_criticalPoint: 'Критическая точка',
 validationDesc_sublimation: 'Линия сублимации',
+lblMediumDiam: 'Среда:',
+lblMediumFlow: 'Среда:',
+lblTempDiam: 'Температура (°C):',
+lblTempFlow: 'Температура (°C):',
 helpContent:`
 <h3>Режимы расчёта</h3>
 <p><b>Упрощённый</b> --- только гидравлика. Быстрая оценка без учёта свойств среды.</p>
@@ -1379,6 +1427,10 @@ validationDesc_superheatedVapor: 'Superheated vapor (offset from saturation line
 validationDesc_nearCritical: 'Near critical point',
 validationDesc_criticalPoint: 'Critical point',
 validationDesc_sublimation: 'Sublimation line',
+lblMediumDiam: 'Medium:',
+lblMediumFlow: 'Medium:',
+lblTempDiam: 'Temperature (°C):',
+lblTempFlow: 'Temperature (°C):',
 helpContent:`
 <h3>Calculation modes</h3>
 <p><b>Simplified</b> — hydraulics only. Quick estimate without fluid properties.</p>
@@ -1516,6 +1568,10 @@ validationDesc_superheatedVapor: '过热蒸汽（偏离饱和线）',
 validationDesc_nearCritical: '临界点附近',
 validationDesc_criticalPoint: '临界点',
 validationDesc_sublimation: '升华线',
+lblMediumDiam: '介质:',
+lblMediumFlow: '介质:',
+lblTempDiam: '温度 (°C):',
+lblTempFlow: '温度 (°C):',
 helpContent:`
 <h3>计算模式</h3>
 <p><b>简化模式</b> — 仅考虑水力学。快速评估，不考虑介质特性。</p>
@@ -2274,6 +2330,14 @@ function applyLanguage(){
   document.getElementById('lblRoughnessFlow').textContent = t('roughness');
   document.getElementById('lblBendsFlow').textContent = t('bends').replace(' (ζ=0.3)','');
   document.getElementById('lblValvesFlow').textContent = t('valves').replace(' (ζ=3.0)','');
+const mediumDiamLabel = document.getElementById('lblMediumDiam');
+if (mediumDiamLabel) mediumDiamLabel.textContent = t('lblMediumDiam');
+const mediumFlowLabel = document.getElementById('lblMediumFlow');
+if (mediumFlowLabel) mediumFlowLabel.textContent = t('lblMediumFlow');
+const lblMediumFlow = document.getElementById('lblMediumFlow');
+if (lblMediumFlow) lblMediumFlow.textContent = t('lblMediumFlow');
+const lblTempFlow = document.getElementById('lblTempFlow');
+if (lblTempFlow) lblTempFlow.textContent = t('lblTempFlow');
   const pu=document.getElementById('pressureUnit');pu.innerHTML='';
   [{value:'Pa',ru:'Па',en:'Pa',zh:'帕'},{value:'kPa',ru:'кПа',en:'kPa',zh:'千帕'},{value:'bar',ru:'бар',en:'bar',zh:'巴'},{value:'kgf/cm²',ru:'кгс/см²',en:'kgf/cm²',zh:'千克力/平方厘米'},{value:'psi',ru:'psi',en:'psi',zh:'psi'}].forEach(o=>{const opt=document.createElement('option');opt.value=o.value;opt.textContent=o[currentLang]||o.en;pu.appendChild(opt)});
   if(lastResult.pressureUnit)pu.value=lastResult.pressureUnit;
@@ -2286,6 +2350,11 @@ function applyLanguage(){
   else{n.classList.remove('show');n.style.display='none';}
   if(presetSelect.value==='lng'){buildLngComposition();checkLngBalance();}
   updateHelpContent();
+
+const lblMediumDiam = document.getElementById('lblMediumDiam');
+if (lblMediumDiam) lblMediumDiam.textContent = t('lblMediumDiam');
+const lblTempDiam = document.getElementById('lblTempDiam');
+if (lblTempDiam) lblTempDiam.textContent = t('lblTempDiam');
 
 // Обновить уже выведенные результаты в обратных задачах
 const diamField = document.getElementById('mainDisplayDiam');
@@ -2303,11 +2372,124 @@ if (flowField && flowField.value !== '---') {
   document.getElementById('validateTitle').textContent = t('validateTitle');
   document.getElementById('validateClose').textContent = t('validateClose');
   document.getElementById('validateBtn').textContent = '🔬 ' + t('validateBtn');
+// Обновление выпадающих списков "Вода/Масло" на вкладках подбора
+const mediumSelects = ['mediumSelectDiam', 'mediumSelectFlow'];
+mediumSelects.forEach(id => {
+    const select = document.getElementById(id);
+    if (select && select.options.length >= 2) {
+        select.options[0].textContent = t('presetWater');
+        select.options[1].textContent = t('presetOil');
+    }
+});
 }
 
 langSelect.addEventListener('change',()=>{currentLang=langSelect.value;localStorage.setItem('calc_hyd_lang',currentLang);applyLanguage()});
 applyLanguage();updateEngineerVisibility();buildLngComposition();
 })();
+
+// Синхронизация выбора среды для вкладки "Подбор диаметра"
+const mediumSelectDiam = document.getElementById('mediumSelectDiam');
+if (mediumSelectDiam) {
+    mediumSelectDiam.addEventListener('change', function() {
+        const densityInput = document.getElementById('densityDiam');
+        const viscosityInput = document.getElementById('viscosityDiam');
+        if (this.value === 'water') {
+            densityInput.value = '1000';
+            viscosityInput.value = '1.0';
+        } else if (this.value === 'oil') {
+            densityInput.value = '900';
+            viscosityInput.value = '50.0';
+        }
+    });
+}
+
+// Синхронизация для вкладки "Подбор расхода"
+const mediumSelectFlow = document.getElementById('mediumSelectFlow');
+if (mediumSelectFlow) {
+    mediumSelectFlow.addEventListener('change', function() {
+        const densityInput = document.getElementById('densityFlow');
+        const viscosityInput = document.getElementById('viscosityFlow');
+        if (this.value === 'water') {
+            densityInput.value = '1000';
+            viscosityInput.value = '1.0';
+        } else if (this.value === 'oil') {
+            densityInput.value = '900';
+            viscosityInput.value = '50.0';
+        }
+    });
+}
+
+// Свойства воды от температуры
+function waterProperties(T_C) {
+    const T = Math.min(100, Math.max(0, T_C));
+    const rho = 1000 - 0.2 * T;
+    let nu = 1.79 / (1 + 0.0337 * T + 0.000221 * T * T);
+    nu = Math.max(nu, 0.3);
+    return { rho: parseFloat(rho.toFixed(2)), nu: parseFloat(nu.toFixed(3)) };
+}
+
+// Свойства масла (И-20) от температуры
+function oilProperties(T_C) {
+    const T = Math.min(80, Math.max(0, T_C));
+    const rho = 900 - 0.7 * (T - 20);
+    let nu = 50 * Math.exp(-0.034 * (T - 20));
+    nu = Math.max(nu, 5);
+    return { rho: parseFloat(rho.toFixed(2)), nu: parseFloat(nu.toFixed(2)) };
+}
+
+// Обновление свойств для вкладки диаметра
+function updateMediumDiam() {
+    const select = document.getElementById('mediumSelectDiam');
+    const temp = parseFloat(document.getElementById('tempDiam').value) || 20;
+    const densityField = document.getElementById('densityDiam');
+    const viscosityField = document.getElementById('viscosityDiam');
+    if (!select) return;
+    if (select.value === 'water') {
+        const props = waterProperties(temp);
+        densityField.value = props.rho;
+        viscosityField.value = props.nu;
+    } else if (select.value === 'oil') {
+        const props = oilProperties(temp);
+        densityField.value = props.rho;
+        viscosityField.value = props.nu;
+    }
+}
+
+// То же для вкладки расхода
+function updateMediumFlow() {
+    const select = document.getElementById('mediumSelectFlow');
+    const temp = parseFloat(document.getElementById('tempFlow').value) || 20;
+    const densityField = document.getElementById('densityFlow');
+    const viscosityField = document.getElementById('viscosityFlow');
+    if (!select) return;
+    if (select.value === 'water') {
+        const props = waterProperties(temp);
+        densityField.value = props.rho;
+        viscosityField.value = props.nu;
+    } else if (select.value === 'oil') {
+        const props = oilProperties(temp);
+        densityField.value = props.rho;
+        viscosityField.value = props.nu;
+    }
+}
+// Инициализация для вкладки диаметра
+const mediumDiam = document.getElementById('mediumSelectDiam');
+const tempDiam = document.getElementById('tempDiam');
+if (mediumDiam) {
+    mediumDiam.addEventListener('change', updateMediumDiam);
+    if (tempDiam) tempDiam.addEventListener('input', updateMediumDiam);
+    updateMediumDiam();
+}
+
+// Для вкладки расхода (аналогично, замените id)
+const mediumFlow = document.getElementById('mediumSelectFlow');
+const tempFlow = document.getElementById('tempFlow');
+if (mediumFlow) {
+    mediumFlow.addEventListener('change', updateMediumFlow);
+    if (tempFlow) tempFlow.addEventListener('input', updateMediumFlow);
+    updateMediumFlow();
+}
+
 </script>
 </body>
 </html>
