@@ -1282,8 +1282,8 @@ reliabilityGasLimitsPressure:'Давление вне допустимого д�
 warningLiquidDensity:'Плотность жидкости вне допустимого диапазона.',
 warningLiquidViscosity:'Вязкость жидкости вне допустимого диапазона.',
 reliabilityCryoVisc:'⚠ Вязкость криогенной жидкости рассчитана по табличным данным NIST.',
-lngBalanceOk:'✅ Сумма 100% --- баланссошёлся',
-lngBalanceWarn:'⚠ Сумма {total}% --- небольшоеотклонение',
+lngBalanceOk:'✅ Сумма 100% --- баланс сошёлся',
+lngBalanceWarn:'⚠ Сумма {total}% --- небольшое отклонение',
 lngBalanceError:'🔴 Сумма {total}% --- необходимо ровно 100%',
 lngCH4:'Метан CH₄ (%):', lngC2H6:'Этан C₂H₆ (%):', lngC3H8:'Пропан C₃H₈ (%):',
 lngIC4H10:'и-Бутан i-C₄H₁₀ (%):', lngNC4H10:'н-Бутан n-C₄H₁₀ (%):', lngIC5H12:'Изопентан i-C₅H₁₂ (%):', lngN2:'Азот N₂ (%):',
@@ -2201,7 +2201,7 @@ function updateInfoPanel(){
     if(preset!=='water'&&preset!=='oil')text+=' '+t('liquidPressureNote');
     // Добавляем информацию о табличных данных
     if (liquidViscosityTables[preset]) {
-      text += ' ⚠Вязкостьпотаблицам NIST (лог. интерполяция).';
+      text += ' ⚠ Вязкость по таблицам NIST (лог. интерполяция).';
     }
     infoPanel.textContent=text;
   }
