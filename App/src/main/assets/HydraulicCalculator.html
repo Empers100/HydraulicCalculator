@@ -216,6 +216,32 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
     margin-left: 8px
 }
 }
+/* Гарантированная видимость предупреждений на мобильных */
+.warning-item {
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+/* Анимация появления ошибки */
+.error-border {
+    animation: errorPulse 0.3s ease;
+}
+
+@keyframes errorPulse {
+    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+    100% { box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2); }
+}
+
+/* Мобильная адаптация */
+@media (max-width: 480px) {
+    .warning-item {
+        font-size: 14px;
+        padding: 8px;
+    }
+    .warning-icon {
+        font-size: 16px;
+    }
+}
 </style>
 </head>
 <body>
@@ -232,11 +258,11 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 </select>
 </div>
 <div class="menu-item">
-<span id="themeLabel">Светлая тема</span>
+<span id="themeLabel">Светлаятема</span>
 <div class="theme-toggle" id="themeToggle"></div>
 </div>
 <div class="menu-item">
-<button id="shareBtn" style="width:100%;">📤 Поделиться</button>
+<button id="shareBtn" style="width:100%;">📤Поделиться</button>
 </div>
 <div class="menu-item">
 <button id="helpBtn" style="width:100%;"></button>
@@ -257,37 +283,37 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 
 <div id="validateModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:200; justify-content:center; align-items:center;">
 <div style="background:var(--surface); border-radius:16px; padding:20px; max-width:600px; width:90%; max-height:80vh; overflow-y:auto; color:var(--text);">
-<h2 id="validateTitle">Валидация модели</h2>
+<h2 id="validateTitle">Валидациямодели</h2>
 <div id="validateContent"></div>
 <button id="validateClose" style="margin-top:12px; padding:10px; border-radius:8px; width:100%;">Закрыть</button>
 </div>
 </div>
 
 <div class="tabs" id="tabContainer">
-<button class="tab-btn active" data-tab="direct" id="tabDirectBtn">Прямой расчёт</button>
-<button class="tab-btn" data-tab="diam" id="tabDiamBtn">Подбор диаметра</button>
-<button class="tab-btn" data-tab="flow" id="tabFlowBtn">Подбор расхода</button>
+<button class="tab-btn active" data-tab="direct" id="tabDirectBtn">Прямойрасчёт</button>
+<button class="tab-btn" data-tab="diam" id="tabDiamBtn">Подбордиаметра</button>
+<button class="tab-btn" data-tab="flow" id="tabFlowBtn">Подборрасхода</button>
 </div>
 
-<!-- ===== ПРЯМОЙ РАСЧЁТ ===== -->
+<!-- ===== ПРЯМОЙРАСЧЁТ ===== -->
 <div class="tab-content active" id="tab-direct">
 <div class="display-container">
-<div class="formula-display" id="formulaDisplay">Готов к расчёту</div>
+<div class="formula-display" id="formulaDisplay">Готовкрасчёту</div>
 <div class="main-display-row">
-<label id="lblFlowRate">Скорость потока:</label>
+<label id="lblFlowRate">Скоростьпотока:</label>
 <input type="text" class="main-display" id="mainDisplay" value="0" readonly>
 </div>
 </div>
-<div class="field-row"><label id="lblOuterDiam">Наружный диаметр (мм):</label><input type="number" id="outerDiam" value="57" min="0.1" step="any"></div>
-<div class="field-row"><label id="lblWall">Толщина стенки (мм):</label><input type="number" id="wall" value="3.5" min="0" step="any"></div>
+<div class="field-row"><label id="lblOuterDiam">Наружныйдиаметр (мм):</label><input type="number" id="outerDiam" value="57" min="0.1" step="any"></div>
+<div class="field-row"><label id="lblWall">Толщинастенки (мм):</label><input type="number" id="wall" value="3.5" min="0" step="any"></div>
 <div class="field-row"><label id="lblLength">Длина (м):</label><input type="number" id="length" value="100" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblMassFlow">Массовый расход<br>(кг/ч):</label><input type="number" id="massFlow" value="5000" min="0.001" step="any"></div>
+<div class="field-row"><label id="lblMassFlow">Массовыйрасход<br>(кг/ч):</label><input type="number" id="massFlow" value="5000" min="0.001" step="any"></div>
 <div class="field-row"><label id="lblMode">Режим:</label><select id="modeSelect"><option value="simple" id="modeSimpleText">Упрощённый</option><option value="engineer" id="modeEngineerText">Инженерный</option></select></div>
 <div class="field-row"><label id="lblDensity">Плотность (кг/м³):</label><input type="number" id="density" value="1000" min="0.001" step="any"></div>
 <div class="engineer-block" id="engineerBlock">
-<div class="field-row"><label id="lblMedium">Тип среды:</label><select id="mediumSelect"><option value="liquid" id="mediumLiquidText">Жидкость</option><option value="gas" id="mediumGasText">Газ</option></select></div>
-<div class="field-row"><label id="lblPreset">Типичные среды:</label><select id="presetSelect">
-<option value="choose" id="presetChooseText">Выберите среду...</option>
+<div class="field-row"><label id="lblMedium">Типсреды:</label><select id="mediumSelect"><option value="liquid" id="mediumLiquidText">Жидкость</option><option value="gas" id="mediumGasText">Газ</option></select></div>
+<div class="field-row"><label id="lblPreset">Типичныесреды:</label><select id="presetSelect">
+<option value="choose" id="presetChooseText">Выберитесреду...</option>
 <option value="water" id="presetWaterText">Вода</option>
 <option value="oil" id="presetOilText">Масло</option>
 <option value="air" id="presetAirText">Воздух</option>
@@ -314,7 +340,7 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 <div class="field-row"><label id="lblRoughness">Шероховатость (мм):</label><input type="number" id="roughness" value="0.1" min="0.01" max="1.0" step="0.01"></div>
 <div class="field-row" id="gasPropsRow"><label id="lblPressure">Абс. давление (бар):</label><input type="number" id="pressure" value="1.0" min="0.001" step="any"></div>
 <div class="field-row" id="tempRow"><label id="lblTemperature">Температура (°C):</label><input type="number" id="temperature" value="20.0" min="-273.14" step="any"></div>
-<div class="field-row" id="molarRow"><label id="lblMolarMass">Молярная масса<br>(г/моль):</label><input type="number" id="molarMass" value="28.97" min="2" max="300" step="any"></div>
+<div class="field-row" id="molarRow"><label id="lblMolarMass">Молярнаямасса<br>(г/моль):</label><input type="number" id="molarMass" value="28.97" min="2" max="300" step="any"></div>
 </div>
 <div class="field-row"><label id="lblBends">Поворотов 90° (ζ=0.3):</label><input type="number" id="bends" value="0" min="0" step="1"></div>
 <div class="field-row"><label id="lblValves">Клапанов (ζ=3.0):</label><input type="number" id="valves" value="0" min="0" step="1"></div>
@@ -323,7 +349,7 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 <div class="field-row"><label id="lblExpansions">Расширений (ζ=1.0):</label><input type="number" id="expansions" value="0" min="0" step="1"></div>
 <div class="field-row"><label id="lblOrifices">Дросселей/диафрагм (ζ=2.0):</label><input type="number" id="orifices" value="0" min="0" step="1"></div>
 </div>
-<div class="field-row"><label id="lblPressureUnit">Единицы давления:</label><select id="pressureUnit"><option value="Pa">Pa</option><option value="kPa">kPa</option><option value="bar">bar</option><option value="kgf/cm²">kgf/cm²</option><option value="psi">psi</option></select></div>
+<div class="field-row"><label id="lblPressureUnit">Единицыдавления:</label><select id="pressureUnit"><option value="Pa">Pa</option><option value="kPa">kPa</option><option value="bar">bar</option><option value="kgf/cm²">kgf/cm²</option><option value="psi">psi</option></select></div>
 <div id="infoBlock" class="info-block">
 <div class="info-panel" id="infoPanel"></div>
 <div id="reliabilityIndicator" class="reliability-indicator reliability-green" style="display:none;">
@@ -337,13 +363,13 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 </div>
 <div class="btn-row">
 <button class="calc-btn" id="calculateBtn">Рассчитать</button>
-<button class="save-btn" id="saveBtn" disabled>Сохранить в файл</button>
+<button class="save-btn" id="saveBtn" disabled>Сохранитьвфайл</button>
 </div>
 <div class="result-area" id="resultArea">
 <span id="velocityResult">Скорость: ---</span>
-<span id="pressureDropResult">Потеря давления: ---</span>
-<span id="reynoldsResult">Число Рейнольдса: ---</span>
-<span id="lambdaResult">Коэффициент трения λ: ---</span>
+<span id="pressureDropResult">Потерядавления: ---</span>
+<span id="reynoldsResult">ЧислоРейнольдса: ---</span>
+<span id="lambdaResult">Коэффициенттренияλ: ---</span>
 <span id="compressNote" class="note"></span>
 </div>
 <div class="validation-panel" id="validationPanel" style="display:none;">
@@ -352,104 +378,104 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 </div>
 </div>
 
-<!-- ===== ПОДБОР ДИАМЕТРА ===== -->
+<!-- ===== ПОДБОРДИАМЕТРА ===== -->
 <div class="tab-content" id="tab-diam">
-    <div class="display-container">
-        <div class="formula-display" id="formulaDisplayDiam">Подбор внутреннего диаметра по ΔP</div>
-        <div class="main-display-row">
-            <label id="lblResultDiam">Результат:</label>
-            <input type="text" class="main-display" id="mainDisplayDiam" value="---" readonly>
-        </div>
-    </div>
-
-    <div class="inverse-section">
-        <h4 id="targetTitleDiam">Целевые параметры</h4>
-        <div class="target-row"><label id="lblTargetDeltaPDiam">Перепад ΔP (Па):</label><input type="number" id="targetDeltaPDiam" value="5000" min="0.001" step="any"></div>
-        <div class="target-row"><label id="lblTargetMassFlowDiam">Массовый расход (кг/ч):</label><input type="number" id="targetMassFlowDiam" value="5000" min="0.001" step="any"></div>
-    </div>
-
-    <div class="field-row"><label id="lblLengthDiam">Длина (м):</label><input type="number" id="lengthDiam" value="100" min="0.001" step="any"></div>
-    <div class="field-row"><label id="lblWallDiam">Толщина стенки (мм):</label><input type="number" id="wallDiam" value="3.5" min="0" step="any"></div>
-
-    <!-- Выбор среды с температурой -->
-    <div class="field-row">
-        <label id="lblMediumDiam">Среда:</label>
-        <select id="mediumSelectDiam">
-            <option value="water">Вода</option>
-            <option value="oil">Масло</option>
-        </select>
-    </div>
-    <div class="field-row">
-        <label id="lblDensityDiam">Плотность (кг/м³):</label>
-        <input type="text" id="densityDiam" readonly value="1000">
-    </div>
-    <div class="field-row">
-        <label id="lblViscosityDiam">Вязкость (сСт):</label>
-        <input type="text" id="viscosityDiam" readonly value="1.0">
-    </div>
-    <div class="field-row" id="tempRowDiam" style="display: flex;">
-        <label id="lblTempDiam">Температура (°C):</label>
-        <input type="number" id="tempDiam" value="20" min="0" max="100" step="1">
-    </div>
-
-    <div class="field-row"><label id="lblRoughnessDiam">Шероховатость (мм):</label><input type="number" id="roughnessDiam" value="0.1" min="0.01" max="1.0" step="0.01"></div>
-    <div class="field-row"><label id="lblBendsDiam">Поворотов 90°:</label><input type="number" id="bendsDiam" value="0" min="0" step="1"></div>
-    <div class="field-row"><label id="lblValvesDiam">Клапанов:</label><input type="number" id="valvesDiam" value="0" min="0" step="1"></div>
-
-    <div class="btn-row">
-        <button class="calc-btn" id="calcDiamBtn">Подобрать диаметр</button>
-    </div>
-    <div class="inverse-result" id="resultDiam"></div>
+<div class="display-container">
+<div class="formula-display" id="formulaDisplayDiam">ПодборвнутреннегодиаметрапоΔP</div>
+<div class="main-display-row">
+<label id="lblResultDiam">Результат:</label>
+<input type="text" class="main-display" id="mainDisplayDiam" value="---" readonly>
+</div>
 </div>
 
-<!-- ===== ПОДБОР РАСХОДА ===== -->
+<div class="inverse-section">
+<h4 id="targetTitleDiam">Целевыепараметры</h4>
+<div class="target-row"><label id="lblTargetDeltaPDiam">ПерепадΔP (Па):</label><input type="number" id="targetDeltaPDiam" value="5000" min="0.001" step="any"></div>
+<div class="target-row"><label id="lblTargetMassFlowDiam">Массовыйрасход (кг/ч):</label><input type="number" id="targetMassFlowDiam" value="5000" min="0.001" step="any"></div>
+</div>
+
+<div class="field-row"><label id="lblLengthDiam">Длина (м):</label><input type="number" id="lengthDiam" value="100" min="0.001" step="any"></div>
+<div class="field-row"><label id="lblWallDiam">Толщинастенки (мм):</label><input type="number" id="wallDiam" value="3.5" min="0" step="any"></div>
+
+<!-- Выбор среды с температурой -->
+<div class="field-row">
+<label id="lblMediumDiam">Среда:</label>
+<select id="mediumSelectDiam">
+<option value="water">Вода</option>
+<option value="oil">Масло</option>
+</select>
+</div>
+<div class="field-row">
+<label id="lblDensityDiam">Плотность (кг/м³):</label>
+<input type="text" id="densityDiam" readonly value="1000">
+</div>
+<div class="field-row">
+<label id="lblViscosityDiam">Вязкость (сСт):</label>
+<input type="text" id="viscosityDiam" readonly value="1.0">
+</div>
+<div class="field-row" id="tempRowDiam" style="display: flex;">
+<label id="lblTempDiam">Температура (°C):</label>
+<input type="number" id="tempDiam" value="20" min="0" max="100" step="1">
+</div>
+
+<div class="field-row"><label id="lblRoughnessDiam">Шероховатость (мм):</label><input type="number" id="roughnessDiam" value="0.1" min="0.01" max="1.0" step="0.01"></div>
+<div class="field-row"><label id="lblBendsDiam">Поворотов 90°:</label><input type="number" id="bendsDiam" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblValvesDiam">Клапанов:</label><input type="number" id="valvesDiam" value="0" min="0" step="1"></div>
+
+<div class="btn-row">
+<button class="calc-btn" id="calcDiamBtn">Подобратьдиаметр</button>
+</div>
+<div class="inverse-result" id="resultDiam"></div>
+</div>
+
+<!-- ===== ПОДБОРРАСХОДА ===== -->
 <div class="tab-content" id="tab-flow">
-    <div class="display-container">
-        <div class="formula-display" id="formulaDisplayFlow">Подбор расхода по ΔP</div>
-        <div class="main-display-row">
-            <label id="lblResultFlow">Результат:</label>
-            <input type="text" class="main-display" id="mainDisplayFlow" value="---" readonly>
-        </div>
-    </div>
+<div class="display-container">
+<div class="formula-display" id="formulaDisplayFlow">ПодборрасходапоΔP</div>
+<div class="main-display-row">
+<label id="lblResultFlow">Результат:</label>
+<input type="text" class="main-display" id="mainDisplayFlow" value="---" readonly>
+</div>
+</div>
 
-    <div class="inverse-section">
-        <h4 id="targetTitleFlow">Целевые параметры</h4>
-        <div class="target-row"><label id="lblTargetDeltaPFlow">Перепад ΔP (Па):</label><input type="number" id="targetDeltaPFlow" value="5000" min="0.001" step="any"></div>
-    </div>
+<div class="inverse-section">
+<h4 id="targetTitleFlow">Целевыепараметры</h4>
+<div class="target-row"><label id="lblTargetDeltaPFlow">ПерепадΔP (Па):</label><input type="number" id="targetDeltaPFlow" value="5000" min="0.001" step="any"></div>
+</div>
 
-    <div class="field-row"><label id="lblOuterDiamFlow">Наружный диаметр (мм):</label><input type="number" id="outerDiamFlow" value="57" min="0.1" step="any"></div>
-    <div class="field-row"><label id="lblWallFlow">Толщина стенки (мм):</label><input type="number" id="wallFlow" value="3.5" min="0" step="any"></div>
-    <div class="field-row"><label id="lblLengthFlow">Длина (м):</label><input type="number" id="lengthFlow" value="100" min="0.001" step="any"></div>
+<div class="field-row"><label id="lblOuterDiamFlow">Наружныйдиаметр (мм):</label><input type="number" id="outerDiamFlow" value="57" min="0.1" step="any"></div>
+<div class="field-row"><label id="lblWallFlow">Толщинастенки (мм):</label><input type="number" id="wallFlow" value="3.5" min="0" step="any"></div>
+<div class="field-row"><label id="lblLengthFlow">Длина (м):</label><input type="number" id="lengthFlow" value="100" min="0.001" step="any"></div>
 
-    <!-- Выбор среды с температурой -->
-    <div class="field-row">
-        <label id="lblMediumFlow">Среда:</label>
-        <select id="mediumSelectFlow">
-            <option value="water">Вода</option>
-            <option value="oil">Масло</option>
-        </select>
-    </div>
-    <div class="field-row">
-        <label id="lblDensityFlow">Плотность (кг/м³):</label>
-        <input type="text" id="densityFlow" readonly value="1000">
-    </div>
-    <div class="field-row">
-        <label id="lblViscosityFlow">Вязкость (сСт):</label>
-        <input type="text" id="viscosityFlow" readonly value="1.0">
-    </div>
-    <div class="field-row" id="tempRowFlow" style="display: flex;">
-        <label id="lblTempFlow">Температура (°C):</label>
-        <input type="number" id="tempFlow" value="20" min="0" max="100" step="1">
-    </div>
+<!-- Выбор среды с температурой -->
+<div class="field-row">
+<label id="lblMediumFlow">Среда:</label>
+<select id="mediumSelectFlow">
+<option value="water">Вода</option>
+<option value="oil">Масло</option>
+</select>
+</div>
+<div class="field-row">
+<label id="lblDensityFlow">Плотность (кг/м³):</label>
+<input type="text" id="densityFlow" readonly value="1000">
+</div>
+<div class="field-row">
+<label id="lblViscosityFlow">Вязкость (сСт):</label>
+<input type="text" id="viscosityFlow" readonly value="1.0">
+</div>
+<div class="field-row" id="tempRowFlow" style="display: flex;">
+<label id="lblTempFlow">Температура (°C):</label>
+<input type="number" id="tempFlow" value="20" min="0" max="100" step="1">
+</div>
 
-    <div class="field-row"><label id="lblRoughnessFlow">Шероховатость (мм):</label><input type="number" id="roughnessFlow" value="0.1" min="0.01" max="1.0" step="0.01"></div>
-    <div class="field-row"><label id="lblBendsFlow">Поворотов 90°:</label><input type="number" id="bendsFlow" value="0" min="0" step="1"></div>
-    <div class="field-row"><label id="lblValvesFlow">Клапанов:</label><input type="number" id="valvesFlow" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblRoughnessFlow">Шероховатость (мм):</label><input type="number" id="roughnessFlow" value="0.1" min="0.01" max="1.0" step="0.01"></div>
+<div class="field-row"><label id="lblBendsFlow">Поворотов 90°:</label><input type="number" id="bendsFlow" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblValvesFlow">Клапанов:</label><input type="number" id="valvesFlow" value="0" min="0" step="1"></div>
 
-    <div class="btn-row">
-        <button class="calc-btn" id="calcFlowBtn">Подобрать расход</button>
-    </div>
-    <div class="inverse-result" id="resultFlow"></div>
+<div class="btn-row">
+<button class="calc-btn" id="calcFlowBtn">Подобратьрасход</button>
+</div>
+<div class="inverse-result" id="resultFlow"></div>
 </div>
 
 <script>
@@ -1256,8 +1282,8 @@ reliabilityGasLimitsPressure:'Давление вне допустимого д�
 warningLiquidDensity:'Плотность жидкости вне допустимого диапазона.',
 warningLiquidViscosity:'Вязкость жидкости вне допустимого диапазона.',
 reliabilityCryoVisc:'⚠ Вязкость криогенной жидкости рассчитана по табличным данным NIST.',
-lngBalanceOk:'✅ Сумма 100% --- баланс сошёлся',
-lngBalanceWarn:'⚠ Сумма {total}% --- небольшое отклонение',
+lngBalanceOk:'✅ Сумма 100% --- баланссошёлся',
+lngBalanceWarn:'⚠ Сумма {total}% --- небольшоеотклонение',
 lngBalanceError:'🔴 Сумма {total}% --- необходимо ровно 100%',
 lngCH4:'Метан CH₄ (%):', lngC2H6:'Этан C₂H₆ (%):', lngC3H8:'Пропан C₃H₈ (%):',
 lngIC4H10:'и-Бутан i-C₄H₁₀ (%):', lngNC4H10:'н-Бутан n-C₄H₁₀ (%):', lngIC5H12:'Изопентан i-C₅H₁₂ (%):', lngN2:'Азот N₂ (%):',
@@ -1273,7 +1299,7 @@ validationDesc_satVapor: 'Пар насыщения',
 validationDesc_gasAtTemp: 'Газ при {temp}°C',
 validationDesc_triplePoint: 'Тройная точка',
 validationDesc_tempC: '{temp}°C',
-validationAllOk: '✅ Все {total} точек в пределах 10% погрешности',
+validationAllOk: '✅ Все {total} точеквпределах 10% погрешности',
 validationSomeError: '⚠️ {errors} из {total} точек превышают 10% погрешности',
 validationDesc_triplePoint: 'Тройная точка (жидкость)',
 validationDesc_triplePointVapor: 'Тройная точка (пар)',
@@ -1496,15 +1522,15 @@ pressure:'绝对压力 (巴)：', temperature:'温度 (°C)：', molarMass:'摩�
 pressureUnit:'压力单位：', calculate:'计算', save:'保存',
 velocity:'流速', pressureDrop:'压力损失', reynolds:'雷诺数', lambda:'摩擦系数 λ',
 errorNum:'请检查数字输入', errorDiam:'无效的直径或壁厚',
-errorPos:'密度、长度和流量必须 > 0', fileSaved:'文件已保存',
+errorPos:'密度、长度和流量必须> 0', fileSaved:'文件已保存',
 errorTempAbs:'温度不能低于绝对零度 (-273.15°C)',
 errorPresAbs:'压力必须为正数',
 errorTempLimit:'温度超出该物质的有效范围 ({min}...{max}°C)',
 errorPresLimit:'压力超出该物质的有效范围 ({min}...{max} 巴)',
 errorMolarMassRange:'摩尔质量应在2到300克/摩尔之间。',
 ready:'准备就绪', resultSummary:'v = {velocity} 米/秒, ΔP = {pressure} {unit}', flowRate:'流速：',
-infoPanelGas:'⚠ 气体密度根据实际气体状态方程（Z）计算。粘度包含压力修正。',
-infoPanelLiquid:'⚠ 检查液体密度和粘度的实际范围。',
+infoPanelGas:'⚠气体密度根据实际气体状态方程（Z）计算。粘度包含压力修正。',
+infoPanelLiquid:'⚠检查液体密度和粘度的实际范围。',
 infoPanelLng:'⚠ LNG/NG 混合物。相态和参数限制取决于组成。',
 limitInfo:'有效范围：T {tmin}...{tmax} °C, P {pmin}...{pmax} 巴',
 noLimitInfo:'无参考限制。',
@@ -1513,16 +1539,16 @@ liquidViscosityRange:'粘度：{min}...{max} 厘斯',
 liquidPressureNote:'⚠液化气体属性为固定值。',
 liquidLimitInfo:'有效范围（液体）：T {tmin}...{tmax} °C, P {pmin}...{pmax} 巴',
 contractions:'收缩 (ζ=0.5)：', expansions:'扩张 (ζ=1.0)：', orifices:'孔板/节流阀 (ζ=2.0)：',
-warningSaturationAbove:'⚠ 压力高于饱和压力 — 按液化气体计算。为获得更高精度，请切换至液体模式。',
-warningNearSaturation:'⚠ 接近饱和压力 — 可能发生冷凝。',
-infoPanelSaturatedLiquid:' ⚠ 压力高于饱和压力。',
-reliabilityGreen:'✅ 计算在模型适用范围内',
-reliabilityYellow:'⚠️ 模型不确定性增加',
-reliabilityRed:'🔴 超出模型适用范围',
+warningSaturationAbove:'⚠压力高于饱和压力 — 按液化气体计算。为获得更高精度，请切换至液体模式。',
+warningNearSaturation:'⚠接近饱和压力 — 可能发生冷凝。',
+infoPanelSaturatedLiquid:' ⚠压力高于饱和压力。',
+reliabilityGreen:'✅计算在模型适用范围内',
+reliabilityYellow:'⚠️模型不确定性增加',
+reliabilityRed:'🔴超出模型适用范围',
 compressTransition:'🟡 M = {mach} — 压缩性影响开始显现。修正系数：×{factor}',
 compressFull:'🟠 M = {mach} — 必须考虑压缩性。损失增至{factor}倍',
 compressHigh:'🔴 M = {mach} — 高速！可能出现激波。修正系数：×{factor}',
-compressChoked:'🔴 壅塞流！质量流量受声速限制。',
+compressChoked:'🔴壅塞流！质量流量受声速限制。',
 soundSpeedInfo:' (声速：{speed} 米/秒)',
 reliabilityCriticalRegion:'临界区 (Tr={tr}, Pr={pr})。不确定性10-30%。',
 reliabilityNearCritical:'接近临界点 (Tr={tr}, Pr={pr})。不确定性5-10%。',
@@ -1533,15 +1559,15 @@ reliabilityZ:'压缩因子Z={z}显著偏离1。',
 reliabilityLiquidGas:'液化气体性质使用简化相关性计算。',
 reliabilityLng:'LNG/NG 混合物。伪临界参数(Kay规则)。精度 ±5-10%。',
 reliabilityLngSupercritical:'超临界流体 (Tr={tr})。性质未定义。',
-reliabilityLngTwoPhase:'⚠ 两相区。可能沸腾或冷凝。',
+reliabilityLngTwoPhase:'⚠两相区。可能沸腾或冷凝。',
 reliabilityGasLimitsTemp:'温度超出有效范围 ({tmin}...{tmax}°C)。',
 reliabilityGasLimitsPressure:'压力超出有效范围 ({pmin}...{pmax} 巴)。',
 warningLiquidDensity:'液体密度超出范围。',
 warningLiquidViscosity:'液体粘度超出范围。',
-reliabilityCryoVisc:'⚠ 低温液体粘度按NIST表格数据计算。',
-lngBalanceOk:'✅ 总和100% — 已平衡',
-lngBalanceWarn:'⚠ 总和{total}% — 轻微偏离',
-lngBalanceError:'🔴 总和{total}% — 需要正好100%',
+reliabilityCryoVisc:'⚠低温液体粘度按NIST表格数据计算。',
+lngBalanceOk:'✅总和100% — 已平衡',
+lngBalanceWarn:'⚠总和{total}% — 轻微偏离',
+lngBalanceError:'🔴总和{total}% — 需要正好100%',
 lngCH4:'甲烷 CH₄ (%)：', lngC2H6:'乙烷 C₂H₆ (%)：', lngC3H8:'丙烷 C₃H₈ (%)：',
 lngIC4H10:'异丁烷 i-C₄H₁₀ (%)：', lngNC4H10:'正丁烷 n-C₄H₁₀ (%)：', lngIC5H12:'异戊烷 i-C₅H₁₂ (%)：', lngN2:'氮气 N₂ (%)：',
 helpTitle:'帮助', helpClose:'关闭', helpBtn:'帮助',
@@ -1556,7 +1582,7 @@ validationDesc_satVapor: '饱和蒸汽',
 validationDesc_gasAtTemp: '{temp}°C 气体',
 validationDesc_triplePoint: '三相点',
 validationDesc_tempC: '{temp}°C',
-validationAllOk: '✅ 所有 {total} 个点误差在10%以内',
+validationAllOk: '✅所有 {total} 个点误差在10%以内',
 validationSomeError: '⚠️ {errors}/{total} 个点误差超过10%',
 validationDesc_triplePoint: '三相点（液体）',
 validationDesc_triplePointVapor: '三相点（蒸汽）',
@@ -1577,13 +1603,13 @@ helpContent:`
 <p><b>简化模式</b> — 仅考虑水力学。快速评估，不考虑介质特性。</p>
 <p><b>工程模式</b> — 完整计算，包含实际气体/液体性质、压缩性和相态。</p>
 <h3>指示器</h3>
-<p>🟢 绿色 — 模型在最佳范围内。</p>
-<p>🟡 黄色 — 不确定性增加（请查看警告）。</p>
-<p>🔴 红色 — 计算超出模型适用范围。</p>
+<p>🟢绿色 — 模型在最佳范围内。</p>
+<p>🟡黄色 — 不确定性增加（请查看警告）。</p>
+<p>🔴红色 — 计算超出模型适用范围。</p>
 <h3>验证点</h3>
-<p>🟢 绿色 — 误差≤5%</p>
-<p>🟡 黄色 — 误差 5–10%</p>
-<p>🔴 红色 — 误差 >10%</p>
+<p>🟢绿色 — 误差≤5%</p>
+<p>🟡黄色 — 误差 5–10%</p>
+<p>🔴红色 — 误差>10%</p>
 <h3>限值与风险</h3>
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
 <tr><th>物质</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (巴)</th><th>主要风险</th></tr>
@@ -1634,6 +1660,13 @@ const lngComposition = document.getElementById('lngComposition');
 
 let lastResult = {velocity:0,deltaP:0,re:0,lambda:0,mode:'',mediumType:'',preset:'',pressureUnit:'Pa',compressDiff:null,compressMach:false,compressCorrection:null};
 let updating = false;
+// Снятие подсветки ошибки при изменении температуры
+document.getElementById('temperature').addEventListener('input', function() {
+    this.classList.remove('error-border');
+});
+document.getElementById('temperature').addEventListener('change', function() {
+    this.classList.remove('error-border');
+});
 
 /* ============================================================
    ВАЛИДАЦИЯ МОДЕЛИ
@@ -1794,88 +1827,328 @@ function calcCompressibilityCorrection(v,dP0){
 
 function updateCompressNoteFromCorr(c){ const n=document.getElementById('compressNote'); if(!c||c.mach<0.1||modeSelect.value==='simple'||mediumSelect.value!=='gas'){n.textContent='';n.classList.remove('show');n.style.display='none';return;} let msg='';const M=c.mach.toFixed(2),f=c.factor.toFixed(2); if(c.regime==='transition')msg=t('compressTransition').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='compressible')msg=t('compressFull').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='high-subsonic')msg=t('compressHigh').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='choked')msg=t('compressChoked'); const a=calcSoundSpeed(); if(a)msg+=t('soundSpeedInfo').replace('{speed}',a.toFixed(0)); n.textContent=msg;n.classList.add('show');n.style.display='block'; }
 
-function getAllMessages(){
-  const preset=presetSelect.value,mediumType=mediumSelect.value,mode=modeSelect.value;
-  if(mode==='simple'||preset==='choose')return{level:-1,messages:[]};
-  const T=parseFloat(document.getElementById('temperature').value),P=parseFloat(document.getElementById('pressure').value);
-  if(isNaN(T)||isNaN(P))return{level:-1,messages:[]};
-  const T_K=T+273.15; let level=0; const messages=[];
-  if(preset==='lng'){
-    level=Math.max(level,1); messages.push({text:t('reliabilityLng'),type:'caution'});
-    const phase=determineLngPhase(T,P),pseudo=calcLngPseudoCritical();
-    if(phase==='supercritical'){level=Math.max(level,2);messages.push({text:t('reliabilityLngSupercritical').replace('{tr}',(T_K/pseudo.Tc).toFixed(2)),type:'critical'});}
-    else if(phase==='two-phase'){level=Math.max(level,1);messages.push({text:t('reliabilityLngTwoPhase'),type:'caution'});}
-    if(phase==='liquid'||phase==='two-phase'){messages.push({text:t('reliabilityLiquidGas'),type:'caution'});}
-    if(!checkLngBalance())messages.push({text:t('lngBalanceError').replace('{total}','?'),type:'critical'});
-    const limits=getCurrentLngLimits();
-    if(limits){const tmin=limits.Tmin-273.15,tmax=limits.Tmax-273.15; if(T<tmin||T>tmax)messages.push({text:t('reliabilityGasLimitsTemp').replace('{tmin}',tmin.toFixed(0)).replace('{tmax}',tmax.toFixed(0)),type:'caution'}); if(P<limits.Pmin||P>limits.Pmax)messages.push({text:t('reliabilityGasLimitsPressure').replace('{pmin}',limits.Pmin.toFixed(4)).replace('{pmax}',limits.Pmax.toFixed(1)),type:'caution'});}
-    return{level,messages};
-  }
-  const crit=gasCritical[preset];
-  if(mediumType==='gas'&&crit){
-    const Tr=T_K/crit.Tc,Pr=P/crit.Pc,P_sat=getSaturationPressure(T_K,preset),phase=determinePhase(P,P_sat,T_K,crit.Tc);
-    const isSub=T_K<crit.Tc,isLiq=(phase==='liquid'||phase==='two-phase');
-    if(Tr>0.92&&Pr>0.85){level=2;messages.push({text:t('reliabilityCriticalRegion').replace('{tr}',Tr.toFixed(2)).replace('{pr}',Pr.toFixed(2)),type:'critical'});}
-    else if(Tr>0.85&&Pr>0.7){level=1;messages.push({text:t('reliabilityNearCritical').replace('{tr}',Tr.toFixed(2)).replace('{pr}',Pr.toFixed(2)),type:'caution'});}
-    if(['parahydrogen','normalhydrogen','helium4'].includes(preset)&&T_K<50){level=1;messages.push({text:t('reliabilityQuantum').replace('{t}',T.toFixed(1)),type:'caution'});}
-    if(preset==='ammonia'&&(T_K>370||P>80)){level=1;messages.push({text:t('reliabilityPolar'),type:'caution'});}
-    const limits=gasLimits[preset];
-    if(limits){const tmin=limits.Tmin-273.15,tmax=limits.Tmax-273.15; if(T<tmin||T>tmax){level=1;messages.push({text:t('reliabilityGasLimitsTemp').replace('{tmin}',tmin.toFixed(0)).replace('{tmax}',tmax.toFixed(0)),type:'caution'});} if(P<limits.Pmin||P>limits.Pmax){level=1;messages.push({text:t('reliabilityGasLimitsPressure').replace('{pmin}',limits.Pmin.toFixed(4)).replace('{pmax}',limits.Pmax.toFixed(1)),type:'caution'});}}
-    const antoine=antoineCoeffs[preset];
-    if(antoine&&isSub&&isLiq&&(T_K<antoine.Tmin||T_K>antoine.Tmax)){level=1;messages.push({text:t('reliabilityAntoine').replace('{tmin}',(antoine.Tmin-273.15).toFixed(0)).replace('{tmax}',(antoine.Tmax-273.15).toFixed(0)),type:'info'});}
-    if(P_sat!==null&&isSub){ if(isLiq&&P>=P_sat*(1-0.001))messages.push({text:t('warningSaturationAbove'),type:'caution'}); else if(!isLiq&&P>=P_sat*0.9)messages.push({text:t('warningNearSaturation'),type:'info'}); }
-    if(isSub&&isLiq&&preset!=='water'&&preset!=='oil'){
-      level=1;
-      // Для криогенных жидкостей с табличными данными — зелёный статус
-      if (['normalhydrogen','parahydrogen','helium4','nitrogen','oxygen','methane','neon','argon','krypton','xenon','ammonia','ethane','ethylene','propane','co2','freon22'].includes(preset)) {
-        messages.push({text:t('reliabilityCryoVisc'),type:'info'});
-      } else {
-        messages.push({text:t('reliabilityLiquidGas'),type:'caution'});
-      }
+function getAllMessages() {
+    const preset = presetSelect.value;
+    const mediumType = mediumSelect.value;
+    const mode = modeSelect.value;
+
+    // ===== ПЕРВАЯ ОЧЕРЕДЬ: АБСОЛЮТНЫЙ НОЛЬ =====
+    const T = parseFloat(document.getElementById('temperature').value);
+    if (isNaN(T) || T < -273.15) {
+        return { 
+            level: 2, 
+            messages: [{ text: t('errorTempAbs'), type: 'critical' }] 
+        };
     }
-    if(!isLiq){const Z=calcZ_PengRobinson(T_K,P,crit.Tc,crit.Pc,crit.w,'gas'); if(Math.abs(Z-1)>0.2){level=1;messages.push({text:t('reliabilityZ').replace('{z}',Z.toFixed(2)),type:'info'});}}
-  }
-  if(mediumType==='liquid'&&preset!=='choose'&&preset!=='lng'){
-    const liq=liquidLimits[preset];
-    if(liq){const d=parseFloat(document.getElementById('density').value),v=parseFloat(document.getElementById('viscosity').value); if(!isNaN(d)&&(d<liq.densityMin||d>liq.densityMax)){level=1;messages.push({text:t('warningLiquidDensity'),type:'caution'});} if(!isNaN(v)&&(v<liq.viscosityMin||v>liq.viscosityMax)){level=1;messages.push({text:t('warningLiquidViscosity'),type:'caution'});}}
-    if(preset!=='water'&&preset!=='oil'){
-      // Для жидкостей с табличными данными — инфо вместо предупреждения
-      if (liquidViscosityTables[preset]) {
-        messages.push({text:t('reliabilityCryoVisc'),type:'info'});
-      } else {
-        level=1;messages.push({text:t('reliabilityLiquidGas'),type:'caution'});
-      }
+
+    // ===== ВТОРАЯ ОЧЕРЕДЬ: ДИАПАЗОН ДЛЯ ГАЗА В ИНЖЕНЕРНОМ РЕЖИМЕ =====
+    if (mode === 'engineer' && preset !== 'choose' && preset !== 'lng' && mediumType === 'gas') {
+        const limits = gasLimits[preset];
+        if (limits) {
+            const tmin = limits.Tmin - 273.15;
+            const tmax = limits.Tmax - 273.15;
+            if (T < tmin || T > tmax) {
+                const msg = t('errorTempLimit')
+                    .replace('{min}', tmin.toFixed(1))
+                    .replace('{max}', tmax.toFixed(1));
+                return { 
+                    level: 2, 
+                    messages: [{ text: msg, type: 'critical' }] 
+                };
+            }
+        }
     }
-  }
-  return{level,messages};
+
+    // ===== ДАЛЬШЕ — ВЕСЬ СТАРЫЙ КОД БЕЗ ПРОВЕРОК ТЕМПЕРАТУРЫ =====
+    let level = 0;
+    const messages = [];
+
+    const P = parseFloat(document.getElementById('pressure').value) || 0;
+    const T_K = T + 273.15;
+
+    // LNG
+    if (preset === 'lng') {
+        level = Math.max(level, 1);
+        messages.push({ text: t('reliabilityLng'), type: 'caution' });
+
+        const phase = determineLngPhase(T, P);
+        const pseudo = calcLngPseudoCritical();
+
+        if (phase === 'supercritical') {
+            level = Math.max(level, 2);
+            messages.push({
+                text: t('reliabilityLngSupercritical').replace('{tr}', (T_K / pseudo.Tc).toFixed(2)),
+                type: 'critical'
+            });
+        } else if (phase === 'two-phase') {
+            level = Math.max(level, 1);
+            messages.push({ text: t('reliabilityLngTwoPhase'), type: 'caution' });
+        }
+
+        if (phase === 'liquid' || phase === 'two-phase') {
+            messages.push({ text: t('reliabilityLiquidGas'), type: 'caution' });
+        }
+
+        if (!checkLngBalance()) {
+            messages.push({
+                text: t('lngBalanceError').replace('{total}', '?'),
+                type: 'critical'
+            });
+        }
+
+        const limits = getCurrentLngLimits();
+        if (limits) {
+            const tmin = limits.Tmin - 273.15;
+            const tmax = limits.Tmax - 273.15;
+            if (T < tmin || T > tmax) {
+                messages.push({
+                    text: t('reliabilityGasLimitsTemp')
+                        .replace('{tmin}', tmin.toFixed(0))
+                        .replace('{tmax}', tmax.toFixed(0)),
+                    type: 'caution'
+                });
+            }
+            if (P < limits.Pmin || P > limits.Pmax) {
+                messages.push({
+                    text: t('reliabilityGasLimitsPressure')
+                        .replace('{pmin}', limits.Pmin.toFixed(4))
+                        .replace('{pmax}', limits.Pmax.toFixed(1)),
+                    type: 'caution'
+                });
+            }
+        }
+        return { level, messages };
+    }
+
+    const crit = gasCritical[preset];
+
+    if (mediumType === 'gas' && crit) {
+        const Tr = T_K / crit.Tc;
+        const Pr = P / crit.Pc;
+        const P_sat = getSaturationPressure(T_K, preset);
+        const phase = determinePhase(P, P_sat, T_K, crit.Tc);
+        const isSub = T_K < crit.Tc;
+        const isLiq = (phase === 'liquid' || phase === 'two-phase');
+
+        // Критическая область
+        if (Tr > 0.92 && Pr > 0.85) {
+            level = 2;
+            messages.push({
+                text: t('reliabilityCriticalRegion')
+                    .replace('{tr}', Tr.toFixed(2))
+                    .replace('{pr}', Pr.toFixed(2)),
+                type: 'critical'
+            });
+        } else if (Tr > 0.85 && Pr > 0.7) {
+            level = 1;
+            messages.push({
+                text: t('reliabilityNearCritical')
+                    .replace('{tr}', Tr.toFixed(2))
+                    .replace('{pr}', Pr.toFixed(2)),
+                type: 'caution'
+            });
+        }
+
+        // Квантовый газ — ТОЛЬКО если температура в допустимом диапазоне для газа
+        // и фаза действительно газ (не жидкость/твердое)
+        if (['parahydrogen', 'normalhydrogen', 'helium4'].includes(preset) 
+&& T_K < 50 
+&& !isLiq 
+&& phase === 'gas') {
+            level = 1;
+            messages.push({
+                text: t('reliabilityQuantum').replace('{t}', T.toFixed(1)),
+                type: 'caution'
+            });
+        }
+
+        // Полярные вещества
+        if (preset === 'ammonia' && (T_K > 370 || P > 80)) {
+            level = 1;
+            messages.push({ text: t('reliabilityPolar'), type: 'caution' });
+        }
+
+        // Пределы давления (температура уже проверена выше)
+        const limits = gasLimits[preset];
+        if (limits) {
+            if (P < limits.Pmin || P > limits.Pmax) {
+                level = 1;
+                messages.push({
+                    text: t('reliabilityGasLimitsPressure')
+                        .replace('{pmin}', limits.Pmin.toFixed(4))
+                        .replace('{pmax}', limits.Pmax.toFixed(1)),
+                    type: 'caution'
+                });
+            }
+        }
+
+        // Антуан
+        const antoine = antoineCoeffs[preset];
+        if (antoine && isSub && isLiq && (T_K < antoine.Tmin || T_K > antoine.Tmax)) {
+            level = 1;
+            messages.push({
+                text: t('reliabilityAntoine')
+                    .replace('{tmin}', (antoine.Tmin - 273.15).toFixed(0))
+                    .replace('{tmax}', (antoine.Tmax - 273.15).toFixed(0)),
+                type: 'info'
+            });
+        }
+
+        // Насыщение
+        if (P_sat !== null && isSub) {
+            if (isLiq && P >= P_sat * (1 - 0.001)) {
+                messages.push({ text: t('warningSaturationAbove'), type: 'caution' });
+            } else if (!isLiq && P >= P_sat * 0.9) {
+                messages.push({ text: t('warningNearSaturation'), type: 'info' });
+            }
+        }
+
+        // Сжиженный газ
+        if (isSub && isLiq && preset !== 'water' && preset !== 'oil') {
+            level = 1;
+            if (['normalhydrogen', 'parahydrogen', 'helium4', 'nitrogen', 
+                 'oxygen', 'methane', 'neon', 'argon', 'krypton', 'xenon',
+                 'ammonia', 'ethane', 'ethylene', 'propane', 'co2', 'freon22'].includes(preset)) {
+                messages.push({ text: t('reliabilityCryoVisc'), type: 'info' });
+            } else {
+                messages.push({ text: t('reliabilityLiquidGas'), type: 'caution' });
+            }
+        }
+
+        // Z-фактор
+        if (!isLiq) {
+            const Z = calcZ_PengRobinson(T_K, P, crit.Tc, crit.Pc, crit.w, 'gas');
+            if (Math.abs(Z - 1) > 0.2) {
+                level = 1;
+                messages.push({
+                    text: t('reliabilityZ').replace('{z}', Z.toFixed(2)),
+                    type: 'info'
+                });
+            }
+        }
+    }
+
+    // Жидкости
+    if (mediumType === 'liquid' && preset !== 'choose' && preset !== 'lng') {
+        const liq = liquidLimits[preset];
+        if (liq) {
+            const d = parseFloat(document.getElementById('density').value);
+            const v = parseFloat(document.getElementById('viscosity').value);
+            if (!isNaN(d) && (d < liq.densityMin || d > liq.densityMax)) {
+                level = 1;
+                messages.push({ text: t('warningLiquidDensity'), type: 'caution' });
+            }
+            if (!isNaN(v) && (v < liq.viscosityMin || v > liq.viscosityMax)) {
+                level = 1;
+                messages.push({ text: t('warningLiquidViscosity'), type: 'caution' });
+            }
+        }
+
+        if (preset !== 'water' && preset !== 'oil') {
+            if (liquidViscosityTables[preset]) {
+                messages.push({ text: t('reliabilityCryoVisc'), type: 'info' });
+            } else {
+                level = 1;
+                messages.push({ text: t('reliabilityLiquidGas'), type: 'caution' });
+            }
+        }
+    }
+
+    return { level, messages };
 }
 
-function updateAllWarnings(){
-  const{level,messages}=getAllMessages();
-  const indicator=document.getElementById('reliabilityIndicator'),textEl=document.getElementById('reliabilityText'),tooltipEl=document.getElementById('reliabilityTooltip');
-  warningListContainer.innerHTML=''; warningListContainer.style.display='none';
-  if(modeSelect.value==='simple'||presetSelect.value==='choose'){indicator.style.display='none';return;}
-  if(level<0){indicator.style.display='none';return;}
-  indicator.style.display='flex'; indicator.classList.remove('reliability-green','reliability-yellow','reliability-red');
-  let mainText;
-  if(level===0){indicator.classList.add('reliability-green');mainText=t('reliabilityGreen');}
-  else if(level===1){indicator.classList.add('reliability-yellow');mainText=t('reliabilityYellow');}
-  else{indicator.classList.add('reliability-red');mainText=t('reliabilityRed');}
-  textEl.textContent=mainText;
-  if(messages.length===0){tooltipEl.textContent='';tooltipEl.style.display='none';}
-  else{
-    const crit=messages.filter(m=>m.type==='critical').length,caut=messages.filter(m=>m.type==='caution').length,info=messages.filter(m=>m.type==='info').length;
-    let summary=[]; if(crit>0)summary.push('🔴'+crit); if(caut>0)summary.push('🟡'+caut); if(info>0)summary.push('🔵'+info);
-    tooltipEl.textContent=summary.join(', '); tooltipEl.style.display='block';
-    const list=document.createElement('div'); list.className='warning-list';
-    messages.forEach(msg=>{
-      const item=document.createElement('div'); let icon,css;
-      if(msg.type==='critical'){icon='🔴';css='warning-critical';}else if(msg.type==='caution'){icon='🟡';css='warning-caution';}else{icon='🔵';css='warning-info';}
-      item.className=`warning-item ${css}`; item.innerHTML=`<span class="warning-icon">${icon}</span><span>${msg.text}</span>`;
-      list.appendChild(item);
-    });
-    warningListContainer.appendChild(list); warningListContainer.style.display='block';
-  }
+function updateAllWarnings() {
+    const indicator = document.getElementById('reliabilityIndicator');
+    const textEl = document.getElementById('reliabilityText');
+    const tooltipEl = document.getElementById('reliabilityTooltip');
+    const warningContainer = document.getElementById('warningListContainer');
+
+    // Получаем сообщения
+    const { level, messages } = getAllMessages();
+
+    // Очищаем контейнер
+    warningContainer.innerHTML = '';
+    warningContainer.style.display = 'none';
+
+    // Убираем подсветку ошибки с поля температуры (добавим при необходимости)
+    const tempField = document.getElementById('temperature');
+    if (tempField) tempField.classList.remove('error-border');
+
+    if (modeSelect.value === 'simple' || presetSelect.value === 'choose') {
+        indicator.style.display = 'none';
+        return;
+    }
+
+    // КРИТИЧЕСКИЕ ОШИБКИ — показываем только их, скрываем индикатор
+    const criticalMessages = messages.filter(m => m.type === 'critical');
+    if (criticalMessages.length > 0) {
+        indicator.style.display = 'none';
+
+        // Подсветка поля температуры для критических ошибок температуры
+        const isTempError = criticalMessages.some(m =>
+            m.text.includes(t('errorTempAbs')) || 
+            m.text.includes(t('errorTempLimit').split('{')[0])
+        );
+        if (isTempError && tempField) {
+            tempField.classList.add('error-border');
+        }
+
+        criticalMessages.forEach(msg => {
+            const div = document.createElement('div');
+            div.className = 'warning-item warning-critical';
+            div.innerHTML = `<span class="warning-icon">🔴</span><span>${msg.text}</span>`;
+            warningContainer.appendChild(div);
+        });
+        warningContainer.style.display = 'block';
+        return;
+    }
+
+    // Нет критических — показываем обычный индикатор
+    indicator.style.display = 'flex';
+    indicator.classList.remove('reliability-green', 'reliability-yellow', 'reliability-red');
+
+    let mainText;
+    if (level === 0) {
+        indicator.classList.add('reliability-green');
+        mainText = t('reliabilityGreen');
+    } else if (level === 1) {
+        indicator.classList.add('reliability-yellow');
+        mainText = t('reliabilityYellow');
+    } else {
+        indicator.classList.add('reliability-red');
+        mainText = t('reliabilityRed');
+    }
+    textEl.textContent = mainText;
+
+    if (messages.length === 0) {
+        tooltipEl.textContent = '';
+        tooltipEl.style.display = 'none';
+    } else {
+        const crit = messages.filter(m => m.type === 'critical').length;
+        const caut = messages.filter(m => m.type === 'caution').length;
+        const info = messages.filter(m => m.type === 'info').length;
+        let summary = [];
+        if (crit > 0) summary.push('🔴' + crit);
+        if (caut > 0) summary.push('🟡' + caut);
+        if (info > 0) summary.push('🔵' + info);
+        tooltipEl.textContent = summary.join(', ');
+        tooltipEl.style.display = 'block';
+
+        const list = document.createElement('div');
+        list.className = 'warning-list';
+        messages.forEach(msg => {
+            const item = document.createElement('div');
+            let icon, css;
+            if (msg.type === 'critical') { icon = '🔴'; css = 'warning-critical'; }
+            else if (msg.type === 'caution') { icon = '🟡'; css = 'warning-caution'; }
+            else { icon = '🔵'; css = 'warning-info'; }
+            item.className = `warning-item ${css}`;
+            item.innerHTML = `<span class="warning-icon">${icon}</span><span>${msg.text}</span>`;
+            list.appendChild(item);
+        });
+        warningContainer.appendChild(list);
+        warningContainer.style.display = 'block';
+    }
 }
 
 function getCurrentLngLimits(){
@@ -1928,7 +2201,7 @@ function updateInfoPanel(){
     if(preset!=='water'&&preset!=='oil')text+=' '+t('liquidPressureNote');
     // Добавляем информацию о табличных данных
     if (liquidViscosityTables[preset]) {
-      text += ' ⚠ Вязкость по таблицам NIST (лог. интерполяция).';
+      text += ' ⚠Вязкостьпотаблицам NIST (лог. интерполяция).';
     }
     infoPanel.textContent=text;
   }
@@ -2030,21 +2303,49 @@ function updateDisplayWithResult(){
 }
 
 calculateBtn.addEventListener('click',()=>{
+    // ===== НАЧАЛО: ПРОВЕРКА ТЕМПЕРАТУРЫ =====
+    const T = parseFloat(document.getElementById('temperature').value);
+    const tempField = document.getElementById('temperature');
+
+    // Сначала убираем старую подсветку
+    if (tempField) tempField.classList.remove('error-border');
+
+    if (isNaN(T) || T < -273.15) {
+        // Для мобильных: показываем сообщение в панели предупреждений
+        updateAllWarnings(); // Это создаст красный блок с ошибкой
+
+        // Для ПК: alert остаётся как fallback
+        // Но НЕ блокируем мобильный вывод — alert можно закомментировать если мешает
+        // alert(t('errorTempAbs'));
+
+        if (tempField) tempField.classList.add('error-border');
+        return;
+    }
+
+    // Проверка диапазона для газа
+    if (modeSelect.value === 'engineer' && presetSelect.value !== 'choose' && mediumSelect.value === 'gas') {
+        const preset = presetSelect.value;
+        const limits = gasLimits[preset];
+        if (limits) {
+            const tmin = limits.Tmin - 273.15;
+            const tmax = limits.Tmax - 273.15;
+            if (T < tmin || T > tmax) {
+                updateAllWarnings(); // Покажет ошибку в панели
+
+                // alert(t('errorTempLimit')
+                //     .replace('{min}', tmin.toFixed(1))
+                //     .replace('{max}', tmax.toFixed(1)));
+
+                if (tempField) tempField.classList.add('error-border');
+                return;
+            }
+        }
+    }
   try{
     const bends=parseInt(document.getElementById('bends').value)||0,valves=parseInt(document.getElementById('valves').value)||0,contractions=parseInt(document.getElementById('contractions').value)||0,expansions=parseInt(document.getElementById('expansions').value)||0,orifices=parseInt(document.getElementById('orifices').value)||0;
     const outerD=parseFloat(document.getElementById('outerDiam').value),wall=parseFloat(document.getElementById('wall').value),density=parseFloat(document.getElementById('density').value),length=parseFloat(document.getElementById('length').value),massFlow=parseFloat(document.getElementById('massFlow').value);
     const Tval=parseFloat(document.getElementById('temperature').value),Pval=parseFloat(document.getElementById('pressure').value);
-    if(isNaN(Tval)||Tval<=-273.15){alert(t('errorTempAbs'));return}
     if(isNaN(Pval)||Pval<=0){alert(t('errorPresAbs'));return}
-    if(modeSelect.value==='engineer'&&presetSelect.value!=='choose'){
-      const preset=presetSelect.value;let limits;
-      if(preset==='lng'){limits=getCurrentLngLimits();}else{limits=gasLimits[preset];}
-      if(limits){
-        const tmin=limits.Tmin-273.15,tmax=limits.Tmax-273.15;
-        if(Tval<tmin||Tval>tmax){alert(t('errorTempLimit').replace('{min}',tmin.toFixed(1)).replace('{max}',tmax.toFixed(1)));return}
-        if(Pval<limits.Pmin||Pval>limits.Pmax){alert(t('errorPresLimit').replace('{min}',limits.Pmin.toFixed(4)).replace('{max}',limits.Pmax.toFixed(1)));return}
-      }
-    }
     if(outerD<=0||wall<0||outerD-2*wall<=0){alert(t('errorDiam'));return}
     if(density<=0||length<=0||massFlow<=0){alert(t('errorPos'));return}
     const innerD=outerD-2*wall,area=Math.PI*Math.pow(innerD/1000,2)/4,velocity=massFlow/3600/area/density;
@@ -2160,6 +2461,7 @@ document.getElementById('helpModal').addEventListener('click',(e)=>{ if(e.target
 
 /* ============== ОБРАТНЫЙ ПОДБОР ============== */
 function calcDeltaP(innerDiam_mm, length_m, massFlow_kgh, density, viscosity_cSt, roughness_mm, bends, valves) {
+roughness_mm = Math.min(Math.max(roughness_mm, 0.01), 1.0);
   const area = Math.PI * Math.pow(innerDiam_mm/1000, 2) / 4;
   const velocity = massFlow_kgh / 3600 / area / density;
   const kinVisc = viscosity_cSt * 1e-6;
@@ -2489,6 +2791,24 @@ if (mediumFlow) {
     if (tempFlow) tempFlow.addEventListener('input', updateMediumFlow);
     updateMediumFlow();
 }
+
+// Функция ограничения шероховатости
+function clampRoughness(input) {
+    let val = parseFloat(input.value);
+    if (isNaN(val)) val = 0.1;
+    val = Math.min(Math.max(val, 0.01), 1.0);
+    input.value = val;
+}
+
+// Применяем ко всем полям шероховатости
+const roughnessFields = ['roughness', 'roughnessDiam', 'roughnessFlow'];
+roughnessFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('blur', function() { clampRoughness(this); });
+        // также можно на 'input', но лучше на blur, чтобы не мешать вводу
+    }
+});
 
 </script>
 </body>
