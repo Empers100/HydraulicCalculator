@@ -2526,21 +2526,58 @@ function updateAllWarnings() {
         warningContainer.innerHTML = '';
         warningContainer.style.display = 'none';
 
-        // === REFPROP-ссылка при блокировке (Фаза 5.2) ===
+        // === REFPROP-ссылка при блокировке ===
         if (blocked) {
-            const div = document.createElement('div');
-            div.className = 'warning-item warning-critical refprop-link';
-            div.innerHTML = `<span class="warning-icon">🔗</span><span><a href="https://www.nist.gov/srd/refprop" target="_blank" rel="noopener">NIST REFPROP — ${t('validationBlocked')}</a></span>`;
-            warningContainer.appendChild(div);
-     // Бейдж зоны при блокировке (extreme)
-        const zoneBadgeCrit = document.getElementById('reliabilityZoneBadge');
-        if (zoneBadgeCrit && blocked && zone === 'extreme') {
-            zoneBadgeCrit.textContent = t('validationZoneExtreme');
-            zoneBadgeCrit.className = 'zone-badge-extreme';
-            zoneBadgeCrit.style.display = 'inline-block';
+    const div = document.createElement('div');
+    div.className = 'warning-item warning-critical refprop-link';
+
+    const linkUrl = 'https://www.nist.gov/srd/refprop';
+    const linkText = `NIST REFPROP --- ${t('validationBlocked')}`;
+
+    // Проверяем, мобильное ли устройство
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        // Мобильная версия: кнопка копирования ссылки
+        div.innerHTML = `
+<span class="warning-icon">🔗</span>
+<span>
+                ${linkText}<br>
+<button id="copyRefpropLink" style="margin-top: 6px; padding: 4px 8px; font-size: 12px; border-radius: 6px; background: #0d6efd; color: white; border: none;">📋 Скопировать ссылку</button>
+<span id="copyMessage" style="font-size: 11px; margin-left: 8px; color: #0d6efd;"></span>
+</span>
+        `;
+        warningContainer.appendChild(div);
+
+        const copyBtn = div.querySelector('#copyRefpropLink');
+        const copyMsg = div.querySelector('#copyMessage');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(linkUrl).then(() => {
+                    copyMsg.textContent = '✓ Скопировано!';
+                    setTimeout(() => { copyMsg.textContent = ''; }, 2000);
+                }).catch(() => {
+                    copyMsg.textContent = '❌ Ошибка копирования';
+                });
+            });
         }
-            warningContainer.style.display = 'block';
-        }
+    } else {
+        // ПК-версия: обычная кликабельная ссылка
+        div.innerHTML = `<span class="warning-icon">🔗</span><span><a href="${linkUrl}" target="_blank" rel="noopener">${linkText}</a></span>`;
+        warningContainer.appendChild(div);
+    }
+
+    // Бейдж зоны при блокировке (extreme) — остаётся без изменений
+    const zoneBadgeCrit = document.getElementById('reliabilityZoneBadge');
+    if (zoneBadgeCrit && blocked && zone === 'extreme') {
+        zoneBadgeCrit.textContent = t('validationZoneExtreme');
+        zoneBadgeCrit.className = 'zone-badge-extreme';
+        zoneBadgeCrit.style.display = 'inline-block';
+    }
+
+    warningContainer.style.display = 'block';
+}
 
         // Подсветка поля температуры для критических ошибок температуры
         const isTempError = criticalMessages.some(m =>
