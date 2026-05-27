@@ -1488,6 +1488,9 @@ validationCriteriaExtreme: 'Модель не применима',
 validationPoints: 'точек',
 validationNotApplicable: 'модель не применима',
 validationBlocked: 'Расчёт заблокирован',
+copyLink: 'Скопировать ссылку',
+copied: '✓ Скопировано!',
+copyError: 'Ошибка копирования',
 errorZoneExtreme: '⚠ Расчёт в экстремальной зоне: модель не применима. Используйте NIST REFPROP.',
 errorZoneCritical: '⚠ Критическая область (Tr > 0.95): расчёт плотности ненадёжен.',
 errorZoneQuantum: '⚠ Квантовый режим (T < 20 K для H₂/He): модель не применима.',
@@ -1643,6 +1646,9 @@ validationCriteriaExtreme: 'Model not applicable',
 validationPoints: 'points',
 validationNotApplicable: 'model not applicable',
 validationBlocked: 'Calculation blocked',
+copyLink: 'Copy link',
+copied: '✓ Copied!',
+copyError: 'Copy error',
 errorZoneExtreme: '⚠ Extreme zone: model not applicable. Use NIST REFPROP.',
 errorZoneCritical: '⚠ Critical region (Tr > 0.95): density calculation unreliable.',
 errorZoneQuantum: '⚠ Quantum regime (T < 20 K for H₂/He): model not applicable.',
@@ -1797,6 +1803,9 @@ validationCriteriaExtreme: '模型不适用',
 validationPoints: '个点',
 validationNotApplicable: '模型不适用',
 validationBlocked: '计算已阻止',
+copyLink: '复制链接',
+copied: '✓ 已复制',
+copyError: '复制错误',
 errorZoneExtreme: '⚠ 极端区域：模型不适用。请使用NIST REFPROP。',
 errorZoneCritical: '⚠ 临界区域（Tr > 0.95）：密度计算不可靠。',
 errorZoneQuantum: '⚠ 量子区域（H₂/He温度<<20K）：模型不适用。',
@@ -2538,27 +2547,26 @@ function updateAllWarnings() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     if (isMobile) {
-        // Мобильная версия: кнопка копирования ссылки
-        div.innerHTML = `
+    div.innerHTML = `
 <span class="warning-icon">🔗</span>
 <span>
-                ${linkText}<br>
-<button id="copyRefpropLink" style="margin-top: 6px; padding: 4px 8px; font-size: 12px; border-radius: 6px; background: #0d6efd; color: white; border: none;">📋 Скопировать ссылку</button>
+            ${linkText}<br>
+<button id="copyRefpropLink" style="margin-top: 6px; padding: 4px 8px; font-size: 12px; border-radius: 6px; background: #0d6efd; color: white; border: none;">📋 ${t('copyLink')}</button>
 <span id="copyMessage" style="font-size: 11px; margin-left: 8px; color: #0d6efd;"></span>
 </span>
-        `;
-        warningContainer.appendChild(div);
+    `;
+    warningContainer.appendChild(div);
 
-        const copyBtn = div.querySelector('#copyRefpropLink');
-        const copyMsg = div.querySelector('#copyMessage');
-        if (copyBtn) {
-            copyBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                navigator.clipboard.writeText(linkUrl).then(() => {
-                    copyMsg.textContent = '✓ Скопировано!';
-                    setTimeout(() => { copyMsg.textContent = ''; }, 2000);
-                }).catch(() => {
-                    copyMsg.textContent = '❌ Ошибка копирования';
+    const copyBtn = div.querySelector('#copyRefpropLink');
+    const copyMsg = div.querySelector('#copyMessage');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(linkUrl).then(() => {
+                copyMsg.textContent = t('copied');
+                setTimeout(() => { copyMsg.textContent = ''; }, 2000);
+            }).catch(() => {
+                    copyMsg.textContent = '❌ ' + t('copyError');
                 });
             });
         }
