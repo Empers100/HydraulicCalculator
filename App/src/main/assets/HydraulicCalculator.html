@@ -242,6 +242,39 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
         font-size: 16px;
     }
 }
+/* === Зоны валидации (таблица + строки) === */
+.validation-zone-engineering { border-left: 4px solid #28a745 !important; }
+.validation-zone-physical     { border-left: 4px solid #ffc107 !important; }
+.validation-zone-extreme      { border-left: 4px solid #dc3545 !important; background: rgba(220,53,69,0.04); }
+
+/* === Бейджи зон рядом с индикатором === */
+.zone-badge-engineering {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600; background: #28a745; color: #fff;
+    margin-left: 8px; vertical-align: middle;
+}
+.zone-badge-physical {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600; background: #ffc107; color: #212529;
+    margin-left: 8px; vertical-align: middle;
+}
+.zone-badge-extreme {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600; background: #dc3545; color: #fff;
+    margin-left: 8px; vertical-align: middle;
+}
+
+/* === Ссылка на REFPROP в панели предупреждений === */
+.refprop-link {
+    background: rgba(13, 110, 253, 0.07);
+    border-left: 4px solid #0d6efd !important;
+}
+.refprop-link a {
+    color: #0d6efd; text-decoration: underline; font-weight: 700;
+}
+.refprop-link a:hover {
+    color: #0a58ca; text-decoration: none;
+}
 </style>
 </head>
 <body>
@@ -357,6 +390,7 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 <div>
 <div id="reliabilityText">Расчёт в пределах применимости моделей</div>
 <div id="reliabilityTooltip" class="reliability-tooltip" style="display:none;"></div>
+<div id="reliabilityZoneBadge" style="display:none;"></div>
 </div>
 </div>
 <div id="warningListContainer"></div>
@@ -624,204 +658,204 @@ Tref: [2.5, 4.0, 5.0, 10.0, 20.0, 50.0]
 
 const validationPoints = {
 normalhydrogen: [
-    { T_C: -259.35, P_bar: 0.0704, phase: 'liquid', rho_ref: 77.0, nu_ref: 0.13, descKey: 'validationDesc_triplePoint' },
-    { T_C: -259.35, P_bar: 0.0704, phase: 'gas', rho_ref: 0.13, nu_ref: 0.658, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -252.88, P_bar: 1.013, phase: 'liquid', rho_ref: 70.8, nu_ref: 0.1836, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -252.88, P_bar: 0.98767, phase: 'gas', rho_ref: 1.2675, nu_ref: 0.6749, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -246.0, P_bar: 3.0, phase: 'liquid', rho_ref: 61.5, nu_ref: 0.12, descKey: 'validationDesc_satLiquid' },
-    { T_C: -246.0, P_bar: 2.91, phase: 'gas', rho_ref: 3.686, nu_ref: 0.4639, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -241.15, P_bar: 11.0, phase: 'liquid', rho_ref: 31.2, nu_ref: 0.08, descKey: 'validationDesc_nearCritical' },
-    { T_C: -241.15, P_bar: 11.0, phase: 'gas', rho_ref: 31.2, nu_ref: 0.08, descKey: 'validationDesc_nearCritical' },
+    { T_C: -259.35, P_bar: 0.0704, phase: 'liquid', rho_ref: 77.0, nu_ref: 0.13, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -259.35, P_bar: 0.0704, phase: 'gas', rho_ref: 0.13, nu_ref: 0.658, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -252.88, P_bar: 1.013, phase: 'liquid', rho_ref: 70.8, nu_ref: 0.1836, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -252.88, P_bar: 0.98767, phase: 'gas', rho_ref: 1.2675, nu_ref: 0.6749, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -246.0, P_bar: 3.0, phase: 'liquid', rho_ref: 61.5, nu_ref: 0.12, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -246.0, P_bar: 2.91, phase: 'gas', rho_ref: 3.686, nu_ref: 0.4639, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -241.15, P_bar: 11.0, phase: 'liquid', rho_ref: 31.2, nu_ref: 0.08, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -241.15, P_bar: 11.0, phase: 'gas', rho_ref: 31.2, nu_ref: 0.08, descKey: 'validationDesc_nearCritical', zone: 'physical' },
   ],
 
   parahydrogen: [
-    { T_C: -259.35, P_bar: 0.0704, phase: 'liquid', rho_ref: 77.0, nu_ref: 0.125, descKey: 'validationDesc_triplePoint' },
-    { T_C: -259.35, P_bar: 0.0704, phase: 'gas', rho_ref: 0.13, nu_ref: 0.714, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -252.88, P_bar: 1.013, phase: 'liquid', rho_ref: 70.7, nu_ref: 0.1757, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -252.88, P_bar: 0.98767, phase: 'gas', rho_ref: 1.3014, nu_ref: 0.7323, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -246.0, P_bar: 3.0, phase: 'liquid', rho_ref: 61.5, nu_ref: 0.115, descKey: 'validationDesc_satLiquid' },
-    { T_C: -246.0, P_bar: 2.91, phase: 'gas', rho_ref: 3.686, nu_ref: 0.4948, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -241.21, P_bar: 12.0, phase: 'liquid', rho_ref: 31.2, nu_ref: 0.075, descKey: 'validationDesc_nearCritical' },
-    { T_C: -241.21, P_bar: 12.0, phase: 'gas', rho_ref: 31.2, nu_ref: 0.075, descKey: 'validationDesc_nearCritical' },
+    { T_C: -259.35, P_bar: 0.0704, phase: 'liquid', rho_ref: 77.0, nu_ref: 0.125, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -259.35, P_bar: 0.0704, phase: 'gas', rho_ref: 0.13, nu_ref: 0.714, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -252.88, P_bar: 1.013, phase: 'liquid', rho_ref: 70.7, nu_ref: 0.1757, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -252.88, P_bar: 0.98767, phase: 'gas', rho_ref: 1.3014, nu_ref: 0.7323, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -246.0, P_bar: 3.0, phase: 'liquid', rho_ref: 61.5, nu_ref: 0.115, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -246.0, P_bar: 2.91, phase: 'gas', rho_ref: 3.686, nu_ref: 0.4948, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -241.21, P_bar: 12.0, phase: 'liquid', rho_ref: 31.2, nu_ref: 0.075, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -241.21, P_bar: 12.0, phase: 'gas', rho_ref: 31.2, nu_ref: 0.075, descKey: 'validationDesc_nearCritical', zone: 'physical' },
   ],
 
   helium4: [
-    { T_C: -270.97, P_bar: 0.0516, phase: 'liquid', rho_ref: 145.9, nu_ref: 0.0231, descKey: 'validationDesc_lambdaPoint' },
-    { T_C: -270.97, P_bar: 0.0516, phase: 'gas', rho_ref: 1.20, nu_ref: 0.4286, descKey: 'validationDesc_lambdaPointVapor' },
-    { T_C: -268.95, P_bar: 1.013, phase: 'liquid', rho_ref: 124.87, nu_ref: 0.01693, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -268.95, P_bar: 0.98767, phase: 'gas', rho_ref: 16.5068, nu_ref: 0.08, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -268.65, P_bar: 1.43, phase: 'liquid', rho_ref: 115.0, nu_ref: 0.025, descKey: 'validationDesc_satLiquid' },
-    { T_C: -268.65, P_bar: 1.3871, phase: 'gas', rho_ref: 24.25, nu_ref: 0.0722, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -268.15, P_bar: 1.69, phase: 'liquid', rho_ref: 102.0, nu_ref: 0.037, descKey: 'validationDesc_nearCritical' },
-    { T_C: -268.15, P_bar: 1.69, phase: 'gas', rho_ref: 37.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical' },
-    { T_C: -267.95, P_bar: 2.2746, phase: 'supercritical', rho_ref: 69.6, nu_ref: 0.0696, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -270.97, P_bar: 0.0516, phase: 'liquid', rho_ref: 145.9, nu_ref: 0.0231, descKey: 'validationDesc_lambdaPoint', zone: 'extreme' },
+    { T_C: -270.97, P_bar: 0.0516, phase: 'gas', rho_ref: 1.20, nu_ref: 0.4286, descKey: 'validationDesc_lambdaPointVapor', zone: 'extreme' },
+    { T_C: -268.95, P_bar: 1.013, phase: 'liquid', rho_ref: 124.87, nu_ref: 0.01693, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -268.95, P_bar: 0.98767, phase: 'gas', rho_ref: 16.5068, nu_ref: 0.08, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -268.65, P_bar: 1.43, phase: 'liquid', rho_ref: 115.0, nu_ref: 0.025, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -268.65, P_bar: 1.3871, phase: 'gas', rho_ref: 24.25, nu_ref: 0.0722, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -268.15, P_bar: 1.69, phase: 'liquid', rho_ref: 102.0, nu_ref: 0.037, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -268.15, P_bar: 1.69, phase: 'gas', rho_ref: 37.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -267.95, P_bar: 2.2746, phase: 'supercritical', rho_ref: 69.6, nu_ref: 0.0696, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   methane: [
-    { T_C: -182.45, P_bar: 0.117, phase: 'liquid', rho_ref: 451.0, nu_ref: 0.28, descKey: 'validationDesc_triplePoint' },
-    { T_C: -182.45, P_bar: 0.117, phase: 'gas', rho_ref: 0.26, nu_ref: 13.88, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -161.65, P_bar: 1.013, phase: 'liquid', rho_ref: 422.0, nu_ref: 0.277, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -161.65, P_bar: 0.98767, phase: 'gas', rho_ref: 1.794, nu_ref: 2.3159, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -123.15, P_bar: 15.0, phase: 'liquid', rho_ref: 300.0, nu_ref: 0.15, descKey: 'validationDesc_satLiquid' },
-    { T_C: -123.15, P_bar: 14.7, phase: 'gas', rho_ref: 14.7, nu_ref: 1.2245, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -88.15, P_bar: 40.0, phase: 'liquid', rho_ref: 180.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical' },
-    { T_C: -88.15, P_bar: 40.0, phase: 'gas', rho_ref: 80.0, nu_ref: 0.12, descKey: 'validationDesc_nearCritical' },
-    { T_C: -82.55, P_bar: 45.99, phase: 'supercritical', rho_ref: 162.0, nu_ref: 0.11, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -182.45, P_bar: 0.117, phase: 'liquid', rho_ref: 451.0, nu_ref: 0.28, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -182.45, P_bar: 0.117, phase: 'gas', rho_ref: 0.26, nu_ref: 13.88, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -161.65, P_bar: 1.013, phase: 'liquid', rho_ref: 422.0, nu_ref: 0.277, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -161.65, P_bar: 0.98767, phase: 'gas', rho_ref: 1.794, nu_ref: 2.3159, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -123.15, P_bar: 15.0, phase: 'liquid', rho_ref: 300.0, nu_ref: 0.15, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -123.15, P_bar: 14.7, phase: 'gas', rho_ref: 14.7, nu_ref: 1.2245, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -88.15, P_bar: 40.0, phase: 'liquid', rho_ref: 180.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -88.15, P_bar: 40.0, phase: 'gas', rho_ref: 80.0, nu_ref: 0.12, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -82.55, P_bar: 45.99, phase: 'supercritical', rho_ref: 162.0, nu_ref: 0.11, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   nitrogen: [
-    { T_C: -210.0, P_bar: 0.125, phase: 'liquid', rho_ref: 873.0, nu_ref: 0.33, descKey: 'validationDesc_triplePoint' },
-    { T_C: -210.0, P_bar: 0.125, phase: 'gas', rho_ref: 0.674, nu_ref: 6.49, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -196.15, P_bar: 1.013, phase: 'liquid', rho_ref: 808.0, nu_ref: 0.199, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -196.15, P_bar: 0.98767, phase: 'gas', rho_ref: 4.485, nu_ref: 1.2728, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -173.15, P_bar: 7.8, phase: 'liquid', rho_ref: 650.0, nu_ref: 0.11, descKey: 'validationDesc_satLiquid' },
-    { T_C: -173.15, P_bar: 7.566, phase: 'gas', rho_ref: 24.25, nu_ref: 0.8247, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -153.15, P_bar: 28.0, phase: 'liquid', rho_ref: 450.0, nu_ref: 0.075, descKey: 'validationDesc_nearCritical' },
-    { T_C: -153.15, P_bar: 28.0, phase: 'gas', rho_ref: 150.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical' },
-    { T_C: -146.95, P_bar: 33.9, phase: 'supercritical', rho_ref: 313.0, nu_ref: 0.082, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -210.0, P_bar: 0.125, phase: 'liquid', rho_ref: 873.0, nu_ref: 0.33, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -210.0, P_bar: 0.125, phase: 'gas', rho_ref: 0.674, nu_ref: 6.49, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -196.15, P_bar: 1.013, phase: 'liquid', rho_ref: 808.0, nu_ref: 0.199, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -196.15, P_bar: 0.98767, phase: 'gas', rho_ref: 4.485, nu_ref: 1.2728, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -173.15, P_bar: 7.8, phase: 'liquid', rho_ref: 650.0, nu_ref: 0.11, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -173.15, P_bar: 7.566, phase: 'gas', rho_ref: 24.25, nu_ref: 0.8247, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -153.15, P_bar: 28.0, phase: 'liquid', rho_ref: 450.0, nu_ref: 0.075, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -153.15, P_bar: 28.0, phase: 'gas', rho_ref: 150.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -146.95, P_bar: 33.9, phase: 'supercritical', rho_ref: 313.0, nu_ref: 0.082, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   oxygen: [
-    { T_C: -218.79, P_bar: 0.0015, phase: 'liquid', rho_ref: 1300.0, nu_ref: 0.55, descKey: 'validationDesc_triplePoint' },
-    { T_C: -218.79, P_bar: 0.0015, phase: 'gas', rho_ref: 0.01, nu_ref: 395.75, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -182.96, P_bar: 1.013, phase: 'liquid', rho_ref: 1141.0, nu_ref: 0.165, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -182.96, P_bar: 0.98767, phase: 'gas', rho_ref: 4.3875, nu_ref: 1.5231, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -153.15, P_bar: 12.0, phase: 'liquid', rho_ref: 900.0, nu_ref: 0.105, descKey: 'validationDesc_satLiquid' },
-    { T_C: -153.15, P_bar: 11.76, phase: 'gas', rho_ref: 34.3, nu_ref: 0.9694, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -123.15, P_bar: 42.0, phase: 'liquid', rho_ref: 550.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical' },
-    { T_C: -123.15, P_bar: 42.0, phase: 'gas', rho_ref: 250.0, nu_ref: 0.075, descKey: 'validationDesc_nearCritical' },
-    { T_C: -118.57, P_bar: 50.43, phase: 'supercritical', rho_ref: 436.0, nu_ref: 0.07, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -218.79, P_bar: 0.0015, phase: 'liquid', rho_ref: 1300.0, nu_ref: 0.55, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -218.79, P_bar: 0.0015, phase: 'gas', rho_ref: 0.01, nu_ref: 395.75, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -182.96, P_bar: 1.013, phase: 'liquid', rho_ref: 1141.0, nu_ref: 0.165, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -182.96, P_bar: 0.98767, phase: 'gas', rho_ref: 4.3875, nu_ref: 1.5231, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -153.15, P_bar: 12.0, phase: 'liquid', rho_ref: 900.0, nu_ref: 0.105, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -153.15, P_bar: 11.76, phase: 'gas', rho_ref: 34.3, nu_ref: 0.9694, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -123.15, P_bar: 42.0, phase: 'liquid', rho_ref: 550.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -123.15, P_bar: 42.0, phase: 'gas', rho_ref: 250.0, nu_ref: 0.075, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -118.57, P_bar: 50.43, phase: 'supercritical', rho_ref: 436.0, nu_ref: 0.07, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   CO2: [
-    { T_C: -56.55, P_bar: 5.185, phase: 'liquid', rho_ref: 1180.0, nu_ref: 0.2178, descKey: 'validationDesc_triplePoint' },
-    { T_C: -56.55, P_bar: 5.185, phase: 'gas', rho_ref: 13.8, nu_ref: 2.5, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -78.45, P_bar: 1.013, phase: 'gas', rho_ref: 2.5, nu_ref: 3.5, descKey: 'validationDesc_sublimation' },
-    { T_C: -23.15, P_bar: 18.0, phase: 'liquid', rho_ref: 900.0, nu_ref: 0.18, descKey: 'validationDesc_satLiquid' },
-    { T_C: -23.15, P_bar: 17.64, phase: 'gas', rho_ref: 58.8, nu_ref: 1.5306, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: 26.85, P_bar: 65.0, phase: 'liquid', rho_ref: 500.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical' },
-    { T_C: 26.85, P_bar: 65.0, phase: 'gas', rho_ref: 300.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical' },
-    { T_C: 31.05, P_bar: 73.83, phase: 'supercritical', rho_ref: 380.0, nu_ref: 0.035, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -56.55, P_bar: 5.185, phase: 'liquid', rho_ref: 1180.0, nu_ref: 0.2178, descKey: 'validationDesc_triplePoint', zone: 'engineering' },
+    { T_C: -56.55, P_bar: 5.185, phase: 'gas', rho_ref: 13.8, nu_ref: 2.5, descKey: 'validationDesc_triplePointVapor', zone: 'engineering' },
+    { T_C: -78.45, P_bar: 1.013, phase: 'gas', rho_ref: 2.5, nu_ref: 3.5, descKey: 'validationDesc_sublimation', zone: 'engineering' },
+    { T_C: -23.15, P_bar: 18.0, phase: 'liquid', rho_ref: 900.0, nu_ref: 0.18, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -23.15, P_bar: 17.64, phase: 'gas', rho_ref: 58.8, nu_ref: 1.5306, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: 26.85, P_bar: 65.0, phase: 'liquid', rho_ref: 500.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: 26.85, P_bar: 65.0, phase: 'gas', rho_ref: 300.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: 31.05, P_bar: 73.83, phase: 'supercritical', rho_ref: 380.0, nu_ref: 0.035, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   ammonia: [
-    { T_C: -77.65, P_bar: 0.061, phase: 'liquid', rho_ref: 729.0, nu_ref: 0.33, descKey: 'validationDesc_triplePoint' },
-    { T_C: -77.65, P_bar: 0.061, phase: 'gas', rho_ref: 0.064, nu_ref: 6.838, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -33.35, P_bar: 1.013, phase: 'liquid', rho_ref: 682.0, nu_ref: 0.368, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -33.35, P_bar: 0.98767, phase: 'gas', rho_ref: 0.7117, nu_ref: 14.2451, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: 26.85, P_bar: 10.0, phase: 'liquid', rho_ref: 580.0, nu_ref: 0.2, descKey: 'validationDesc_satLiquid' },
-    { T_C: 26.85, P_bar: 9.7, phase: 'gas', rho_ref: 7.76, nu_ref: 8.7629, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: 116.85, P_bar: 95.0, phase: 'liquid', rho_ref: 350.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical' },
-    { T_C: 116.85, P_bar: 95.0, phase: 'gas', rho_ref: 200.0, nu_ref: 0.12, descKey: 'validationDesc_nearCritical' },
-    { T_C: 132.35, P_bar: 112.8, phase: 'supercritical', rho_ref: 235.0, nu_ref: 0.11, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -77.65, P_bar: 0.061, phase: 'liquid', rho_ref: 729.0, nu_ref: 0.33, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -77.65, P_bar: 0.061, phase: 'gas', rho_ref: 0.064, nu_ref: 6.838, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -33.35, P_bar: 1.013, phase: 'liquid', rho_ref: 682.0, nu_ref: 0.368, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -33.35, P_bar: 0.98767, phase: 'gas', rho_ref: 0.7117, nu_ref: 14.2451, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: 26.85, P_bar: 10.0, phase: 'liquid', rho_ref: 580.0, nu_ref: 0.2, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: 26.85, P_bar: 9.7, phase: 'gas', rho_ref: 7.76, nu_ref: 8.7629, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: 116.85, P_bar: 95.0, phase: 'liquid', rho_ref: 350.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: 116.85, P_bar: 95.0, phase: 'gas', rho_ref: 200.0, nu_ref: 0.12, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: 132.35, P_bar: 112.8, phase: 'supercritical', rho_ref: 235.0, nu_ref: 0.11, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   ethane: [
-    { T_C: -182.78, P_bar: 1.14e-05, phase: 'liquid', rho_ref: 651.5, nu_ref: 1.72, descKey: 'validationDesc_triplePoint' },
-    { T_C: -182.78, P_bar: 1.14e-05, phase: 'gas', rho_ref: 4.57e-05, nu_ref: 5.47e+04, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -88.55, P_bar: 1.013, phase: 'liquid', rho_ref: 546.0, nu_ref: 0.36, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -88.55, P_bar: 0.98767, phase: 'gas', rho_ref: 1.95, nu_ref: 2.87, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -33.15, P_bar: 12.0, phase: 'liquid', rho_ref: 400.0, nu_ref: 0.2, descKey: 'validationDesc_satLiquid' },
-    { T_C: -33.15, P_bar: 11.76, phase: 'gas', rho_ref: 19.6, nu_ref: 1.53, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: 16.85, P_bar: 40.0, phase: 'liquid', rho_ref: 250.0, nu_ref: 0.12, descKey: 'validationDesc_nearCritical' },
-    { T_C: 16.85, P_bar: 40.0, phase: 'gas', rho_ref: 150.0, nu_ref: 0.14, descKey: 'validationDesc_nearCritical' },
-    { T_C: 32.25, P_bar: 48.84, phase: 'supercritical', rho_ref: 207.0, nu_ref: 0.13, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -182.78, P_bar: 1.14e-05, phase: 'liquid', rho_ref: 651.5, nu_ref: 1.72, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -182.78, P_bar: 1.14e-05, phase: 'gas', rho_ref: 4.57e-05, nu_ref: 5.47e+04, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -88.55, P_bar: 1.013, phase: 'liquid', rho_ref: 546.0, nu_ref: 0.36, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -88.55, P_bar: 0.98767, phase: 'gas', rho_ref: 1.95, nu_ref: 2.87, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -33.15, P_bar: 12.0, phase: 'liquid', rho_ref: 400.0, nu_ref: 0.2, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -33.15, P_bar: 11.76, phase: 'gas', rho_ref: 19.6, nu_ref: 1.53, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: 16.85, P_bar: 40.0, phase: 'liquid', rho_ref: 250.0, nu_ref: 0.12, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: 16.85, P_bar: 40.0, phase: 'gas', rho_ref: 150.0, nu_ref: 0.14, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: 32.25, P_bar: 48.84, phase: 'supercritical', rho_ref: 207.0, nu_ref: 0.13, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   propane: [
-    { T_C: -187.68, P_bar: 1.69e-09, phase: 'liquid', rho_ref: 733.3, nu_ref: 3.41, descKey: 'validationDesc_triplePoint' },
-    { T_C: -187.68, P_bar: 1.69e-09, phase: 'gas', rho_ref: 1.05e-08, nu_ref: 5.72e+07, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -42.15, P_bar: 1.013, phase: 'liquid', rho_ref: 581.0, nu_ref: 0.558, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -42.15, P_bar: 0.98767, phase: 'gas', rho_ref: 2.34, nu_ref: 3.59, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: 26.85, P_bar: 10.0, phase: 'liquid', rho_ref: 450.0, nu_ref: 0.25, descKey: 'validationDesc_satLiquid' },
-    { T_C: 26.85, P_bar: 9.7, phase: 'gas', rho_ref: 17.46, nu_ref: 2.06, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: 76.85, P_bar: 35.0, phase: 'liquid', rho_ref: 280.0, nu_ref: 0.13, descKey: 'validationDesc_nearCritical' },
-    { T_C: 76.85, P_bar: 35.0, phase: 'gas', rho_ref: 160.0, nu_ref: 0.15, descKey: 'validationDesc_nearCritical' },
-    { T_C: 96.65, P_bar: 42.48, phase: 'supercritical', rho_ref: 220.0, nu_ref: 0.14, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -187.68, P_bar: 1.69e-09, phase: 'liquid', rho_ref: 733.3, nu_ref: 3.41, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -187.68, P_bar: 1.69e-09, phase: 'gas', rho_ref: 1.05e-08, nu_ref: 5.72e+07, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -42.15, P_bar: 1.013, phase: 'liquid', rho_ref: 581.0, nu_ref: 0.558, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -42.15, P_bar: 0.98767, phase: 'gas', rho_ref: 2.34, nu_ref: 3.59, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: 26.85, P_bar: 10.0, phase: 'liquid', rho_ref: 450.0, nu_ref: 0.25, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: 26.85, P_bar: 9.7, phase: 'gas', rho_ref: 17.46, nu_ref: 2.06, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: 76.85, P_bar: 35.0, phase: 'liquid', rho_ref: 280.0, nu_ref: 0.13, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: 76.85, P_bar: 35.0, phase: 'gas', rho_ref: 160.0, nu_ref: 0.15, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: 96.65, P_bar: 42.48, phase: 'supercritical', rho_ref: 220.0, nu_ref: 0.14, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   ethylene: [
-    { T_C: -169.15, P_bar: 0.0012, phase: 'liquid', rho_ref: 656.0, nu_ref: 1.04, descKey: 'validationDesc_triplePoint' },
-    { T_C: -169.15, P_bar: 0.0012, phase: 'gas', rho_ref: 0.0039, nu_ref: 1280.0, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -103.95, P_bar: 1.013, phase: 'liquid', rho_ref: 567.0, nu_ref: 0.205, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -103.95, P_bar: 0.98767, phase: 'gas', rho_ref: 1.95, nu_ref: 2.56, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -53.15, P_bar: 10.0, phase: 'liquid', rho_ref: 420.0, nu_ref: 0.13, descKey: 'validationDesc_satLiquid' },
-    { T_C: -53.15, P_bar: 9.7, phase: 'gas', rho_ref: 19.4, nu_ref: 1.86, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -3.15, P_bar: 42.0, phase: 'liquid', rho_ref: 250.0, nu_ref: 0.085, descKey: 'validationDesc_nearCritical' },
-    { T_C: -3.15, P_bar: 42.0, phase: 'gas', rho_ref: 140.0, nu_ref: 0.095, descKey: 'validationDesc_nearCritical' },
-    { T_C: 9.2, P_bar: 50.42, phase: 'supercritical', rho_ref: 214.0, nu_ref: 0.09, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -169.15, P_bar: 0.0012, phase: 'liquid', rho_ref: 656.0, nu_ref: 1.04, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -169.15, P_bar: 0.0012, phase: 'gas', rho_ref: 0.0039, nu_ref: 1280.0, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -103.95, P_bar: 1.013, phase: 'liquid', rho_ref: 567.0, nu_ref: 0.205, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -103.95, P_bar: 0.98767, phase: 'gas', rho_ref: 1.95, nu_ref: 2.56, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -53.15, P_bar: 10.0, phase: 'liquid', rho_ref: 420.0, nu_ref: 0.13, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -53.15, P_bar: 9.7, phase: 'gas', rho_ref: 19.4, nu_ref: 1.86, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -3.15, P_bar: 42.0, phase: 'liquid', rho_ref: 250.0, nu_ref: 0.085, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -3.15, P_bar: 42.0, phase: 'gas', rho_ref: 140.0, nu_ref: 0.095, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: 9.2, P_bar: 50.42, phase: 'supercritical', rho_ref: 214.0, nu_ref: 0.09, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   freon22: [
-{ T_C: -157.45, P_bar: 3.8e-06, phase: 'liquid', rho_ref: 1600.0, nu_ref: 0.59, descKey: 'validationDesc_triplePoint' },
-{ T_C: -157.42, P_bar: 3.79e-06, phase: 'gas', rho_ref: 3.41e-05, nu_ref: 1.03e+05, descKey: 'validationDesc_triplePointVapor' },
-{ T_C: -41.15, P_bar: 1.013, phase: 'liquid', rho_ref: 1400.0, nu_ref: 0.24, descKey: 'validationDesc_boilingPoint' },
-{ T_C: -41.15, P_bar: 0.98767, phase: 'gas', rho_ref: 4.3875, nu_ref: 2.8718, descKey: 'validationDesc_superheatedVapor' },
-{ T_C: 26.85, P_bar: 10.0, phase: 'liquid', rho_ref: 1200.0, nu_ref: 0.15, descKey: 'validationDesc_satLiquid' },
-{ T_C: 26.85, P_bar: 9.7, phase: 'gas', rho_ref: 33.95, nu_ref: 1.5464, descKey: 'validationDesc_superheatedVapor' },
-{ T_C: 76.85, P_bar: 42.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.08, descKey: 'validationDesc_nearCritical' },
-{ T_C: 76.85, P_bar: 42.0, phase: 'gas', rho_ref: 400.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical' },
-{ T_C: 96.15, P_bar: 49.86, phase: 'supercritical', rho_ref: 525.0, nu_ref: 0.085, descKey: 'validationDesc_criticalPoint' },
+{ T_C: -157.45, P_bar: 3.8e-06, phase: 'liquid', rho_ref: 1600.0, nu_ref: 0.59, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+{ T_C: -157.42, P_bar: 3.79e-06, phase: 'gas', rho_ref: 3.41e-05, nu_ref: 1.03e+05, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+{ T_C: -41.15, P_bar: 1.013, phase: 'liquid', rho_ref: 1400.0, nu_ref: 0.24, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+{ T_C: -41.15, P_bar: 0.98767, phase: 'gas', rho_ref: 4.3875, nu_ref: 2.8718, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+{ T_C: 26.85, P_bar: 10.0, phase: 'liquid', rho_ref: 1200.0, nu_ref: 0.15, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+{ T_C: 26.85, P_bar: 9.7, phase: 'gas', rho_ref: 33.95, nu_ref: 1.5464, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+{ T_C: 76.85, P_bar: 42.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.08, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+{ T_C: 76.85, P_bar: 42.0, phase: 'gas', rho_ref: 400.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+{ T_C: 96.15, P_bar: 49.86, phase: 'supercritical', rho_ref: 525.0, nu_ref: 0.085, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
 ],
 
   neon: [
-    { T_C: -248.59, P_bar: 0.434, phase: 'liquid', rho_ref: 1248.9, nu_ref: 0.141, descKey: 'validationDesc_triplePoint' },
-    { T_C: -248.59, P_bar: 0.434, phase: 'gas', rho_ref: 5.0, nu_ref: 1.2, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -246.05, P_bar: 1.013, phase: 'liquid', rho_ref: 1206.0, nu_ref: 0.104, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -246.05, P_bar: 0.98767, phase: 'gas', rho_ref: 10.14, nu_ref: 1.07, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -238.15, P_bar: 5.0, phase: 'liquid', rho_ref: 1000.0, nu_ref: 0.07, descKey: 'validationDesc_satLiquid' },
-    { T_C: -238.15, P_bar: 4.85, phase: 'gas', rho_ref: 38.8, nu_ref: 0.72, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -231.15, P_bar: 22.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.05, descKey: 'validationDesc_nearCritical' },
-    { T_C: -231.15, P_bar: 22.0, phase: 'gas', rho_ref: 300.0, nu_ref: 0.055, descKey: 'validationDesc_nearCritical' },
-    { T_C: -228.75, P_bar: 27.56, phase: 'supercritical', rho_ref: 484.0, nu_ref: 0.052, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -248.59, P_bar: 0.434, phase: 'liquid', rho_ref: 1248.9, nu_ref: 0.141, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -248.59, P_bar: 0.434, phase: 'gas', rho_ref: 5.0, nu_ref: 1.2, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -246.05, P_bar: 1.013, phase: 'liquid', rho_ref: 1206.0, nu_ref: 0.104, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -246.05, P_bar: 0.98767, phase: 'gas', rho_ref: 10.14, nu_ref: 1.07, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -238.15, P_bar: 5.0, phase: 'liquid', rho_ref: 1000.0, nu_ref: 0.07, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -238.15, P_bar: 4.85, phase: 'gas', rho_ref: 38.8, nu_ref: 0.72, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -231.15, P_bar: 22.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.05, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -231.15, P_bar: 22.0, phase: 'gas', rho_ref: 300.0, nu_ref: 0.055, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -228.75, P_bar: 27.56, phase: 'supercritical', rho_ref: 484.0, nu_ref: 0.052, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   argon: [
-    { T_C: -189.35, P_bar: 0.688, phase: 'liquid', rho_ref: 1416.0, nu_ref: 0.205, descKey: 'validationDesc_triplePoint' },
-    { T_C: -189.35, P_bar: 0.688, phase: 'gas', rho_ref: 4.0, nu_ref: 2.8, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -185.85, P_bar: 1.013, phase: 'liquid', rho_ref: 1394.0, nu_ref: 0.265, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -185.85, P_bar: 0.98767, phase: 'gas', rho_ref: 5.655, nu_ref: 2.72, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -153.15, P_bar: 12.0, phase: 'liquid', rho_ref: 1100.0, nu_ref: 0.155, descKey: 'validationDesc_satLiquid' },
-    { T_C: -153.15, P_bar: 11.76, phase: 'gas', rho_ref: 44.1, nu_ref: 1.58, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -128.15, P_bar: 42.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical' },
-    { T_C: -128.15, P_bar: 42.0, phase: 'gas', rho_ref: 300.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical' },
-    { T_C: -122.35, P_bar: 48.98, phase: 'supercritical', rho_ref: 531.0, nu_ref: 0.095, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -189.35, P_bar: 0.688, phase: 'liquid', rho_ref: 1416.0, nu_ref: 0.205, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -189.35, P_bar: 0.688, phase: 'gas', rho_ref: 4.0, nu_ref: 2.8, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -185.85, P_bar: 1.013, phase: 'liquid', rho_ref: 1394.0, nu_ref: 0.265, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -185.85, P_bar: 0.98767, phase: 'gas', rho_ref: 5.655, nu_ref: 2.72, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -153.15, P_bar: 12.0, phase: 'liquid', rho_ref: 1100.0, nu_ref: 0.155, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -153.15, P_bar: 11.76, phase: 'gas', rho_ref: 44.1, nu_ref: 1.58, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -128.15, P_bar: 42.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -128.15, P_bar: 42.0, phase: 'gas', rho_ref: 300.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -122.35, P_bar: 48.98, phase: 'supercritical', rho_ref: 531.0, nu_ref: 0.095, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   krypton: [
-    { T_C: -157.35, P_bar: 0.7275, phase: 'liquid', rho_ref: 2443.8, nu_ref: 0.174, descKey: 'validationDesc_triplePoint' },
-    { T_C: -157.35, P_bar: 0.7275, phase: 'gas', rho_ref: 6.48, nu_ref: 1.646, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -153.35, P_bar: 1.013, phase: 'liquid', rho_ref: 2413.0, nu_ref: 0.36, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -153.35, P_bar: 0.98767, phase: 'gas', rho_ref: 6.825, nu_ref: 3.33, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -113.15, P_bar: 15.0, phase: 'liquid', rho_ref: 1800.0, nu_ref: 0.182, descKey: 'validationDesc_satLiquid' },
-    { T_C: -113.15, P_bar: 14.7, phase: 'gas', rho_ref: 58.8, nu_ref: 1.86, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -73.15, P_bar: 45.0, phase: 'liquid', rho_ref: 1000.0, nu_ref: 0.115, descKey: 'validationDesc_nearCritical' },
-    { T_C: -73.15, P_bar: 45.0, phase: 'gas', rho_ref: 450.0, nu_ref: 0.125, descKey: 'validationDesc_nearCritical' },
-    { T_C: -63.75, P_bar: 55.0, phase: 'supercritical', rho_ref: 908.0, nu_ref: 0.12, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -157.35, P_bar: 0.7275, phase: 'liquid', rho_ref: 2443.8, nu_ref: 0.174, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -157.35, P_bar: 0.7275, phase: 'gas', rho_ref: 6.48, nu_ref: 1.646, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -153.35, P_bar: 1.013, phase: 'liquid', rho_ref: 2413.0, nu_ref: 0.36, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -153.35, P_bar: 0.98767, phase: 'gas', rho_ref: 6.825, nu_ref: 3.33, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -113.15, P_bar: 15.0, phase: 'liquid', rho_ref: 1800.0, nu_ref: 0.182, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -113.15, P_bar: 14.7, phase: 'gas', rho_ref: 58.8, nu_ref: 1.86, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -73.15, P_bar: 45.0, phase: 'liquid', rho_ref: 1000.0, nu_ref: 0.115, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -73.15, P_bar: 45.0, phase: 'gas', rho_ref: 450.0, nu_ref: 0.125, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -63.75, P_bar: 55.0, phase: 'supercritical', rho_ref: 908.0, nu_ref: 0.12, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   xenon: [
-    { T_C: -111.745, P_bar: 0.8177, phase: 'liquid', rho_ref: 3084.0, nu_ref: 0.163, descKey: 'validationDesc_triplePoint' },
-    { T_C: -111.745, P_bar: 0.8177, phase: 'gas', rho_ref: 9.0, nu_ref: 1.55, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -108.15, P_bar: 1.013, phase: 'liquid', rho_ref: 3057.0, nu_ref: 0.485, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -108.15, P_bar: 0.98767, phase: 'gas', rho_ref: 7.3125, nu_ref: 4.56, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -53.15, P_bar: 15.0, phase: 'liquid', rho_ref: 2200.0, nu_ref: 0.22, descKey: 'validationDesc_satLiquid' },
-    { T_C: -53.15, P_bar: 14.7, phase: 'gas', rho_ref: 68.6, nu_ref: 2.24, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: 6.85, P_bar: 55.0, phase: 'liquid', rho_ref: 1200.0, nu_ref: 0.118, descKey: 'validationDesc_nearCritical' },
-    { T_C: 6.85, P_bar: 55.0, phase: 'gas', rho_ref: 550.0, nu_ref: 0.13, descKey: 'validationDesc_nearCritical' },
-    { T_C: 16.55, P_bar: 58.4, phase: 'supercritical', rho_ref: 1100.0, nu_ref: 0.124, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -111.745, P_bar: 0.8177, phase: 'liquid', rho_ref: 3084.0, nu_ref: 0.163, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -111.745, P_bar: 0.8177, phase: 'gas', rho_ref: 9.0, nu_ref: 1.55, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -108.15, P_bar: 1.013, phase: 'liquid', rho_ref: 3057.0, nu_ref: 0.485, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -108.15, P_bar: 0.98767, phase: 'gas', rho_ref: 7.3125, nu_ref: 4.56, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -53.15, P_bar: 15.0, phase: 'liquid', rho_ref: 2200.0, nu_ref: 0.22, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -53.15, P_bar: 14.7, phase: 'gas', rho_ref: 68.6, nu_ref: 2.24, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: 6.85, P_bar: 55.0, phase: 'liquid', rho_ref: 1200.0, nu_ref: 0.118, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: 6.85, P_bar: 55.0, phase: 'gas', rho_ref: 550.0, nu_ref: 0.13, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: 16.55, P_bar: 58.4, phase: 'supercritical', rho_ref: 1100.0, nu_ref: 0.124, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
   air: [
-    { T_C: -213.4, P_bar: 0.05265, phase: 'liquid', rho_ref: 957.6, nu_ref: 0.3933, descKey: 'validationDesc_triplePoint' },
-    { T_C: -213.4, P_bar: 0.05265, phase: 'gas', rho_ref: 0.142, nu_ref: 29.69, descKey: 'validationDesc_triplePointVapor' },
-    { T_C: -195.15, P_bar: 0.949, phase: 'liquid', rho_ref: 878.4, nu_ref: 0.216, descKey: 'validationDesc_boilingPoint' },
-    { T_C: -195.15, P_bar: 0.64105, phase: 'gas', rho_ref: 2.953, nu_ref: 1.8046, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -173.15, P_bar: 6.6755, phase: 'liquid', rho_ref: 767.74, nu_ref: 0.118, descKey: 'validationDesc_satLiquid' },
-    { T_C: -173.15, P_bar: 5.67, phase: 'gas', rho_ref: 22.74, nu_ref: 0.3004, descKey: 'validationDesc_superheatedVapor' },
-    { T_C: -143.15, P_bar: 32.0, phase: 'liquid', rho_ref: 400.0, nu_ref: 0.058, descKey: 'validationDesc_nearCritical' },
-    { T_C: -143.15, P_bar: 32.0, phase: 'gas', rho_ref: 200.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical' },
-    { T_C: -140.65, P_bar: 37.7, phase: 'supercritical', rho_ref: 342.0, nu_ref: 0.061, descKey: 'validationDesc_criticalPoint' },
+    { T_C: -213.4, P_bar: 0.05265, phase: 'liquid', rho_ref: 957.6, nu_ref: 0.3933, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+    { T_C: -213.4, P_bar: 0.05265, phase: 'gas', rho_ref: 0.142, nu_ref: 29.69, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+    { T_C: -195.15, P_bar: 0.949, phase: 'liquid', rho_ref: 878.4, nu_ref: 0.216, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+    { T_C: -195.15, P_bar: 0.64105, phase: 'gas', rho_ref: 2.953, nu_ref: 1.8046, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -173.15, P_bar: 6.6755, phase: 'liquid', rho_ref: 767.74, nu_ref: 0.118, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -173.15, P_bar: 5.67, phase: 'gas', rho_ref: 22.74, nu_ref: 0.3004, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    { T_C: -143.15, P_bar: 32.0, phase: 'liquid', rho_ref: 400.0, nu_ref: 0.058, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -143.15, P_bar: 32.0, phase: 'gas', rho_ref: 200.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    { T_C: -140.65, P_bar: 37.7, phase: 'supercritical', rho_ref: 342.0, nu_ref: 0.061, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ]
 };
 
@@ -921,6 +955,27 @@ argon: { Tc: 150.8, Pc: 48.98, w: 0.0 }, krypton: { Tc: 209.4, Pc: 55.0, w: 0.0 
 ammonia: { Tc: 405.5, Pc: 112.8, w: 0.253 }, ethane: { Tc: 305.4, Pc: 48.84, w: 0.099 }, ethylene: { Tc: 282.35, Pc: 50.42, w: 0.087 },
 propane: { Tc: 369.8, Pc: 42.48, w: 0.152 }, freon22: { Tc: 369.3, Pc: 49.86, w: 0.221 }
 };
+
+function classifyValidationZone(T_C, P_bar, gas, phase) {
+  const T_K = T_C + 273.15;
+  const crit = gasCritical[gas.toLowerCase()] || gasCritical[gas];
+  if (!crit) return 'engineering';
+  
+  const Tr = T_K / crit.Tc;
+  const Pr = P_bar / crit.Pc;
+  
+  if (Tr > 0.95 && Pr > 0.8) return 'extreme';
+  if (Tr > 0.92 && Pr > 0.85) return 'extreme';
+  if (gas === 'helium4' && T_K < 2.1768) return 'extreme';
+  if ((gas === 'parahydrogen' || gas === 'normalhydrogen') && T_K < 20) return 'extreme';
+  if (P_bar < 0.001 && phase === 'gas') return 'extreme';
+  
+  if (Tr > 0.85 && Pr > 0.7) return 'physical';
+  if (gas === 'ammonia' && (T_K > 370 || P_bar > 80)) return 'physical';
+  if (gas === 'co2' && Tr > 0.9 && Pr > 0.6) return 'physical';
+  
+  return 'engineering';
+}
 
 const antoineCoeffs = {
 air: { A: 3.7362, B: 264.651, C: -6.788, Tmin: 60, Tmax: 132 },
@@ -1284,6 +1339,16 @@ const xi = (mu0 * 1e7) * Math.pow(Tc, 1/6) / (Math.pow(M, 0.5) * Math.pow(Pc, 2/
 const mu = mu0 * (1 + (Math.pow(sum, 4) - 1) / xi);
 return Math.max(mu * quantumFactor * polarFactor, 0.5 * mu0);
 }
+const gasViscosityValidationPoints = {
+  ethane: [
+    { T_K: 184.6, mu_ref: 9.3, desc: 'Точка кипения' },
+    { T_K: 300, mu_ref: 14.0, desc: '300K' }
+  ],
+  propane: [
+    { T_K: 231.0, mu_ref: 8.0, desc: 'Точка кипения' },
+    { T_K: 300, mu_ref: 10.5, desc: '300K' }
+  ]
+};
 
 /* ============================================================
 СПГ
@@ -1414,6 +1479,19 @@ validateSubstance:'Вещество', validatePoint:'Точка', validateRhoRef
 validateRhoCalc:'ρ расчёт', validateNuRef:'ν справка', validateNuCalc:'ν расчёт',
 validateError:'Ошибка', validateStatus:'Статус',
 validateBtn: 'Валидация модели',
+validationZoneEngineering: 'Инженерная зона',
+validationZonePhysical: 'Физическая зона',
+validationZoneExtreme: 'Экстремальная зона',
+validationCriteriaEngineering: 'Допустимая погрешность: ≤10%',
+validationCriteriaPhysical: 'Допустимая погрешность: ≤15%',
+validationCriteriaExtreme: 'Модель не применима',
+validationPoints: 'точек',
+validationNotApplicable: 'модель не применима',
+validationBlocked: 'Расчёт заблокирован',
+errorZoneExtreme: '⚠ Расчёт в экстремальной зоне: модель не применима. Используйте NIST REFPROP.',
+errorZoneCritical: '⚠ Критическая область (Tr > 0.95): расчёт плотности ненадёжен.',
+errorZoneQuantum: '⚠ Квантовый режим (T < 20 K для H₂/He): модель не применима.',
+errorZoneVacuum: '⚠ Вакуум (P < 0.001 бар): модель не применима.',
 validationDesc_boilingPoint: 'Точка кипения',
 validationDesc_satVapor: 'Пар насыщения',
 validationDesc_gasAtTemp: 'Газ при {temp}°C',
@@ -1556,6 +1634,19 @@ validateSubstance:'Substance', validatePoint:'Point', validateRhoRef:'ρ ref',
 validateRhoCalc:'ρ calc', validateNuRef:'ν ref', validateNuCalc:'ν calc',
 validateError:'Error', validateStatus:'Status',
 validateBtn: 'Model Validation',
+validationZoneEngineering: 'Engineering Zone',
+validationZonePhysical: 'Physical Zone',
+validationZoneExtreme: 'Extreme Zone',
+validationCriteriaEngineering: 'Acceptable error: ≤10%',
+validationCriteriaPhysical: 'Acceptable error: ≤15%',
+validationCriteriaExtreme: 'Model not applicable',
+validationPoints: 'points',
+validationNotApplicable: 'model not applicable',
+validationBlocked: 'Calculation blocked',
+errorZoneExtreme: '⚠ Extreme zone: model not applicable. Use NIST REFPROP.',
+errorZoneCritical: '⚠ Critical region (Tr > 0.95): density calculation unreliable.',
+errorZoneQuantum: '⚠ Quantum regime (T < 20 K for H₂/He): model not applicable.',
+errorZoneVacuum: '⚠ Vacuum (P < 0.001 bar): model not applicable.',
 validationDesc_boilingPoint: 'Boiling point',
 validationDesc_satVapor: 'Saturated vapor',
 validationDesc_gasAtTemp: 'Gas at {temp}°C',
@@ -1697,6 +1788,19 @@ validateSubstance:'物质', validatePoint:'测点', validateRhoRef:'ρ 参考',
 validateRhoCalc:'ρ 计算', validateNuRef:'ν 参考', validateNuCalc:'ν 计算',
 validateError:'误差', validateStatus:'状态',
 validateBtn: '模型验证',
+validationZoneEngineering: '工程区域',
+validationZonePhysical: '物理区域',
+validationZoneExtreme: '极端区域',
+validationCriteriaEngineering: '允许误差：≤10%',
+validationCriteriaPhysical: '允许误差：≤15%',
+validationCriteriaExtreme: '模型不适用',
+validationPoints: '个点',
+validationNotApplicable: '模型不适用',
+validationBlocked: '计算已阻止',
+errorZoneExtreme: '⚠ 极端区域：模型不适用。请使用NIST REFPROP。',
+errorZoneCritical: '⚠ 临界区域（Tr > 0.95）：密度计算不可靠。',
+errorZoneQuantum: '⚠ 量子区域（H₂/He温度<<20K）：模型不适用。',
+errorZoneVacuum: '⚠ 真空（P < 0.001巴）：模型不适用。',
 validationDesc_boilingPoint: '沸点',
 validationDesc_satVapor: '饱和蒸汽',
 validationDesc_gasAtTemp: '{temp}°C 气体',
@@ -1757,8 +1861,28 @@ units:{ mm:'毫米', m:'米', kgm3:'千克/立方米', kgh:'千克/小时', cSt:
 };
 
 let currentLang = localStorage.getItem('calc_hyd_lang') || 'ru';
-function t(key) { return locales[currentLang]?.[key] || key; }
+function t(key, fallbackLang) {
+  const primary = locales[currentLang]?.[key];
+  if (primary) return primary;
+  const fallback = fallbackLang || 'en';
+  if (fallback !== currentLang) {
+    const secondary = locales[fallback]?.[key];
+    if (secondary) return secondary;
+  }
+  const tertiary = locales['ru']?.[key];
+  if (tertiary) return tertiary;
+  return key;
+}
 
+function tf(key, params) {
+  let text = t(key);
+  if (params && typeof params === 'object') {
+    for (const [k, v] of Object.entries(params)) {
+      text = text.replace('{' + k + '}', v);
+    }
+  }
+  return text;
+}
 
 /* ============================================================
    UI ЭЛЕМЕНТЫ И ОБРАБОТЧИКИ
@@ -1777,6 +1901,38 @@ const compressNote = document.getElementById('compressNote'), saveBtn = document
 const calculateBtn = document.getElementById('calculateBtn'), infoPanel = document.getElementById('infoPanel');
 const warningListContainer = document.getElementById('warningListContainer'), extraResistances = document.getElementById('extraResistances');
 const lngComposition = document.getElementById('lngComposition');
+// Кнопка валидации модели
+const validateBtn = document.getElementById('validateBtn');
+if (validateBtn) {
+    validateBtn.addEventListener('click', function() {
+        runValidation();
+    });
+}
+// ===== ЗАКРЫТИЕ ОКНА ВАЛИДАЦИИ =====
+const validateModal = document.getElementById('validateModal');
+const validateClose = document.getElementById('validateClose');
+
+if (validateClose) {
+    validateClose.addEventListener('click', () => {
+        validateModal.style.display = 'none';
+    });
+}
+
+if (validateModal) {
+    // Закрытие по клику на фон (серую область)
+    validateModal.addEventListener('click', (e) => {
+        if (e.target === validateModal) {
+            validateModal.style.display = 'none';
+        }
+    });
+
+    // Закрытие по клавише Esc
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && validateModal.style.display === 'flex') {
+            validateModal.style.display = 'none';
+        }
+    });
+}
 
 let lastResult = {velocity:0,deltaP:0,re:0,lambda:0,mode:'',mediumType:'',preset:'',pressureUnit:'Pa',compressDiff:null,compressMach:false,compressCorrection:null};
 let updating = false;
@@ -1794,132 +1950,238 @@ document.getElementById('temperature').addEventListener('change', function() {
 
 function runValidation() {
   const content = document.getElementById('validateContent');
-  content.innerHTML = '<p>' + t('validateInfo') + '</p>';
+  content.innerHTML = '';
 
-  const table = document.createElement('table');
-  table.style.cssText = 'width:100%; font-size:11px; border-collapse:collapse; margin-top:8px;';
+  // ====== ЗАГОЛОВОК ======
+  const header = document.createElement('h3');
+  header.textContent = t('validateInfo');
+  header.style.marginBottom = '12px';
+  content.appendChild(header);
 
-  // Заголовок
-  const header = document.createElement('tr');
-  ['validateSubstance','validatePoint','validateRhoRef','validateRhoCalc','validateNuRef','validateNuCalc','validateError','validateStatus'].forEach(key => {
-    const th = document.createElement('th');
-    th.textContent = t(key);
-    th.style.cssText = 'border:1px solid var(--border); padding:4px; background:var(--btn-bg);';
-    header.appendChild(th);
-  });
-  table.appendChild(header);
+  // ====== СТАТИСТИКА ПО ЗОНАМ ======
+  const zoneStats = {
+    engineering: { total: 0, errors: 0, label: t('validationZoneEngineering') },
+    physical:    { total: 0, errors: 0, label: t('validationZonePhysical') },
+    extreme:     { total: 0, errors: 0, label: t('validationZoneExtreme') }
+  };
 
-  let totalErrors = 0;
-  let totalPoints = 0;
+  // ====== СОЗДАЁМ 3 ТАБЛИЦЫ ПО ЗОНАМ ======
+  const zoneTables = {
+    engineering: createZoneTable('engineering', t('validationZoneEngineering'), t('validationCriteriaEngineering')),
+    physical:    createZoneTable('physical',    t('validationZonePhysical'),    t('validationCriteriaPhysical')),
+    extreme:     createZoneTable('extreme',     t('validationZoneExtreme'),     t('validationCriteriaExtreme'))
+  };
 
+  // ====== ОБРАБОТКА ТОЧЕК ======
   for (const [gas, points] of Object.entries(validationPoints)) {
     for (const pt of points) {
-      totalPoints++;
-      // Set correct molar mass for this gas before calculation
-      const mmDefaults = { normalhydrogen: 2.016, parahydrogen: 2.016, helium4: 4.0026, methane: 16.04, nitrogen: 28.01, oxygen: 32.00, co2: 44.01, ammonia: 17.03, ethane: 30.07, ethylene: 28.05, propane: 44.1, freon22: 86.47, neon: 20.18, argon: 39.95, krypton: 83.80, xenon: 131.29, air: 28.97, water: 18.015 };
+      // Определяем зону (из поля zone или функцией classifyValidationZone)
+      const zone = pt.zone || classifyValidationZone(pt.T_C, pt.P_bar, gas, pt.phase);
+      zoneStats[zone].total++;
+
+      // Установка молярной массы
+      const mmDefaults = { normalhydrogen: 2.016, parahydrogen: 2.016, helium4: 4.0026, 
+        methane: 16.04, nitrogen: 28.01, oxygen: 32.00, co2: 44.01, ammonia: 17.03, 
+        ethane: 30.07, ethylene: 28.05, propane: 44.1, freon22: 86.47, neon: 20.18, 
+        argon: 39.95, krypton: 83.80, xenon: 131.29, air: 28.97, water: 18.015 };
       document.getElementById('molarMass').value = mmDefaults[gas] || 28.97;
+
+      // Расчёт
       const calc_rho = calcRealGasDensity(pt.T_C, pt.P_bar, gas, pt.phase);
       const calc_mu = calcRealGasViscosity(pt.T_C, pt.P_bar, gas, pt.phase);
-      const calc_nu = calc_mu / calc_rho * 1e6; // сСт
+      const calc_nu = calc_mu / calc_rho * 1e6;
 
       const rho_err = Math.abs(calc_rho - pt.rho_ref) / pt.rho_ref * 100;
       const nu_err = pt.nu_ref ? Math.abs(calc_nu - pt.nu_ref) / pt.nu_ref * 100 : 0;
-
-      const row = document.createElement('tr');
-
-      // Вещество
-      const tdGas = document.createElement('td');
-      tdGas.textContent = t('preset' + gas.charAt(0).toUpperCase() + gas.slice(1)) || gas;
-      tdGas.style.cssText = 'border:1px solid var(--border); padding:4px;';
-      row.appendChild(tdGas);
-
-      // Точка (локализована)
-      const tdPoint = document.createElement('td');
-      if (pt.descKey) {
-        let desc = t(pt.descKey);
-        if (pt.descParams) {
-          for (const [k, v] of Object.entries(pt.descParams)) {
-            desc = desc.replace('{'+k+'}', v);
-          }
-        }
-        tdPoint.textContent = desc;
-      } else {
-        tdPoint.textContent = pt.desc || '';
-      }
-      tdPoint.style.cssText = 'border:1px solid var(--border); padding:4px;';
-      row.appendChild(tdPoint);
-
-      // ρ справка
-      const tdRhoRef = document.createElement('td');
-      tdRhoRef.textContent = pt.rho_ref.toFixed(3);
-      tdRhoRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-      row.appendChild(tdRhoRef);
-
-      // ρ расчёт
-      const tdRhoCalc = document.createElement('td');
-      tdRhoCalc.textContent = calc_rho.toFixed(3);
-      tdRhoCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-      row.appendChild(tdRhoCalc);
-
-      // ν справка
-      const tdNuRef = document.createElement('td');
-      tdNuRef.textContent = pt.nu_ref ? pt.nu_ref.toFixed(3) : '—';
-      tdNuRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-      row.appendChild(tdNuRef);
-
-      // ν расчёт
-      const tdNuCalc = document.createElement('td');
-      tdNuCalc.textContent = calc_nu ? calc_nu.toFixed(3) : '—';
-      tdNuCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-      row.appendChild(tdNuCalc);
-
-      // Ошибка
-      const tdError = document.createElement('td');
       const maxErr = Math.max(rho_err, nu_err);
-      tdError.textContent = maxErr.toFixed(1) + '%';
-      tdError.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-      if (maxErr > 10) tdError.style.color = '#dc3545';
-      else if (maxErr > 5) tdError.style.color = '#ffc107';
-      else tdError.style.color = '#28a745';
-      row.appendChild(tdError);
 
-      // Статус
-      const tdStatus = document.createElement('td');
-      if (maxErr > 10) { tdStatus.textContent = '🔴'; totalErrors++; }
-      else if (maxErr > 5) tdStatus.textContent = '🟡';
-      else tdStatus.textContent = '🟢';
-      tdStatus.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:center;';
-      row.appendChild(tdStatus);
+      // Критерии по зонам:
+      let isError = false;
+      let statusIcon = '';
+      let statusColor = '';
 
-      table.appendChild(row);
+      if (zone === 'extreme') {
+        statusIcon = '⚪';
+        statusColor = '#6c757d';
+      } else if (zone === 'physical') {
+        if (maxErr > 15) { isError = true; statusIcon = '🔴'; statusColor = '#dc3545'; }
+        else if (maxErr > 10) { statusIcon = '🟡'; statusColor = '#ffc107'; }
+        else { statusIcon = '🟢'; statusColor = '#28a745'; }
+      } else { // engineering
+        if (maxErr > 10) { isError = true; statusIcon = '🔴'; statusColor = '#dc3545'; zoneStats[zone].errors++; }
+        else if (maxErr > 5) { statusIcon = '🟡'; statusColor = '#ffc107'; }
+        else { statusIcon = '🟢'; statusColor = '#28a745'; }
+      }
+
+      // Добавляем строку в соответствующую таблицу
+      addRowToZoneTable(zoneTables[zone], gas, pt, calc_rho, calc_nu, rho_err, nu_err, maxErr, statusIcon, statusColor, zone);
     }
   }
 
-  content.appendChild(table);
+  // ====== ВЫВОД ТАБЛИЦ ======
+  content.appendChild(zoneTables.engineering.container);
+  content.appendChild(zoneTables.physical.container);
+  content.appendChild(zoneTables.extreme.container);
 
-  // Итог (локализован)
-  const summary = document.createElement('p');
-  summary.style.marginTop = '12px';
-  summary.style.fontWeight = 'bold';
-  if (totalErrors === 0) {
-    summary.textContent = t('validationAllOk').replace('{total}', totalPoints);
-    summary.style.color = '#28a745';
+  // ====== ИТОГОВЫЙ БЛОК ======
+  const summary = document.createElement('div');
+  summary.style.marginTop = '16px';
+  summary.style.padding = '12px';
+  summary.style.borderRadius = '8px';
+  summary.style.background = '#f8f9fa';
+
+  // Engineering итог
+  const eng = zoneStats.engineering;
+  const engDiv = document.createElement('div');
+  engDiv.style.fontWeight = 'bold';
+  engDiv.style.marginBottom = '8px';
+  if (eng.errors === 0) {
+    engDiv.innerHTML = '🟢 ' + t('validationAllOk').replace('{total}', eng.total);
+    engDiv.style.color = '#28a745';
+    summary.style.border = '2px solid #28a745';
   } else {
-    summary.textContent = t('validationSomeError').replace('{errors}', totalErrors).replace('{total}', totalPoints);
-    summary.style.color = '#ffc107';
+    engDiv.innerHTML = '🔴 ' + t('validationSomeError').replace('{errors}', eng.errors).replace('{total}', eng.total);
+    engDiv.style.color = '#dc3545';
+    summary.style.border = '2px solid #dc3545';
   }
+  summary.appendChild(engDiv);
+
+  // Physical итог
+  const phys = zoneStats.physical;
+  const physDiv = document.createElement('div');
+  physDiv.style.fontSize = '13px';
+  physDiv.style.color = '#6c757d';
+  physDiv.innerHTML = '🟡 ' + t('validationZonePhysical') + ': ' + phys.total + ' ' + t('validationPoints') + 
+    ' (' + t('validationCriteriaPhysical') + ')';
+  summary.appendChild(physDiv);
+
+  // Extreme итог
+  const ext = zoneStats.extreme;
+  const extDiv = document.createElement('div');
+  extDiv.style.fontSize = '13px';
+  extDiv.style.color = '#6c757d';
+  extDiv.innerHTML = '⚪ ' + t('validationZoneExtreme') + ': ' + ext.total + ' ' + t('validationPoints') + 
+    ' (' + t('validationNotApplicable') + ')';
+  summary.appendChild(extDiv);
+
   content.appendChild(summary);
 
   document.getElementById('validateModal').style.display = 'flex';
 }
 
-document.getElementById('validateBtn').addEventListener('click', runValidation);
-document.getElementById('validateClose').addEventListener('click', () => {
-  document.getElementById('validateModal').style.display = 'none';
-});
-document.getElementById('validateModal').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('validateModal')) document.getElementById('validateModal').style.display = 'none';
-});
+// ====== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ======
+
+function createZoneTable(zone, title, criteria) {
+  const container = document.createElement('div');
+  container.style.marginBottom = '20px';
+  container.className = 'validation-zone-' + zone;
+
+  const header = document.createElement('h4');
+  header.textContent = title;
+  header.style.margin = '12px 0 8px 0';
+  header.style.padding = '6px 12px';
+  header.style.borderRadius = '4px';
+  header.style.fontSize = '14px';
+
+  if (zone === 'engineering') {
+    header.style.background = '#d4edda';
+    header.style.color = '#155724';
+    header.style.borderLeft = '4px solid #28a745';
+  } else if (zone === 'physical') {
+    header.style.background = '#fff3cd';
+    header.style.color = '#856404';
+    header.style.borderLeft = '4px solid #ffc107';
+  } else {
+    header.style.background = '#e9ecef';
+    header.style.color = '#6c757d';
+    header.style.borderLeft = '4px solid #6c757d';
+  }
+
+  const criteriaDiv = document.createElement('div');
+  criteriaDiv.textContent = criteria;
+  criteriaDiv.style.fontSize = '11px';
+  criteriaDiv.style.color = '#6c757d';
+  criteriaDiv.style.marginBottom = '8px';
+  criteriaDiv.style.fontStyle = 'italic';
+
+  const table = document.createElement('table');
+  table.style.cssText = 'width:100%; font-size:11px; border-collapse:collapse;';
+
+  const thead = document.createElement('tr');
+  ['validateSubstance', 'validatePoint', 'validateRhoRef', 'validateRhoCalc', 
+   'validateNuRef', 'validateNuCalc', 'validateError', 'validateStatus'].forEach(key => {
+    const th = document.createElement('th');
+    th.textContent = t(key);
+    th.style.cssText = 'border:1px solid var(--border); padding:4px; background:var(--btn-bg);';
+    thead.appendChild(th);
+  });
+  table.appendChild(thead);
+
+  container.appendChild(header);
+  container.appendChild(criteriaDiv);
+  container.appendChild(table);
+
+  return { container, table };
+}
+
+function addRowToZoneTable(zoneTable, gas, pt, calc_rho, calc_nu, rho_err, nu_err, maxErr, statusIcon, statusColor, zone) {
+  const row = document.createElement('tr');
+
+  const tdGas = document.createElement('td');
+  tdGas.textContent = t('preset' + gas.charAt(0).toUpperCase() + gas.slice(1)) || gas;
+  tdGas.style.cssText = 'border:1px solid var(--border); padding:4px;';
+  row.appendChild(tdGas);
+
+  const tdPoint = document.createElement('td');
+  let desc = pt.descKey ? t(pt.descKey) : (pt.desc || '');
+  if (pt.descParams) {
+    for (const [k, v] of Object.entries(pt.descParams)) {
+      desc = desc.replace('{' + k + '}', v);
+    }
+  }
+  desc += ' (' + pt.T_C.toFixed(1) + '°C, ' + pt.P_bar + ' бар)';
+  tdPoint.textContent = desc;
+  tdPoint.style.cssText = 'border:1px solid var(--border); padding:4px; font-size:10px;';
+  row.appendChild(tdPoint);
+
+  const tdRhoRef = document.createElement('td');
+  tdRhoRef.textContent = pt.rho_ref.toFixed(3);
+  tdRhoRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+  row.appendChild(tdRhoRef);
+
+  const tdRhoCalc = document.createElement('td');
+  tdRhoCalc.textContent = calc_rho.toFixed(3);
+  tdRhoCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+  row.appendChild(tdRhoCalc);
+
+  const tdNuRef = document.createElement('td');
+  tdNuRef.textContent = pt.nu_ref ? pt.nu_ref.toFixed(3) : '---';
+  tdNuRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+  row.appendChild(tdNuRef);
+
+  const tdNuCalc = document.createElement('td');
+  tdNuCalc.textContent = calc_nu ? calc_nu.toFixed(3) : '---';
+  tdNuCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+  row.appendChild(tdNuCalc);
+
+  const tdError = document.createElement('td');
+  tdError.textContent = maxErr.toFixed(1) + '%';
+  tdError.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
+  if (zone === 'extreme') {
+    tdError.style.color = '#6c757d';
+    tdError.style.fontStyle = 'italic';
+  } else {
+    tdError.style.color = statusColor;
+  }
+  row.appendChild(tdError);
+
+  const tdStatus = document.createElement('td');
+  tdStatus.textContent = statusIcon;
+  tdStatus.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:center;';
+  row.appendChild(tdStatus);
+
+  zoneTable.table.appendChild(row);
+}
 
 /* ============================================================
    ОСТАЛЬНЫЕ ФУНКЦИИ (сжимаемость, достоверность и т.д.)
@@ -1935,14 +2197,52 @@ function calcSoundSpeed(){
   return Math.sqrt(getGammaDetailed(presetSelect.value)*R_GAS*(T+273.15)/(M/1000));
 }
 
-function calcCompressibilityCorrection(v,dP0){
-  if(modeSelect.value==='simple'||mediumSelect.value!=='gas')return{factor:1,mach:0,regime:'incompressible',dP_corrected:dP0};
-  const a=calcSoundSpeed();
-  if(!a||a<=0)return{factor:1,mach:0,regime:'incompressible',dP_corrected:dP0};
-  const M=v/a;
-  if(M<0.1)return{factor:1,mach:M,regime:'incompressible',dP_corrected:dP0};
-  if(M<0.3){const t=(M-0.1)/0.2,P_abs=parseFloat(document.getElementById('pressure').value)*1e5; const P2=Math.max(P_abs-dP0,100),P1=Math.max(P_abs,100),fc=(P1/P2+1)/2; return{factor:1+(fc-1)*t,mach:M,regime:'transition',dP_corrected:dP0*(1+(fc-1)*t)};}
-  const P_abs=parseFloat(document.getElementById('pressure').value)*1e5; const g=getGammaDetailed(presetSelect.value),critR=g/(g+1),maxDP=P_abs*critR; const dP_lim=Math.min(dP0,maxDP*0.99); const P2=Math.max(P_abs-dP_lim,100),fc=(P_abs/P2+1)/2,dP_corr=dP_lim*fc; let regime='compressible'; if(M>0.7)regime='high-subsonic'; if(dP_lim>=maxDP*0.95)regime='choked'; return{factor:fc,mach:M,regime,dP_corrected:dP_corr};
+function calcCompressibilityCorrection(v, dP0) {
+    if (modeSelect.value === 'simple' || mediumSelect.value !== 'gas') {
+        return { factor: 1, mach: 0, regime: 'incompressible', dP_corrected: dP0 };
+    }
+    const a = calcSoundSpeed();
+    if (!a || a <= 0) {
+        return { factor: 1, mach: 0, regime: 'incompressible', dP_corrected: dP0 };
+    }
+    const M = v / a;
+    const P_abs = parseFloat(document.getElementById('pressure').value) * 1e5;
+    const g = getGammaDetailed(presetSelect.value);
+    const maxDP = P_abs * (g / (g + 1));     // максимальный перепад при критическом истечении
+
+    // Если расчётный перепад превышает 95% от maxDP → режим choked
+    if (dP0 >= maxDP * 0.95) {
+        const dP_corr = maxDP * 0.99;
+        return { factor: dP_corr / dP0, mach: M, regime: 'choked', dP_corrected: dP_corr };
+    }
+
+    // M < 0.3 : переходный режим, но с проверкой на P2
+    if (M < 0.3) {
+        const t = (M - 0.1) / 0.2;
+        let P2 = P_abs - dP0;
+        // Защита от слишком малого P2 (физически перепад не может превысить P_abs)
+        if (P2 < P_abs * 0.01) P2 = P_abs * 0.01;
+        const fc = (P_abs / P2 + 1) / 2;
+        const factor = 1 + (fc - 1) * t;
+        return {
+            factor: factor,
+            mach: M,
+            regime: 'transition',
+            dP_corrected: dP0 * factor
+        };
+    }
+
+    // M >= 0.3 : сжимаемый поток
+    const P2 = Math.max(P_abs - dP0, P_abs * 0.01);
+    const fc = (P_abs / P2 + 1) / 2;
+    let regime = 'compressible';
+    if (M > 0.7) regime = 'high-subsonic';
+    return {
+        factor: fc,
+        mach: M,
+        regime: regime,
+        dP_corrected: dP0 * fc
+    };
 }
 
 function updateCompressNoteFromCorr(c){ const n=document.getElementById('compressNote'); if(!c||c.mach<0.1||modeSelect.value==='simple'||mediumSelect.value!=='gas'){n.textContent='';n.classList.remove('show');n.style.display='none';return;} let msg='';const M=c.mach.toFixed(2),f=c.factor.toFixed(2); if(c.regime==='transition')msg=t('compressTransition').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='compressible')msg=t('compressFull').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='high-subsonic')msg=t('compressHigh').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='choked')msg=t('compressChoked'); const a=calcSoundSpeed(); if(a)msg+=t('soundSpeedInfo').replace('{speed}',a.toFixed(0)); n.textContent=msg;n.classList.add('show');n.style.display='block'; }
@@ -1959,6 +2259,26 @@ function getAllMessages() {
             level: 2, 
             messages: [{ text: t('errorTempAbs'), type: 'critical' }] 
         };
+    }
+
+    // ===== ПРОВЕРКА ЭКСТРЕМАЛЬНОЙ ЗОНЫ (блокировка расчёта) =====
+    if (mode === 'engineer' && preset !== 'choose' && preset !== 'lng' && mediumType === 'gas') {
+        const P = parseFloat(document.getElementById('pressure').value) || 0;
+        const T_K = T + 273.15;
+        const crit = gasCritical[preset];
+        if (crit) {
+            const P_sat = getSaturationPressure(T_K, preset);
+            const phase = determinePhase(P, P_sat, T_K, crit.Tc);
+            const zone = classifyValidationZone(T, P, preset, phase);
+            if (zone === 'extreme') {
+                return {
+                    level: 2,
+                    messages: [{ text: t('errorZoneExtreme'), type: 'critical' }],
+                    blocked: true,
+                    zone: 'extreme'
+                };
+            }
+        }
     }
 
     // ===== ВТОРАЯ ОЧЕРЕДЬ: ДИАПАЗОН ДЛЯ ГАЗА В ИНЖЕНЕРНОМ РЕЖИМЕ =====
@@ -2184,7 +2504,7 @@ function updateAllWarnings() {
     const warningContainer = document.getElementById('warningListContainer');
 
     // Получаем сообщения
-    const { level, messages } = getAllMessages();
+    const { level, messages, blocked, zone } = getAllMessages();
 
     // Очищаем контейнер
     warningContainer.innerHTML = '';
@@ -2201,8 +2521,26 @@ function updateAllWarnings() {
 
     // КРИТИЧЕСКИЕ ОШИБКИ — показываем только их, скрываем индикатор
     const criticalMessages = messages.filter(m => m.type === 'critical');
-    if (criticalMessages.length > 0) {
+    if (criticalMessages.length > 0 || blocked) {
         indicator.style.display = 'none';
+        warningContainer.innerHTML = '';
+        warningContainer.style.display = 'none';
+
+        // === REFPROP-ссылка при блокировке (Фаза 5.2) ===
+        if (blocked) {
+            const div = document.createElement('div');
+            div.className = 'warning-item warning-critical refprop-link';
+            div.innerHTML = `<span class="warning-icon">🔗</span><span><a href="https://www.nist.gov/srd/refprop" target="_blank" rel="noopener">NIST REFPROP — ${t('validationBlocked')}</a></span>`;
+            warningContainer.appendChild(div);
+     // Бейдж зоны при блокировке (extreme)
+        const zoneBadgeCrit = document.getElementById('reliabilityZoneBadge');
+        if (zoneBadgeCrit && blocked && zone === 'extreme') {
+            zoneBadgeCrit.textContent = t('validationZoneExtreme');
+            zoneBadgeCrit.className = 'zone-badge-extreme';
+            zoneBadgeCrit.style.display = 'inline-block';
+        }
+            warningContainer.style.display = 'block';
+        }
 
         // Подсветка поля температуры для критических ошибок температуры
         const isTempError = criticalMessages.some(m =>
@@ -2268,8 +2606,46 @@ function updateAllWarnings() {
         });
         warningContainer.appendChild(list);
         warningContainer.style.display = 'block';
+     // ===== БЕЙДЖ ЗОНЫ ВАЛИДАЦИИ (Фаза 6.3) =====
+    const zoneBadge = document.getElementById('reliabilityZoneBadge');
+    if (zoneBadge) {
+        let currentZone = zone; // может прийти из getAllMessages()
+        
+        // Если зона ещё не определена — вычисляем прямо здесь
+        if (!currentZone && modeSelect.value === 'engineer' 
+            && presetSelect.value !== 'choose' && presetSelect.value !== 'lng' 
+            && mediumSelect.value === 'gas') {
+            const P = parseFloat(document.getElementById('pressure').value) || 0;
+            const T_K = parseFloat(document.getElementById('temperature').value) + 273.15;
+            const crit = gasCritical[presetSelect.value];
+            if (crit) {
+                const P_sat = getSaturationPressure(T_K, presetSelect.value);
+                const ph = determinePhase(P, P_sat, T_K, crit.Tc);
+                currentZone = classifyValidationZone(T_K - 273.15, P, presetSelect.value, ph);
+            }
+        }
+
+        if (currentZone) {
+            const map = {
+                engineering: { text: t('validationZoneEngineering'), cls: 'zone-badge-engineering' },
+                physical:     { text: t('validationZonePhysical'),     cls: 'zone-badge-physical' },
+                extreme:      { text: t('validationZoneExtreme'),      cls: 'zone-badge-extreme' }
+            };
+            const z = map[currentZone];
+            if (z) {
+                zoneBadge.textContent = z.text;
+                zoneBadge.className = z.cls;
+                zoneBadge.style.display = 'inline-block';
+            } else {
+                zoneBadge.style.display = 'none';
+            }
+        } else {
+            zoneBadge.style.display = 'none';
+        }
     }
-}
+     }
+    }
+
 
 function getCurrentLngLimits(){
   const T=parseFloat(document.getElementById('temperature').value),P=parseFloat(document.getElementById('pressure').value);
@@ -2461,6 +2837,13 @@ calculateBtn.addEventListener('click',()=>{
             }
         }
     }
+// Получаем зону валидации
+const { zone } = getAllMessages();
+if (zone === 'extreme') {
+  updateAllWarnings();
+  return; // БЛОКИРОВКА
+}
+
   try{
     const bends=parseInt(document.getElementById('bends').value)||0,valves=parseInt(document.getElementById('valves').value)||0,contractions=parseInt(document.getElementById('contractions').value)||0,expansions=parseInt(document.getElementById('expansions').value)||0,orifices=parseInt(document.getElementById('orifices').value)||0;
     const outerD=parseFloat(document.getElementById('outerDiam').value),wall=parseFloat(document.getElementById('wall').value),density=parseFloat(document.getElementById('density').value),length=parseFloat(document.getElementById('length').value),massFlow=parseFloat(document.getElementById('massFlow').value);
