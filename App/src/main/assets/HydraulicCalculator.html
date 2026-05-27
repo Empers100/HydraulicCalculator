@@ -2366,7 +2366,20 @@ function getAllMessages() {
                 });
             }
         }
-        return { level, messages };
+       // Определяем текущую зону (даже для engineering/physical)
+let currentZone = 'engineering';
+if (mode === 'engineer' && preset !== 'choose' && preset !== 'lng' && mediumType === 'gas') {
+    const P = parseFloat(document.getElementById('pressure').value) || 0;
+    const T_K = T + 273.15;
+    const crit = gasCritical[preset];
+    if (crit) {
+        const P_sat = getSaturationPressure(T_K, preset);
+        const phase = determinePhase(P, P_sat, T_K, crit.Tc);
+        currentZone = classifyValidationZone(T, P, preset, phase);
+    }
+}
+return { level, messages, zone: currentZone };
+
     }
 
     const crit = gasCritical[preset];
@@ -3231,6 +3244,7 @@ mediumSelects.forEach(id => {
         select.options[1].textContent = t('presetOil');
     }
 });
+updateAllWarnings();
 }
 
 langSelect.addEventListener('change',()=>{currentLang=langSelect.value;localStorage.setItem('calc_hyd_lang',currentLang);applyLanguage()});
