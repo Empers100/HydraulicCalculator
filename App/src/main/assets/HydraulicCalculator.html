@@ -2352,6 +2352,23 @@ function createZoneTable(zone, title, criteria) {
 }
 
 /* ============================================================
+
+ФОРМАТИРОВАНИЕ ЧИСЕЛ ДЛЯ ТАБЛИЦЫ ВАЛИДАЦИИ
+
+============================================================ */
+
+function formatValidationNumber(x) {
+    if (x === null || x === undefined || isNaN(x)) return '---';
+    const absX = Math.abs(x);
+    if (absX === 0) return '0';
+    if (absX < 0.001 || absX >= 1e6) {
+        return x.toExponential(3);
+    }
+    return x.toFixed(3);
+}
+
+
+/* ============================================================
    ИСПРАВЛЕННАЯ ФУНКЦИЯ: добавление строки в таблицу зоны
    ============================================================ */
 function addRowToZoneTable(zoneTable, gas, pt, calc_rho, calc_nu, rho_err, nu_err, maxErr, statusIcon, statusColor, statusText, zone) {
@@ -2378,25 +2395,25 @@ function addRowToZoneTable(zoneTable, gas, pt, calc_rho, calc_nu, rho_err, nu_er
 
     // Эталонная плотность
     const tdRhoRef = document.createElement('td');
-    tdRhoRef.textContent = pt.rho_ref.toFixed(3);
+    tdRhoRef.textContent = formatValidationNumber(pt.rho_ref);
     tdRhoRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right; font-size:10px;';
     row.appendChild(tdRhoRef);
 
     // Расчётная плотность
     const tdRhoCalc = document.createElement('td');
-    tdRhoCalc.textContent = calc_rho.toFixed(3);
+    tdRhoCalc.textContent = formatValidationNumber(calc_rho);
     tdRhoCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right; font-size:10px;';
     row.appendChild(tdRhoCalc);
 
     // Эталонная вязкость
     const tdNuRef = document.createElement('td');
-    tdNuRef.textContent = pt.nu_ref ? pt.nu_ref.toFixed(3) : '---';
+    tdNuRef.textContent = formatValidationNumber(pt.nu_ref);
     tdNuRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right; font-size:10px;';
     row.appendChild(tdNuRef);
 
     // Расчётная вязкость
     const tdNuCalc = document.createElement('td');
-    tdNuCalc.textContent = calc_nu ? calc_nu.toFixed(3) : '---';
+    tdNuCalc.textContent = formatValidationNumber(calc_nu);
     tdNuCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right; font-size:10px;';
     row.appendChild(tdNuCalc);
 
