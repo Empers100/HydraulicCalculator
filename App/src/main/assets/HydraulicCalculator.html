@@ -956,25 +956,81 @@ ammonia: { Tc: 405.5, Pc: 112.8, w: 0.253 }, ethane: { Tc: 305.4, Pc: 48.84, w: 
 propane: { Tc: 369.8, Pc: 42.48, w: 0.152 }, freon22: { Tc: 369.3, Pc: 49.86, w: 0.221 }
 };
 
+/* ============================================================
+   ИСПРАВЛЕННАЯ ФУНКЦИЯ: научно обоснованная классификация зон
+   ============================================================
+   
+   Экстремальная зона — модель неприменима:
+   - Критическая область (ρ, μ неопределены, флуктуации)
+   - Квантовый режим He-4 < λ-точки (сверхтекучесть)
+   - Вакуум (молекулярный режим, Knudsen > 0.01)
+   - Тройная точка квантовых газов (нулевые колебания)
+   
+   Физическая зона — модель применима с оговорками:
+   - Близко к критической точке (0.90 < Tr < 0.98)
+   - Полярные вещества при высоких T/P (дипольные взаимодействия)
+   - Криогенные жидкости с квантовыми поправками
+   - Линии фазовых переходов (сублимация, насыщение)
+   
+   Инженерная зона — модель надёжна:
+   - Далеко от критической точки
+   - Классическая механика применима
+   - Нелинейные эффекты пренебрежимо малы
+   ============================================================ */
 function classifyValidationZone(T_C, P_bar, gas, phase) {
-  const T_K = T_C + 273.15;
-  const crit = gasCritical[gas.toLowerCase()] || gasCritical[gas];
-  if (!crit) return 'engineering';
-  
-  const Tr = T_K / crit.Tc;
-  const Pr = P_bar / crit.Pc;
-  
-  if (Tr > 0.95 && Pr > 0.8) return 'extreme';
-  if (Tr > 0.92 && Pr > 0.85) return 'extreme';
-  if (gas === 'helium4' && T_K < 2.1768) return 'extreme';
-  if ((gas === 'parahydrogen' || gas === 'normalhydrogen') && T_K < 20) return 'extreme';
-  if (P_bar < 0.001 && phase === 'gas') return 'extreme';
-  
-  if (Tr > 0.85 && Pr > 0.7) return 'physical';
-  if (gas === 'ammonia' && (T_K > 370 || P_bar > 80)) return 'physical';
-  if (gas === 'co2' && Tr > 0.9 && Pr > 0.6) return 'physical';
-  
-  return 'engineering';
+    const T_K = T_C + 273.15;
+    const crit = gasCritical[gas.toLowerCase()] || gasCritical[gas];
+    if (!crit) return 'engineering';
+
+    const Tr = T_K / crit.Tc;
+    const Pr = P_bar / crit.Pc;
+
+    // === ЭКСТРЕМАЛЬНАЯ ЗОНА: модель неприменима в принципе ===
+    
+    // Критическая область: плотность и вязкость неопределены
+    // (корреляционная длина → ∞, флуктуации на всех масштабах)
+    if (Tr > 0.98 && Pr > 0.90) return 'extreme';
+    
+    // He-4 ниже λ-точки: сверхтекучесть, квантовая гидродинамика
+    if (gas === 'helium4' && T_K < 2.1768) return 'extreme';
+    
+    // Вакуум: разреженный газ, нарушается локальное равновесие
+    if (P_bar < 0.001 && phase === 'gas') return 'extreme';
+    
+    // H₂ ниже тройной точки: нулевые колебания, квантовая диффузия
+    if ((gas === 'parahydrogen' || gas === 'normalhydrogen') && T_K < 13.8) {
+        return 'extreme';
+    }
+
+    // === ФИЗИЧЕСКАЯ ЗОНА: модель применима с оговорками ===
+    
+    // Близко к критической точке: сильные флуктуации, нелинейность
+    if (Tr > 0.90 && Pr > 0.75) return 'physical';
+    
+    // Полярные вещества: диполь-дипольное взаимодействие, ассоциация
+    if (gas === 'ammonia' && (T_K > 350 || P_bar > 50)) return 'physical';
+    
+    // CO₂ при Tr > 0.85: слабые межмолекулярные силы, нелинейность уравнения состояния
+    if (gas === 'co2' && Tr > 0.85) return 'physical';
+    
+    // Криогенные жидкости квантовых газов: квантовые поправки к классике
+    if (['parahydrogen', 'normalhydrogen', 'helium4', 'neon'].includes(gas)
+        && phase === 'liquid' && T_K < crit.Tc * 0.5) {
+        return 'physical';
+    }
+    
+    // Линия сублимации: фазовое равновесие твёрдое-газовое (для CO₂)
+    if (gas === 'co2' && T_C < -56.55 && phase === 'gas' && P_bar < 5.185) {
+        return 'physical';
+    }
+    
+    // Насыщенная жидкость при T > 0.7 Tc: термическое расширение, предкритические явления
+    if (phase === 'liquid' && Tr > 0.70 && gas !== 'water' && gas !== 'oil') {
+        return 'physical';
+    }
+
+    // === ИНЖЕНЕРНАЯ ЗОНА: классическая механика, модель надёжна ===
+    return 'engineering';
 }
 
 const antoineCoeffs = {
@@ -1444,9 +1500,9 @@ contractions:'Сужений (ζ=0.5):', expansions:'Расширений (ζ=1.
 warningSaturationAbove:'⚠ Давление выше давления насыщения --- расчёт сжиженного газа. Для точности выберите режим «Жидкость».',
 warningNearSaturation:'⚠ Близко к линии насыщения --- возможна конденсация.',
 infoPanelSaturatedLiquid:' ⚠ Давление выше давления насыщения.',
-reliabilityGreen:'✅ Расчёт в пределах применимости моделей',
-reliabilityYellow:'⚠️ Повышенная погрешность моделей',
-reliabilityRed:'🔴 За пределами применимости моделей',
+reliabilityGreen: '✅ Расчёт в пределах применимости моделей',
+reliabilityYellow: '⚠️ Повышенная погрешность моделей',
+reliabilityRed: '🔴 За пределами применимости моделей',
 compressTransition:'🟡 M = {mach} --- начинается влияние сжимаемости. Поправка: ×{factor}',
 compressFull:'🟠 M = {mach} --- необходим учёт сжимаемости. Потери увеличены в {factor} раза',
 compressHigh:'🔴 M = {mach} --- высокая скорость! Возможны скачки уплотнения. Поправка: ×{factor}',
@@ -1488,6 +1544,7 @@ validationCriteriaExtreme: 'Модель не применима',
 validationPoints: 'точек',
 validationNotApplicable: 'модель не применима',
 validationBlocked: 'Расчёт заблокирован',
+validationExceeds: 'превышают {threshold}',
 copyLink: 'Скопировать ссылку',
 copied: '✓ Скопировано!',
 copyError: 'Ошибка копирования',
@@ -1498,7 +1555,7 @@ errorZoneVacuum: '⚠ Вакуум (P < 0.001 бар): модель не при�
 validationDesc_boilingPoint: 'Точка кипения',
 validationDesc_satVapor: 'Пар насыщения',
 validationDesc_gasAtTemp: 'Газ при {temp}°C',
-validationDesc_triplePoint: 'Тройная точка',
+validationDesc_triplePointVapor: 'Тройная точка (пар)',
 validationDesc_tempC: '{temp}°C',
 validationAllOk: '✅ Все {total} точеквпределах 10% погрешности',
 validationSomeError: '⚠️ {errors} из {total} точек превышают 10% погрешности',
@@ -1520,14 +1577,51 @@ helpContent:`
 <h3>Режимы расчёта</h3>
 <p><b>Упрощённый</b> --- только гидравлика. Быстрая оценка без учёта свойств среды.</p>
 <p><b>Инженерный</b> --- полный расчёт с учётом реальных свойств газа/жидкости, сжимаемости и фазового состояния.</p>
+<h3>Зоны применимости моделей</h3>
+<p>Модели разделены на три зоны в зависимости от термодинамических условий:</p>
+
+<table style="width:100%; font-size:12px; border-collapse:collapse; margin:8px 0;">
+<tr style="background:var(--btn-bg); font-weight:bold;">
+<th>Зона</th><th>Условия</th><th>Допустимая ошибка</th><th>Индикатор</th>
+</tr>
+<tr>
+<td><b>Инженерная</b></td>
+<td>Далеко от критической точки, классическая механика</td>
+<td>≤5% 🟢, ≤10% 🟡</td>
+<td>Зелёный/жёлтый</td>
+</tr>
+<tr style="background:rgba(255,193,7,0.1);">
+<td><b>Физическая</b></td>
+<td>Близко к критической точке, фазовые переходы, полярные эффекты</td>
+<td>≤10% 🟢, ≤15% 🟡</td>
+<td>Жёлтый (панель)</td>
+</tr>
+<tr style="background:rgba(220,53,69,0.1);">
+<td><b>Экстремальная</b></td>
+<td>Критическая область, квантовые эффекты, вакуум, сверхтекучесть</td>
+<td>Модель неприменима</td>
+<td>Красный, расчёт блокируется</td>
+</tr>
+</table>
+
 <h3>Индикаторы достоверности</h3>
 <p>🟢 Зелёный --- модели работают в оптимальной области.</p>
 <p>🟡 Жёлтый --- повышенная погрешность (см. список предупреждений).</p>
 <p>🔴 Красный --- расчёт вне области применимости моделей.</p>
-<h3>Точки валидации</h3>
+
+<h3>Точки валидации по зонам</h3>
+<p><b>Инженерная зона</b> (основной диапазон):</p>
 <p>🟢 Зелёный --- ошибка ≤5%</p>
 <p>🟡 Жёлтый --- ошибка 5–10%</p>
-<p>🔴 Красный --- ошибка >10%</p>
+<p>🔴 Красный --- ошибка >10% (модель не соответствует заявленной точности)</p>
+
+<p><b>Физическая зона</b> (сложные условия):</p>
+<p>🟢 Зелёный --- ошибка ≤10%</p>
+<p>🟡 Жёлтый --- ошибка 10–15%</p>
+<p>🔴 Красный --- ошибка >15% (требуется уточнение модели)</p>
+
+<p><b>Экстремальная зона</b>:</p>
+<p>⚪ N/A --- модель неприменима, точность не проверяется. Используйте NIST REFPROP.</p>
 
 <h3>Граничные значения и риски</h3>
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
@@ -1551,6 +1645,7 @@ helpContent:`
 <p>Для проектных расчётов сверяйте результаты с NIST REFPROP. При выходе за границы диапазона расчёт блокируется.</p>
 <p><b>Новое:</b> Вязкость жидкостей рассчитывается по табличным данным NIST с логарифмической интерполяцией.</p>
 `,
+unitBar: 'бар',
 units:{ mm:'мм', m:'м', kgm3:'кг/м³', kgh:'кг/ч', cSt:'сСт', gmol:'г/моль', Pa:'Па', kPa:'кПа', bar:'бар', 'kgf/cm²':'кгс/см²', psi:'psi', m_s:'м/с' }
 },
 en: {
@@ -1602,9 +1697,9 @@ contractions:'Contractions (ζ=0.5):', expansions:'Expansions (ζ=1.0):', orific
 warningSaturationAbove:'⚠ Pressure above saturation — liquefied gas calculation. For accuracy, select Liquid mode.',
 warningNearSaturation:'⚠ Near saturation line — condensation possible.',
 infoPanelSaturatedLiquid:' ⚠ Pressure above saturation.',
-reliabilityGreen:'✅ Calculation within model applicability',
-reliabilityYellow:'⚠️ Increased model uncertainty',
-reliabilityRed:'🔴 Outside model applicability range',
+reliabilityGreen: '✅ Calculation within model applicability',
+reliabilityYellow: '⚠️ Increased model uncertainty',
+reliabilityRed: '🔴 Outside model applicability range',
 compressTransition:'🟡 M = {mach} — compressibility influence beginning. Correction: ×{factor}',
 compressFull:'🟠 M = {mach} — compressibility must be accounted for. Losses increased by factor of {factor}',
 compressHigh:'🔴 M = {mach} — high speed! Shock waves possible. Correction: ×{factor}',
@@ -1646,6 +1741,7 @@ validationCriteriaExtreme: 'Model not applicable',
 validationPoints: 'points',
 validationNotApplicable: 'model not applicable',
 validationBlocked: 'Calculation blocked',
+validationExceeds: 'exceed {threshold}',
 copyLink: 'Copy link',
 copied: '✓ Copied!',
 copyError: 'Copy error',
@@ -1678,14 +1774,52 @@ helpContent:`
 <h3>Calculation modes</h3>
 <p><b>Simplified</b> — hydraulics only. Quick estimate without fluid properties.</p>
 <p><b>Engineering</b> — full calculation with real gas/liquid properties, compressibility, and phase state.</p>
+<h3>Applicability zones</h3>
+<p>Models are divided into three zones depending on thermodynamic conditions:</p>
+
+<table style="width:100%; font-size:12px; border-collapse:collapse; margin:8px 0;">
+<tr style="background:var(--btn-bg); font-weight:bold;">
+<th>Zone</th><th>Conditions</th><th>Acceptable error</th><th>Indicator</th>
+</tr>
+<tr>
+<td><b>Engineering</b></td>
+<td>Far from critical point, classical mechanics</td>
+<td>≤5% 🟢, ≤10% 🟡</td>
+<td>Green/Yellow</td>
+</tr>
+<tr style="background:rgba(255,193,7,0.1);">
+<td><b>Physical</b></td>
+<td>Near critical point, phase transitions, polar effects</td>
+<td>≤10% 🟢, ≤15% 🟡</td>
+<td>Yellow (panel)</td>
+</tr>
+<tr style="background:rgba(220,53,69,0.1);">
+<td><b>Extreme</b></td>
+<td>Critical region, quantum effects, vacuum, superfluidity</td>
+<td>Model not applicable</td>
+<td>Red, calculation blocked</td>
+</tr>
+</table>
+
 <h3>Reliability indicators</h3>
 <p>🟢 Green — models in optimal range.</p>
 <p>🟡 Yellow — increased uncertainty (see warnings).</p>
 <p>🔴 Red — calculation outside model applicability.</p>
-<h3>Validation points</h3>
-<p>🟢 Green — error ≤5%</p>
-<p>🟡 Yellow — error 5–10%</p>
-<p>🔴 Red — error >10%</p>
+
+<h3>Validation points by zone</h3>
+<p><b>Engineering zone</b> (main range):</p>
+<p>🟢 Green --- error ≤5%</p>
+<p>🟡 Yellow --- error 5–10%</p>
+<p>🔴 Red --- error >10% (model does not meet claimed accuracy)</p>
+
+<p><b>Physical zone</b> (complex conditions):</p>
+<p>🟢 Green --- error ≤10%</p>
+<p>🟡 Yellow --- error 10–15%</p>
+<p>🔴 Red --- error >15% (model refinement required)</p>
+
+<p><b>Extreme zone</b>:</p>
+<p>⚪ N/A --- model not applicable, accuracy not checked. Use NIST REFPROP.</p>
+
 <h3>Limits and risks</h3>
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
 <tr><th>Substance</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (bar)</th><th>Main risk</th></tr>
@@ -1708,6 +1842,7 @@ helpContent:`
 <p>For design calculations, verify against NIST REFPROP. Out-of-range inputs are blocked.</p>
 <p><b>New:</b> Liquid viscosity calculated from NIST tables with logarithmic interpolation.</p>
 `,
+unitBar: 'bar',
 units:{ mm:'mm', m:'m', kgm3:'kg/m³', kgh:'kg/h', cSt:'cSt', gmol:'g/mol', Pa:'Pa', kPa:'kPa', bar:'bar', 'kgf/cm²':'kgf/cm²', psi:'psi', m_s:'m/s' }
 },
 zh: {
@@ -1759,9 +1894,9 @@ contractions:'收缩 (ζ=0.5)：', expansions:'扩张 (ζ=1.0)：', orifices:'�
 warningSaturationAbove:'⚠压力高于饱和压力 — 按液化气体计算。为获得更高精度，请切换至液体模式。',
 warningNearSaturation:'⚠接近饱和压力 — 可能发生冷凝。',
 infoPanelSaturatedLiquid:' ⚠压力高于饱和压力。',
-reliabilityGreen:'✅计算在模型适用范围内',
-reliabilityYellow:'⚠️模型不确定性增加',
-reliabilityRed:'🔴超出模型适用范围',
+reliabilityGreen: '✅计算在模型适用范围内',
+reliabilityYellow: '⚠️模型不确定性增加',
+reliabilityRed: '🔴超出模型适用范围',
 compressTransition:'🟡 M = {mach} — 压缩性影响开始显现。修正系数：×{factor}',
 compressFull:'🟠 M = {mach} — 必须考虑压缩性。损失增至{factor}倍',
 compressHigh:'🔴 M = {mach} — 高速！可能出现激波。修正系数：×{factor}',
@@ -1803,6 +1938,7 @@ validationCriteriaExtreme: '模型不适用',
 validationPoints: '个点',
 validationNotApplicable: '模型不适用',
 validationBlocked: '计算已阻止',
+validationExceeds: '超过{threshold}',
 copyLink: '复制链接',
 copied: '✓ 已复制',
 copyError: '复制错误',
@@ -1835,14 +1971,52 @@ helpContent:`
 <h3>计算模式</h3>
 <p><b>简化模式</b> — 仅考虑水力学。快速评估，不考虑介质特性。</p>
 <p><b>工程模式</b> — 完整计算，包含实际气体/液体性质、压缩性和相态。</p>
+<h3>模型适用范围分区</h3>
+<p>根据热力学条件，模型分为三个区域：</p>
+
+<table style="width:100%; font-size:12px; border-collapse:collapse; margin:8px 0;">
+<tr style="background:var(--btn-bg); font-weight:bold;">
+<th>区域</th><th>条件</th><th>允许误差</th><th>指示器</th>
+</tr>
+<tr>
+<td><b>工程区域</b></td>
+<td>远离临界点，经典力学适用</td>
+<td>≤5% 🟢, ≤10% 🟡</td>
+<td>绿色/黄色</td>
+</tr>
+<tr style="background:rgba(255,193,7,0.1);">
+<td><b>物理区域</b></td>
+<td>接近临界点，相变，极性效应</td>
+<td>≤10% 🟢, ≤15% 🟡</td>
+<td>黄色（面板）</td>
+</tr>
+<tr style="background:rgba(220,53,69,0.1);">
+<td><b>极端区域</b></td>
+<td>临界区，量子效应，真空，超流性</td>
+<td>模型不适用</td>
+<td>红色，计算被阻止</td>
+</tr>
+</table>
+
 <h3>指示器</h3>
 <p>🟢绿色 — 模型在最佳范围内。</p>
 <p>🟡黄色 — 不确定性增加（请查看警告）。</p>
 <p>🔴红色 — 计算超出模型适用范围。</p>
-<h3>验证点</h3>
-<p>🟢绿色 — 误差≤5%</p>
-<p>🟡黄色 — 误差 5–10%</p>
-<p>🔴红色 — 误差>10%</p>
+
+<h3>各区域验证点</h3>
+<p><b>工程区域</b>（主要范围）：</p>
+<p>🟢 绿色 --- 误差 ≤5%</p>
+<p>🟡 黄色 --- 误差 5–10%</p>
+<p>🔴 红色 --- 误差 >10%（模型不符合声称精度）</p>
+
+<p><b>物理区域</b>（复杂条件）：</p>
+<p>🟢 绿色 --- 误差 ≤10%</p>
+<p>🟡 黄色 --- 误差 10–15%</p>
+<p>🔴 红色 --- 误差 >15%（需要改进模型）</p>
+
+<p><b>极端区域</b>：</p>
+<p>⚪ 不适用 --- 模型不适用，不检查精度。请使用 NIST REFPROP。</p>
+
 <h3>限值与风险</h3>
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
 <tr><th>物质</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (巴)</th><th>主要风险</th></tr>
@@ -1865,6 +2039,7 @@ helpContent:`
 <p>设计计算请与 NIST REFPROP 对比验证。超出范围的输入将被阻止。</p>
 <p><b>新增：</b>液体粘度使用NIST表格数据通过对数插值计算。</p>
 `,
+unitBar: '巴',
 units:{ mm:'毫米', m:'米', kgm3:'千克/立方米', kgh:'千克/小时', cSt:'厘斯', gmol:'克/摩尔', Pa:'帕', kPa:'千帕', bar:'巴', 'kgf/cm²':'千克力/平方厘米', psi:'psi', m_s:'米/秒' }
 }
 };
@@ -1956,126 +2131,169 @@ document.getElementById('temperature').addEventListener('change', function() {
 /* ============================================================
    ВАЛИДАЦИЯ МОДЕЛИ
    ============================================================ */
-
+/* ============================================================
+   ИСПРАВЛЕННАЯ ФУНКЦИЯ runValidation()
+   ============================================================
+   
+   Критерии по зонам:
+   - Экстремальная: не проверяем точность (N/A), модель неприменима
+   - Физическая:    🟢 ≤10%  🟡 10-15%  🔴 >15%
+   - Инженерная:    🟢 ≤5%   🟡 5-10%   🔴 >10%
+   ============================================================ */
 function runValidation() {
-  const content = document.getElementById('validateContent');
-  content.innerHTML = '';
+    const content = document.getElementById('validateContent');
+    content.innerHTML = '';
 
-  // ====== ЗАГОЛОВОК ======
-  const header = document.createElement('h3');
-  header.textContent = t('validateInfo');
-  header.style.marginBottom = '12px';
-  content.appendChild(header);
+    // ===== ЗАГОЛОВОК =====
+    const header = document.createElement('h3');
+    header.textContent = t('validateInfo');
+    header.style.marginBottom = '12px';
+    content.appendChild(header);
 
-  // ====== СТАТИСТИКА ПО ЗОНАМ ======
-  const zoneStats = {
-    engineering: { total: 0, errors: 0, label: t('validationZoneEngineering') },
-    physical:    { total: 0, errors: 0, label: t('validationZonePhysical') },
-    extreme:     { total: 0, errors: 0, label: t('validationZoneExtreme') }
-  };
+    // ===== СТАТИСТИКА ПО ЗОНАМ =====
+    const zoneStats = {
+        engineering: { total: 0, errors: 0, label: t('validationZoneEngineering') },
+        physical:    { total: 0, errors: 0, label: t('validationZonePhysical') },
+        extreme:     { total: 0, na: 0,   label: t('validationZoneExtreme') }
+    };
 
-  // ====== СОЗДАЁМ 3 ТАБЛИЦЫ ПО ЗОНАМ ======
-  const zoneTables = {
-    engineering: createZoneTable('engineering', t('validationZoneEngineering'), t('validationCriteriaEngineering')),
-    physical:    createZoneTable('physical',    t('validationZonePhysical'),    t('validationCriteriaPhysical')),
-    extreme:     createZoneTable('extreme',     t('validationZoneExtreme'),     t('validationCriteriaExtreme'))
-  };
+    // ===== СОЗДАЁМ 3 ТАБЛИЦЫ ПО ЗОНАМ =====
+    const zoneTables = {
+        engineering: createZoneTable('engineering', t('validationZoneEngineering'), t('validationCriteriaEngineering')),
+        physical:    createZoneTable('physical',    t('validationZonePhysical'),    t('validationCriteriaPhysical')),
+        extreme:     createZoneTable('extreme',     t('validationZoneExtreme'),     t('validationCriteriaExtreme'))
+    };
 
-  // ====== ОБРАБОТКА ТОЧЕК ======
-  for (const [gas, points] of Object.entries(validationPoints)) {
-    for (const pt of points) {
-      // Определяем зону (из поля zone или функцией classifyValidationZone)
-      const zone = pt.zone || classifyValidationZone(pt.T_C, pt.P_bar, gas, pt.phase);
-      zoneStats[zone].total++;
+    // ===== ОБРАБОТКА ТОЧЕК =====
+    for (const [gas, points] of Object.entries(validationPoints)) {
+        for (const pt of points) {
+            // Определяем зону научно обоснованно
+            const zone = classifyValidationZone(pt.T_C, pt.P_bar, gas, pt.phase);
+            zoneStats[zone].total++;
 
-      // Установка молярной массы
-      const mmDefaults = { normalhydrogen: 2.016, parahydrogen: 2.016, helium4: 4.0026, 
-        methane: 16.04, nitrogen: 28.01, oxygen: 32.00, co2: 44.01, ammonia: 17.03, 
-        ethane: 30.07, ethylene: 28.05, propane: 44.1, freon22: 86.47, neon: 20.18, 
-        argon: 39.95, krypton: 83.80, xenon: 131.29, air: 28.97, water: 18.015 };
-      document.getElementById('molarMass').value = mmDefaults[gas] || 28.97;
+            // Установка молярной массы для расчёта
+            const mmDefaults = {
+                normalhydrogen: 2.016, parahydrogen: 2.016, helium4: 4.0026,
+                methane: 16.04, nitrogen: 28.01, oxygen: 32.00, co2: 44.01,
+                ammonia: 17.03, ethane: 30.07, ethylene: 28.05, propane: 44.1,
+                freon22: 86.47, neon: 20.18, argon: 39.95, krypton: 83.80,
+                xenon: 131.29, air: 28.97, water: 18.015
+            };
+            document.getElementById('molarMass').value = mmDefaults[gas] || 28.97;
 
-      // Расчёт
-      const calc_rho = calcRealGasDensity(pt.T_C, pt.P_bar, gas, pt.phase);
-      const calc_mu = calcRealGasViscosity(pt.T_C, pt.P_bar, gas, pt.phase);
-      const calc_nu = calc_mu / calc_rho * 1e6;
+            // Расчёт
+            const calc_rho = calcRealGasDensity(pt.T_C, pt.P_bar, gas, pt.phase);
+            const calc_mu = calcRealGasViscosity(pt.T_C, pt.P_bar, gas, pt.phase);
+            const calc_nu = calc_mu / calc_rho * 1e6;
 
-      const rho_err = Math.abs(calc_rho - pt.rho_ref) / pt.rho_ref * 100;
-      const nu_err = pt.nu_ref ? Math.abs(calc_nu - pt.nu_ref) / pt.nu_ref * 100 : 0;
-      const maxErr = Math.max(rho_err, nu_err);
+            const rho_err = Math.abs(calc_rho - pt.rho_ref) / pt.rho_ref * 100;
+            const nu_err = pt.nu_ref ? Math.abs(calc_nu - pt.nu_ref) / pt.nu_ref * 100 : 0;
+            const maxErr = Math.max(rho_err, nu_err);
 
-      // Критерии по зонам:
-      let isError = false;
-      let statusIcon = '';
-      let statusColor = '';
+            // ===== КРИТЕРИИ ПО ЗОНАМ =====
+            let isError = false;
+            let statusIcon = '';
+            let statusColor = '';
+            let statusText = '';
 
-      if (zone === 'extreme') {
-        statusIcon = '⚪';
-        statusColor = '#6c757d';
-      } else if (zone === 'physical') {
-        if (maxErr > 15) { isError = true; statusIcon = '🔴'; statusColor = '#dc3545'; }
-        else if (maxErr > 10) { statusIcon = '🟡'; statusColor = '#ffc107'; }
-        else { statusIcon = '🟢'; statusColor = '#28a745'; }
-      } else { // engineering
-        if (maxErr > 10) { isError = true; statusIcon = '🔴'; statusColor = '#dc3545'; zoneStats[zone].errors++; }
-        else if (maxErr > 5) { statusIcon = '🟡'; statusColor = '#ffc107'; }
-        else { statusIcon = '🟢'; statusColor = '#28a745'; }
-      }
+            if (zone === 'extreme') {
+                // Экстремальная: модель неприменима, точность не проверяем
+                statusIcon = '⚪';
+                statusColor = '#6c757d';
+                statusText = t('validationNotApplicable');
+                zoneStats[zone].na++;
+                
+            } else if (zone === 'physical') {
+                // Физическая: 🟢≤10% 🟡10-15% 🔴>15%
+                if (maxErr > 15) {
+                    isError = true;
+                    statusIcon = '🔴';
+                    statusColor = '#dc3545';
+                    statusText = `>${maxErr.toFixed(1)}%`;
+                    zoneStats[zone].errors++;
+                } else if (maxErr > 10) {
+                    statusIcon = '🟡';
+                    statusColor = '#ffc107';
+                    statusText = `${maxErr.toFixed(1)}%`;
+                } else {
+                    statusIcon = '🟢';
+                    statusColor = '#28a745';
+                    statusText = `${maxErr.toFixed(1)}%`;
+                }
+                
+            } else {
+                // Инженерная: 🟢≤5% 🟡5-10% 🔴>10%
+                if (maxErr > 10) {
+                    isError = true;
+                    statusIcon = '🔴';
+                    statusColor = '#dc3545';
+                    statusText = `>${maxErr.toFixed(1)}%`;
+                    zoneStats[zone].errors++;
+                } else if (maxErr > 5) {
+                    statusIcon = '🟡';
+                    statusColor = '#ffc107';
+                    statusText = `${maxErr.toFixed(1)}%`;
+                } else {
+                    statusIcon = '🟢';
+                    statusColor = '#28a745';
+                    statusText = `${maxErr.toFixed(1)}%`;
+                }
+            }
 
-      // Добавляем строку в соответствующую таблицу
-      addRowToZoneTable(zoneTables[zone], gas, pt, calc_rho, calc_nu, rho_err, nu_err, maxErr, statusIcon, statusColor, zone);
+            // Добавляем строку в соответствующую таблицу
+            addRowToZoneTable(zoneTables[zone], gas, pt, calc_rho, calc_nu, rho_err, nu_err, maxErr, statusIcon, statusColor, statusText, zone);
+        }
     }
-  }
+    // ===== ВЫВОД ТАБЛИЦ =====
+    content.appendChild(zoneTables.engineering.container);
+    content.appendChild(zoneTables.physical.container);
+    content.appendChild(zoneTables.extreme.container);
 
-  // ====== ВЫВОД ТАБЛИЦ ======
-  content.appendChild(zoneTables.engineering.container);
-  content.appendChild(zoneTables.physical.container);
-  content.appendChild(zoneTables.extreme.container);
+    // ===== ИТОГОВЫЙ БЛОК =====
+    const summary = document.createElement('div');
+    summary.style.marginTop = '16px';
+    summary.style.padding = '12px';
+    summary.style.borderRadius = '8px';
+    summary.style.background = 'var(--display-bg)';
 
-  // ====== ИТОГОВЫЙ БЛОК ======
-  const summary = document.createElement('div');
-  summary.style.marginTop = '16px';
-  summary.style.padding = '12px';
-  summary.style.borderRadius = '8px';
-  summary.style.background = '#f8f9fa';
+    // Engineering итог
+    const eng = zoneStats.engineering;
+    const engDiv = document.createElement('div');
+    engDiv.style.fontWeight = 'bold';
+    engDiv.style.marginBottom = '8px';
+    if (eng.errors === 0) {
+        engDiv.innerHTML = '🟢 ' + t('validationAllOk').replace('{total}', eng.total);
+        engDiv.style.color = '#28a745';
+        summary.style.border = '2px solid #28a745';
+    } else {
+        engDiv.innerHTML = '🔴 ' + t('validationSomeError').replace('{errors}', eng.errors).replace('{total}', eng.total);
+        engDiv.style.color = '#dc3545';
+        summary.style.border = '2px solid #dc3545';
+    }
+    summary.appendChild(engDiv);
 
-  // Engineering итог
-  const eng = zoneStats.engineering;
-  const engDiv = document.createElement('div');
-  engDiv.style.fontWeight = 'bold';
-  engDiv.style.marginBottom = '8px';
-  if (eng.errors === 0) {
-    engDiv.innerHTML = '🟢 ' + t('validationAllOk').replace('{total}', eng.total);
-    engDiv.style.color = '#28a745';
-    summary.style.border = '2px solid #28a745';
-  } else {
-    engDiv.innerHTML = '🔴 ' + t('validationSomeError').replace('{errors}', eng.errors).replace('{total}', eng.total);
-    engDiv.style.color = '#dc3545';
-    summary.style.border = '2px solid #dc3545';
-  }
-  summary.appendChild(engDiv);
+    // Physical итог
+    const phys = zoneStats.physical;
+    const physDiv = document.createElement('div');
+    physDiv.style.fontSize = '13px';
+    physDiv.style.color = 'var(--text-secondary)';
+    if (phys.errors === 0) {
+        physDiv.innerHTML = `🟢 ${t('validationZonePhysical')}: ${phys.total} ${t('validationPoints')} (${t('validationCriteriaPhysical')})`;
+    } else {
+        physDiv.innerHTML = `🟡 ${t('validationZonePhysical')}: ${phys.errors}/${phys.total} ${t('validationPoints')} ${t('validationExceeds').replace('{threshold}', '15%')}`;
+    }
+    summary.appendChild(physDiv);
 
-  // Physical итог
-  const phys = zoneStats.physical;
-  const physDiv = document.createElement('div');
-  physDiv.style.fontSize = '13px';
-  physDiv.style.color = '#6c757d';
-  physDiv.innerHTML = '🟡 ' + t('validationZonePhysical') + ': ' + phys.total + ' ' + t('validationPoints') + 
-    ' (' + t('validationCriteriaPhysical') + ')';
-  summary.appendChild(physDiv);
+    // Extreme итог
+    const ext = zoneStats.extreme;
+    const extDiv = document.createElement('div');
+    extDiv.style.fontSize = '13px';
+    extDiv.style.color = 'var(--text-secondary)';
+    extDiv.innerHTML = `⚪ ${t('validationZoneExtreme')}: ${ext.total} ${t('validationPoints')} (${ext.na} N/A)`;
+    summary.appendChild(extDiv);
 
-  // Extreme итог
-  const ext = zoneStats.extreme;
-  const extDiv = document.createElement('div');
-  extDiv.style.fontSize = '13px';
-  extDiv.style.color = '#6c757d';
-  extDiv.innerHTML = '⚪ ' + t('validationZoneExtreme') + ': ' + ext.total + ' ' + t('validationPoints') + 
-    ' (' + t('validationNotApplicable') + ')';
-  summary.appendChild(extDiv);
-
-  content.appendChild(summary);
-
-  document.getElementById('validateModal').style.display = 'flex';
+    content.appendChild(summary);
+    document.getElementById('validateModal').style.display = 'flex';
 }
 
 // ====== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ======
@@ -2133,63 +2351,74 @@ function createZoneTable(zone, title, criteria) {
   return { container, table };
 }
 
-function addRowToZoneTable(zoneTable, gas, pt, calc_rho, calc_nu, rho_err, nu_err, maxErr, statusIcon, statusColor, zone) {
-  const row = document.createElement('tr');
+/* ============================================================
+   ИСПРАВЛЕННАЯ ФУНКЦИЯ: добавление строки в таблицу зоны
+   ============================================================ */
+function addRowToZoneTable(zoneTable, gas, pt, calc_rho, calc_nu, rho_err, nu_err, maxErr, statusIcon, statusColor, statusText, zone) {
+    const row = document.createElement('tr');
 
-  const tdGas = document.createElement('td');
-  tdGas.textContent = t('preset' + gas.charAt(0).toUpperCase() + gas.slice(1)) || gas;
-  tdGas.style.cssText = 'border:1px solid var(--border); padding:4px;';
-  row.appendChild(tdGas);
+    // Вещество
+    const tdGas = document.createElement('td');
+    tdGas.textContent = t('preset' + gas.charAt(0).toUpperCase() + gas.slice(1)) || gas;
+    tdGas.style.cssText = 'border:1px solid var(--border); padding:4px; font-size:11px;';
+    row.appendChild(tdGas);
 
-  const tdPoint = document.createElement('td');
-  let desc = pt.descKey ? t(pt.descKey) : (pt.desc || '');
-  if (pt.descParams) {
-    for (const [k, v] of Object.entries(pt.descParams)) {
-      desc = desc.replace('{' + k + '}', v);
+    // Точка (описание)
+    const tdPoint = document.createElement('td');
+    let desc = pt.descKey ? t(pt.descKey) : (pt.desc || '');
+    if (pt.descParams) {
+        for (const [k, v] of Object.entries(pt.descParams)) {
+            desc = desc.replace('{' + k + '}', v);
+        }
     }
-  }
-  desc += ' (' + pt.T_C.toFixed(1) + '°C, ' + pt.P_bar + ' бар)';
-  tdPoint.textContent = desc;
-  tdPoint.style.cssText = 'border:1px solid var(--border); padding:4px; font-size:10px;';
-  row.appendChild(tdPoint);
+    desc += ` (${pt.T_C.toFixed(1)}°C, ${pt.P_bar} ${t('unitBar')})`;
+    tdPoint.textContent = desc;
+    tdPoint.style.cssText = 'border:1px solid var(--border); padding:4px; font-size:10px;';
+    row.appendChild(tdPoint);
 
-  const tdRhoRef = document.createElement('td');
-  tdRhoRef.textContent = pt.rho_ref.toFixed(3);
-  tdRhoRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-  row.appendChild(tdRhoRef);
+    // Эталонная плотность
+    const tdRhoRef = document.createElement('td');
+    tdRhoRef.textContent = pt.rho_ref.toFixed(3);
+    tdRhoRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right; font-size:10px;';
+    row.appendChild(tdRhoRef);
 
-  const tdRhoCalc = document.createElement('td');
-  tdRhoCalc.textContent = calc_rho.toFixed(3);
-  tdRhoCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-  row.appendChild(tdRhoCalc);
+    // Расчётная плотность
+    const tdRhoCalc = document.createElement('td');
+    tdRhoCalc.textContent = calc_rho.toFixed(3);
+    tdRhoCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right; font-size:10px;';
+    row.appendChild(tdRhoCalc);
 
-  const tdNuRef = document.createElement('td');
-  tdNuRef.textContent = pt.nu_ref ? pt.nu_ref.toFixed(3) : '---';
-  tdNuRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-  row.appendChild(tdNuRef);
+    // Эталонная вязкость
+    const tdNuRef = document.createElement('td');
+    tdNuRef.textContent = pt.nu_ref ? pt.nu_ref.toFixed(3) : '---';
+    tdNuRef.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right; font-size:10px;';
+    row.appendChild(tdNuRef);
 
-  const tdNuCalc = document.createElement('td');
-  tdNuCalc.textContent = calc_nu ? calc_nu.toFixed(3) : '---';
-  tdNuCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-  row.appendChild(tdNuCalc);
+    // Расчётная вязкость
+    const tdNuCalc = document.createElement('td');
+    tdNuCalc.textContent = calc_nu ? calc_nu.toFixed(3) : '---';
+    tdNuCalc.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right; font-size:10px;';
+    row.appendChild(tdNuCalc);
 
-  const tdError = document.createElement('td');
-  tdError.textContent = maxErr.toFixed(1) + '%';
-  tdError.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right;';
-  if (zone === 'extreme') {
-    tdError.style.color = '#6c757d';
-    tdError.style.fontStyle = 'italic';
-  } else {
-    tdError.style.color = statusColor;
-  }
-  row.appendChild(tdError);
+    // Ошибка
+    const tdError = document.createElement('td');
+    if (zone === 'extreme') {
+        tdError.textContent = 'N/A';
+        tdError.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:right; font-size:10px; color:#6c757d; font-style:italic;';
+    } else {
+        tdError.textContent = maxErr.toFixed(1) + '%';
+        tdError.style.cssText = `border:1px solid var(--border); padding:4px; text-align:right; font-size:10px; color:${statusColor}; font-weight:600;`;
+    }
+    row.appendChild(tdError);
 
-  const tdStatus = document.createElement('td');
-  tdStatus.textContent = statusIcon;
-  tdStatus.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:center;';
-  row.appendChild(tdStatus);
+    // Статус (иконка)
+    const tdStatus = document.createElement('td');
+    tdStatus.textContent = statusIcon;
+    tdStatus.title = statusText; // подсказка при наведении
+    tdStatus.style.cssText = 'border:1px solid var(--border); padding:4px; text-align:center; font-size:14px;';
+    row.appendChild(tdStatus);
 
-  zoneTable.table.appendChild(row);
+    zoneTable.table.appendChild(row);
 }
 
 /* ============================================================
@@ -2255,43 +2484,92 @@ function calcCompressibilityCorrection(v, dP0) {
 }
 
 function updateCompressNoteFromCorr(c){ const n=document.getElementById('compressNote'); if(!c||c.mach<0.1||modeSelect.value==='simple'||mediumSelect.value!=='gas'){n.textContent='';n.classList.remove('show');n.style.display='none';return;} let msg='';const M=c.mach.toFixed(2),f=c.factor.toFixed(2); if(c.regime==='transition')msg=t('compressTransition').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='compressible')msg=t('compressFull').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='high-subsonic')msg=t('compressHigh').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='choked')msg=t('compressChoked'); const a=calcSoundSpeed(); if(a)msg+=t('soundSpeedInfo').replace('{speed}',a.toFixed(0)); n.textContent=msg;n.classList.add('show');n.style.display='block'; }
+/* ============================================================
+   НОВАЯ ФУНКЦИЯ: единое определение зоны валидации
+   ============================================================ */
+function determineCurrentZone(preset, mode, mediumType, T_C, P_bar) {
 
+	// Для упрощённого режима, невыбранной среды или жидкости --- инженерная зона
+
+	if (mode !== 'engineer' || preset === 'choose' || mediumType !== 'gas') {
+
+		return 'engineering';
+
+	}
+
+	// Для LNG --- определяем по фазовому состоянию
+
+	if (preset === 'lng') {
+
+		const phase = determineLngPhase(T_C, P_bar);
+
+		const pseudo = calcLngPseudoCritical();
+
+		const T_K = T_C + 273.15;
+
+		const Tr = T_K / pseudo.Tc;
+
+		if (Tr >= 0.98 && P_bar / pseudo.Pc > 0.90) return 'extreme';
+
+		if (Tr > 0.90 && P_bar / pseudo.Pc > 0.75) return 'physical';
+
+		if (phase === 'supercritical') return 'physical';
+
+		if (phase === 'two-phase') return 'physical';
+
+		return 'engineering';
+
+	}
+    
+    const crit = gasCritical[preset.toLowerCase()] || gasCritical[preset];
+    if (!crit) return 'engineering';
+    
+    const T_K = T_C + 273.15;
+    const P_sat = getSaturationPressure(T_K, preset);
+    const phase = determinePhase(P_bar, P_sat, T_K, crit.Tc);
+    
+    return classifyValidationZone(T_C, P_bar, preset, phase);
+}
+
+/* ============================================================
+   ИСПРАВЛЕННАЯ ФУНКЦИЯ getAllMessages()
+   ============================================================ */
 function getAllMessages() {
     const preset = presetSelect.value;
     const mediumType = mediumSelect.value;
     const mode = modeSelect.value;
+    
+    const T = parseFloat(document.getElementById('temperature').value);
+    const P = parseFloat(document.getElementById('pressure').value) || 0;
+    
+    // === ОПРЕДЕЛЯЕМ ЗОНУ ОДИН РАЗ, СРАЗУ ===
+    const currentZone = determineCurrentZone(preset, mode, mediumType, T, P);
 
     // ===== ПЕРВАЯ ОЧЕРЕДЬ: АБСОЛЮТНЫЙ НОЛЬ =====
-    const T = parseFloat(document.getElementById('temperature').value);
     if (isNaN(T) || T < -273.15) {
-        return { 
-            level: 2, 
-            messages: [{ text: t('errorTempAbs'), type: 'critical' }] 
+        return {
+            level: 2,
+            messages: [{ text: t('errorTempAbs'), type: 'critical' }],
+            zone: currentZone
         };
     }
 
     // ===== ПРОВЕРКА ЭКСТРЕМАЛЬНОЙ ЗОНЫ (блокировка расчёта) =====
-    if (mode === 'engineer' && preset !== 'choose' && preset !== 'lng' && mediumType === 'gas') {
-        const P = parseFloat(document.getElementById('pressure').value) || 0;
-        const T_K = T + 273.15;
-        const crit = gasCritical[preset];
-        if (crit) {
-            const P_sat = getSaturationPressure(T_K, preset);
-            const phase = determinePhase(P, P_sat, T_K, crit.Tc);
-            const zone = classifyValidationZone(T, P, preset, phase);
-            if (zone === 'extreme') {
-                return {
-                    level: 2,
-                    messages: [{ text: t('errorZoneExtreme'), type: 'critical' }],
-                    blocked: true,
-                    zone: 'extreme'
-                };
-            }
+    if (mode === 'engineer' && preset !== 'choose' && preset !== 'lng'
+        && mediumType === 'gas') {
+        if (currentZone === 'extreme') {
+            return {
+                level: 2,
+                messages: [{ text: t('errorZoneExtreme'), type: 'critical' }],
+                blocked: true,
+                zone: currentZone
+            };
         }
     }
 
-    // ===== ВТОРАЯ ОЧЕРЕДЬ: ДИАПАЗОН ДЛЯ ГАЗА В ИНЖЕНЕРНОМ РЕЖИМЕ =====
-    if (mode === 'engineer' && preset !== 'choose' && preset !== 'lng' && mediumType === 'gas') {
+    // ===== ВТОРАЯ ОЧЕРЕДЬ: ДИАПАЗОН ТЕМПЕРАТУРЫ ДЛЯ ГАЗА =====
+    if (mode === 'engineer' && preset !== 'choose' && preset !== 'lng'
+        && mediumType === 'gas') {
         const limits = gasLimits[preset];
         if (limits) {
             const tmin = limits.Tmin - 273.15;
@@ -2300,9 +2578,10 @@ function getAllMessages() {
                 const msg = t('errorTempLimit')
                     .replace('{min}', tmin.toFixed(1))
                     .replace('{max}', tmax.toFixed(1));
-                return { 
-                    level: 2, 
-                    messages: [{ text: msg, type: 'critical' }] 
+                return {
+                    level: 2,
+                    messages: [{ text: msg, type: 'critical' }],
+                    zone: currentZone
                 };
             }
         }
@@ -2311,18 +2590,16 @@ function getAllMessages() {
     // ===== ДАЛЬШЕ — ВЕСЬ СТАРЫЙ КОД БЕЗ ПРОВЕРОК ТЕМПЕРАТУРЫ =====
     let level = 0;
     const messages = [];
-
-    const P = parseFloat(document.getElementById('pressure').value) || 0;
     const T_K = T + 273.15;
 
-    // LNG
+        // ===== LNG =====
     if (preset === 'lng') {
         level = Math.max(level, 1);
         messages.push({ text: t('reliabilityLng'), type: 'caution' });
-
+        
         const phase = determineLngPhase(T, P);
         const pseudo = calcLngPseudoCritical();
-
+        
         if (phase === 'supercritical') {
             level = Math.max(level, 2);
             messages.push({
@@ -2333,18 +2610,18 @@ function getAllMessages() {
             level = Math.max(level, 1);
             messages.push({ text: t('reliabilityLngTwoPhase'), type: 'caution' });
         }
-
+        
         if (phase === 'liquid' || phase === 'two-phase') {
             messages.push({ text: t('reliabilityLiquidGas'), type: 'caution' });
         }
-
+        
         if (!checkLngBalance()) {
             messages.push({
                 text: t('lngBalanceError').replace('{total}', '?'),
                 type: 'critical'
             });
         }
-
+        
         const limits = getCurrentLngLimits();
         if (limits) {
             const tmin = limits.Tmin - 273.15;
@@ -2366,131 +2643,11 @@ function getAllMessages() {
                 });
             }
         }
-       // Определяем текущую зону (даже для engineering/physical)
-let currentZone = 'engineering';
-if (mode === 'engineer' && preset !== 'choose' && preset !== 'lng' && mediumType === 'gas') {
-    const P = parseFloat(document.getElementById('pressure').value) || 0;
-    const T_K = T + 273.15;
-    const crit = gasCritical[preset];
-    if (crit) {
-        const P_sat = getSaturationPressure(T_K, preset);
-        const phase = determinePhase(P, P_sat, T_K, crit.Tc);
-        currentZone = classifyValidationZone(T, P, preset, phase);
-    }
-}
-return { level, messages, zone: currentZone };
-
+        
+        return { level, messages, zone: currentZone };
     }
 
-    const crit = gasCritical[preset];
-
-    if (mediumType === 'gas' && crit) {
-        const Tr = T_K / crit.Tc;
-        const Pr = P / crit.Pc;
-        const P_sat = getSaturationPressure(T_K, preset);
-        const phase = determinePhase(P, P_sat, T_K, crit.Tc);
-        const isSub = T_K < crit.Tc;
-        const isLiq = (phase === 'liquid' || phase === 'two-phase');
-
-        // Критическая область
-        if (Tr > 0.92 && Pr > 0.85) {
-            level = 2;
-            messages.push({
-                text: t('reliabilityCriticalRegion')
-                    .replace('{tr}', Tr.toFixed(2))
-                    .replace('{pr}', Pr.toFixed(2)),
-                type: 'critical'
-            });
-        } else if (Tr > 0.85 && Pr > 0.7) {
-            level = 1;
-            messages.push({
-                text: t('reliabilityNearCritical')
-                    .replace('{tr}', Tr.toFixed(2))
-                    .replace('{pr}', Pr.toFixed(2)),
-                type: 'caution'
-            });
-        }
-
-        // Квантовый газ — ТОЛЬКО если температура в допустимом диапазоне для газа
-        // и фаза действительно газ (не жидкость/твердое)
-        if (['parahydrogen', 'normalhydrogen', 'helium4'].includes(preset) 
-&& T_K < 50 
-&& !isLiq 
-&& phase === 'gas') {
-            level = 1;
-            messages.push({
-                text: t('reliabilityQuantum').replace('{t}', T.toFixed(1)),
-                type: 'caution'
-            });
-        }
-
-        // Полярные вещества
-        if (preset === 'ammonia' && (T_K > 370 || P > 80)) {
-            level = 1;
-            messages.push({ text: t('reliabilityPolar'), type: 'caution' });
-        }
-
-        // Пределы давления (температура уже проверена выше)
-        const limits = gasLimits[preset];
-        if (limits) {
-            if (P < limits.Pmin || P > limits.Pmax) {
-                level = 1;
-                messages.push({
-                    text: t('reliabilityGasLimitsPressure')
-                        .replace('{pmin}', limits.Pmin.toFixed(4))
-                        .replace('{pmax}', limits.Pmax.toFixed(1)),
-                    type: 'caution'
-                });
-            }
-        }
-
-        // Антуан
-        const antoine = antoineCoeffs[preset];
-        if (antoine && isSub && isLiq && (T_K < antoine.Tmin || T_K > antoine.Tmax)) {
-            level = 1;
-            messages.push({
-                text: t('reliabilityAntoine')
-                    .replace('{tmin}', (antoine.Tmin - 273.15).toFixed(0))
-                    .replace('{tmax}', (antoine.Tmax - 273.15).toFixed(0)),
-                type: 'info'
-            });
-        }
-
-        // Насыщение
-        if (P_sat !== null && isSub) {
-            if (isLiq && P >= P_sat * (1 - 0.001)) {
-                messages.push({ text: t('warningSaturationAbove'), type: 'caution' });
-            } else if (!isLiq && P >= P_sat * 0.9) {
-                messages.push({ text: t('warningNearSaturation'), type: 'info' });
-            }
-        }
-
-        // Сжиженный газ
-        if (isSub && isLiq && preset !== 'water' && preset !== 'oil') {
-            level = 1;
-            if (['normalhydrogen', 'parahydrogen', 'helium4', 'nitrogen', 
-                 'oxygen', 'methane', 'neon', 'argon', 'krypton', 'xenon',
-                 'ammonia', 'ethane', 'ethylene', 'propane', 'co2', 'freon22'].includes(preset)) {
-                messages.push({ text: t('reliabilityCryoVisc'), type: 'info' });
-            } else {
-                messages.push({ text: t('reliabilityLiquidGas'), type: 'caution' });
-            }
-        }
-
-        // Z-фактор
-        if (!isLiq) {
-            const Z = calcZ_PengRobinson(T_K, P, crit.Tc, crit.Pc, crit.w, 'gas');
-            if (Math.abs(Z - 1) > 0.2) {
-                level = 1;
-                messages.push({
-                    text: t('reliabilityZ').replace('{z}', Z.toFixed(2)),
-                    type: 'info'
-                });
-            }
-        }
-    }
-
-    // Жидкости
+    // ===== ЖИДКОСТИ =====
     if (mediumType === 'liquid' && preset !== 'choose' && preset !== 'lng') {
         const liq = liquidLimits[preset];
         if (liq) {
@@ -2505,7 +2662,7 @@ return { level, messages, zone: currentZone };
                 messages.push({ text: t('warningLiquidViscosity'), type: 'caution' });
             }
         }
-
+        
         if (preset !== 'water' && preset !== 'oil') {
             if (liquidViscosityTables[preset]) {
                 messages.push({ text: t('reliabilityCryoVisc'), type: 'info' });
@@ -2516,194 +2673,355 @@ return { level, messages, zone: currentZone };
         }
     }
 
-    return { level, messages };
+    return { level, messages, zone: currentZone };
 }
+
+/* ============================================================
+   ИСПРАВЛЕННАЯ ФУНКЦИЯ updateAllWarnings()
+   ============================================================ */
+/* ============================================================
+
+ИСПРАВЛЕННАЯ ФУНКЦИЯ updateAllWarnings()
+
+============================================================ */
 
 function updateAllWarnings() {
-    const indicator = document.getElementById('reliabilityIndicator');
-    const textEl = document.getElementById('reliabilityText');
-    const tooltipEl = document.getElementById('reliabilityTooltip');
-    const warningContainer = document.getElementById('warningListContainer');
 
-    // Получаем сообщения
-    const { level, messages, blocked, zone } = getAllMessages();
+	const indicator = document.getElementById('reliabilityIndicator');
 
-    // Очищаем контейнер
-    warningContainer.innerHTML = '';
-    warningContainer.style.display = 'none';
+	const textEl = document.getElementById('reliabilityText');
 
-    // Убираем подсветку ошибки с поля температуры (добавим при необходимости)
-    const tempField = document.getElementById('temperature');
-    if (tempField) tempField.classList.remove('error-border');
+	const tooltipEl = document.getElementById('reliabilityTooltip');
 
-    if (modeSelect.value === 'simple' || presetSelect.value === 'choose') {
-        indicator.style.display = 'none';
-        return;
-    }
+	const warningContainer = document.getElementById('warningListContainer');
 
-    // КРИТИЧЕСКИЕ ОШИБКИ — показываем только их, скрываем индикатор
-    const criticalMessages = messages.filter(m => m.type === 'critical');
-    if (criticalMessages.length > 0 || blocked) {
-        indicator.style.display = 'none';
-        warningContainer.innerHTML = '';
-        warningContainer.style.display = 'none';
+	const zoneBadge = document.getElementById('reliabilityZoneBadge');
 
-        // === REFPROP-ссылка при блокировке ===
-        if (blocked) {
-    const div = document.createElement('div');
-    div.className = 'warning-item warning-critical refprop-link';
+	// === ШАГ 1: СБРАСЫВАЕМ ВСЁ ===
 
-    const linkUrl = 'https://www.nist.gov/srd/refprop';
-    const linkText = `NIST REFPROP --- ${t('validationBlocked')}`;
+	indicator.style.display = 'none';
 
-    // Проверяем, мобильное ли устройство
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+	indicator.classList.remove('reliability-green', 'reliability-yellow', 'reliability-red');
 
-    if (isMobile) {
-    div.innerHTML = `
-<span class="warning-icon">🔗</span>
-<span>
-            ${linkText}<br>
-<button id="copyRefpropLink" style="margin-top: 6px; padding: 4px 8px; font-size: 12px; border-radius: 6px; background: #0d6efd; color: white; border: none;">📋 ${t('copyLink')}</button>
-<span id="copyMessage" style="font-size: 11px; margin-left: 8px; color: #0d6efd;"></span>
-</span>
-    `;
-    warningContainer.appendChild(div);
+	if (zoneBadge) zoneBadge.style.display = 'none';
 
-    const copyBtn = div.querySelector('#copyRefpropLink');
-    const copyMsg = div.querySelector('#copyMessage');
-    if (copyBtn) {
-        copyBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            navigator.clipboard.writeText(linkUrl).then(() => {
-                copyMsg.textContent = t('copied');
-                setTimeout(() => { copyMsg.textContent = ''; }, 2000);
-            }).catch(() => {
-                    copyMsg.textContent = '❌ ' + t('copyError');
-                });
-            });
-        }
-    } else {
-        // ПК-версия: обычная кликабельная ссылка
-        div.innerHTML = `<span class="warning-icon">🔗</span><span><a href="${linkUrl}" target="_blank" rel="noopener">${linkText}</a></span>`;
-        warningContainer.appendChild(div);
-    }
+	warningContainer.innerHTML = '';
 
-    // Бейдж зоны при блокировке (extreme) — остаётся без изменений
-    const zoneBadgeCrit = document.getElementById('reliabilityZoneBadge');
-    if (zoneBadgeCrit && blocked && zone === 'extreme') {
-        zoneBadgeCrit.textContent = t('validationZoneExtreme');
-        zoneBadgeCrit.className = 'zone-badge-extreme';
-        zoneBadgeCrit.style.display = 'inline-block';
-    }
+	warningContainer.style.display = 'none';
 
-    warningContainer.style.display = 'block';
+	tooltipEl.textContent = '';
+
+	tooltipEl.style.display = 'none';
+
+	// Убираем подсветку ошибки с поля температуры
+
+	const tempField = document.getElementById('temperature');
+
+	if (tempField) tempField.classList.remove('error-border');
+
+	// === ШАГ 2: ПРОВЕРКА РЕЖИМА ===
+
+	if (modeSelect.value === 'simple' || presetSelect.value === 'choose') {
+
+		return;
+
+	}
+
+	// === ШАГ 3: ПОЛУЧАЕМ ДАННЫЕ ===
+
+	const { level, messages, blocked, zone } = getAllMessages();
+
+	const currentZone = zone || 'engineering';
+
+	// === ШАГ 4: ЕДИНАЯ УСТАНОВКА БЕЙДЖА ЗОНЫ ===
+
+	function setZoneBadge(zoneName) {
+
+		if (!zoneBadge || !zoneName) return;
+
+		const map = {
+
+			engineering: { text: t('validationZoneEngineering'), cls: 'zone-badge-engineering' },
+
+			physical: { text: t('validationZonePhysical'), cls: 'zone-badge-physical' },
+
+			extreme: { text: t('validationZoneExtreme'), cls: 'zone-badge-extreme' }
+
+		};
+
+		const z = map[zoneName];
+
+		if (z) {
+
+			zoneBadge.textContent = z.text;
+
+			zoneBadge.className = z.cls;
+
+			zoneBadge.style.display = 'inline-block';
+
+		}
+
+	}
+
+	// === ШАГ 5: КРИТИЧЕСКИЕ ОШИБКИ / ЭКСТРЕМАЛЬНАЯ ЗОНА ===
+
+	const criticalMessages = messages.filter(m => m.type === 'critical');
+
+	if (blocked || currentZone === 'extreme') {
+
+		// 🔴 Экстремальная зона: всегда красная полоса, всегда блокировка
+
+		indicator.style.display = 'flex';
+
+		indicator.classList.add('reliability-red');
+
+		textEl.textContent = t('reliabilityRed');
+
+		setZoneBadge('extreme');
+
+		// Подсветка поля температуры для критических ошибок температуры
+
+		const isTempError = criticalMessages.some(m =>
+
+			m.text === t('errorTempAbs') ||
+
+			m.text.includes(t('errorTempLimit').split('{')[0])
+
+		);
+
+		if (isTempError && tempField) {
+
+			tempField.classList.add('error-border');
+
+		}
+
+		// Выводим критические сообщения
+
+		criticalMessages.forEach(msg => {
+
+			const div = document.createElement('div');
+
+			div.className = 'warning-item warning-critical';
+
+			div.innerHTML = `<span class="warning-icon">🔴</span><span>${msg.text}</span>`;
+
+			warningContainer.appendChild(div);
+
+		});
+
+		// REFPROP-ссылка при блокировке
+
+		if (blocked) {
+
+			const div = document.createElement('div');
+
+			div.className = 'warning-item warning-critical refprop-link';
+
+			const linkUrl = 'https://www.nist.gov/srd/refprop';
+
+			const linkText = `NIST REFPROP — ${t('validationBlocked')}`;
+
+			const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+			if (isMobile) {
+
+				div.innerHTML = `
+
+					<span class="warning-icon">🔗</span>
+
+					<span>
+
+						${linkText}<br>
+
+						<button id="copyRefpropLink" style="margin-top: 6px; padding: 4px 8px; font-size: 12px; border-radius: 6px; background: #0d6efd; color: white; border: none;">📋 ${t('copyLink')}</button>
+
+						<span id="copyMessage" style="font-size: 11px; margin-left: 8px; color: #0d6efd;"></span>
+
+					</span>
+
+				`;
+
+				warningContainer.appendChild(div);
+
+				const copyBtn = div.querySelector('#copyRefpropLink');
+
+				const copyMsg = div.querySelector('#copyMessage');
+
+				if (copyBtn) {
+
+					copyBtn.addEventListener('click', (e) => {
+
+						e.stopPropagation();
+
+						navigator.clipboard.writeText(linkUrl).then(() => {
+
+							copyMsg.textContent = t('copied');
+
+							setTimeout(() => { copyMsg.textContent = ''; }, 2000);
+
+						}).catch(() => {
+
+							copyMsg.textContent = '❌ ' + t('copyError');
+
+						});
+
+					});
+
+				}
+
+			} else {
+
+				div.innerHTML = `<span class="warning-icon">🔗</span><span><a href="${linkUrl}" target="_blank" rel="noopener">${linkText}</a></span>`;
+
+				warningContainer.appendChild(div);
+
+			}
+
+		}
+
+		warningContainer.style.display = 'block';
+
+		return;
+
+	}
+
+	// === ШАГ 6: ФИЗИЧЕСКАЯ ЗОНА ===
+
+	if (currentZone === 'physical') {
+
+		indicator.style.display = 'flex';
+
+		// Физическая зона = повышенная погрешность, но расчёт возможен
+
+		indicator.classList.add('reliability-yellow');
+
+		textEl.textContent = t('reliabilityYellow');
+
+		setZoneBadge('physical');
+
+		// Выводим все сообщения
+
+		if (messages.length > 0) {
+
+			const list = document.createElement('div');
+
+			list.className = 'warning-list';
+
+			messages.forEach(msg => {
+
+				const item = document.createElement('div');
+
+				let icon, css;
+
+				if (msg.type === 'critical') { icon = '🔴'; css = 'warning-critical'; }
+
+				else if (msg.type === 'caution') { icon = '⚠️'; css = 'warning-caution'; }
+
+				else { icon = '🔵'; css = 'warning-info'; }
+
+				item.className = `warning-item ${css}`;
+
+				item.innerHTML = `<span class="warning-icon">${icon}</span><span>${msg.text}</span>`;
+
+				list.appendChild(item);
+
+			});
+
+			warningContainer.appendChild(list);
+
+			warningContainer.style.display = 'block';
+
+		}
+
+		return;
+
+	}
+
+	// === ШАГ 7: ИНЖЕНЕРНАЯ ЗОНА (нормальный режим) ===
+
+	indicator.style.display = 'flex';
+
+	if (level === 0) {
+
+		indicator.classList.add('reliability-green');
+
+		textEl.textContent = t('reliabilityGreen');
+
+	} else if (level === 1) {
+
+		indicator.classList.add('reliability-yellow');
+
+		textEl.textContent = t('reliabilityYellow');
+
+	} else {
+
+		indicator.classList.add('reliability-red');
+
+		textEl.textContent = t('reliabilityRed');
+
+	}
+
+	setZoneBadge('engineering');
+
+	// Тултип с количеством сообщений
+
+	if (messages.length > 0) {
+
+		const crit = messages.filter(m => m.type === 'critical').length;
+
+		const caut = messages.filter(m => m.type === 'caution').length;
+
+		const info = messages.filter(m => m.type === 'info').length;
+
+		let summary = [];
+
+		if (crit > 0) summary.push('🔴' + crit);
+
+		if (caut > 0) summary.push('⚠️' + caut);
+
+		if (info > 0) summary.push('🔵' + info);
+
+		tooltipEl.textContent = summary.join(', ');
+
+		tooltipEl.style.display = 'block';
+
+	}
+
+	// Выводим все сообщения
+
+	if (messages.length > 0) {
+
+		const list = document.createElement('div');
+
+		list.className = 'warning-list';
+
+		messages.forEach(msg => {
+
+			const item = document.createElement('div');
+
+			let icon, css;
+
+			if (msg.type === 'critical') { icon = '🔴'; css = 'warning-critical'; }
+
+			else if (msg.type === 'caution') { icon = '⚠️'; css = 'warning-caution'; }
+
+			else { icon = '🔵'; css = 'warning-info'; }
+
+			item.className = `warning-item ${css}`;
+
+			item.innerHTML = `<span class="warning-icon">${icon}</span><span>${msg.text}</span>`;
+
+			list.appendChild(item);
+
+		});
+
+		warningContainer.appendChild(list);
+
+		warningContainer.style.display = 'block';
+
+	}
+
 }
-
-        // Подсветка поля температуры для критических ошибок температуры
-        const isTempError = criticalMessages.some(m =>
-            m.text.includes(t('errorTempAbs')) || 
-            m.text.includes(t('errorTempLimit').split('{')[0])
-        );
-        if (isTempError && tempField) {
-            tempField.classList.add('error-border');
-        }
-
-        criticalMessages.forEach(msg => {
-            const div = document.createElement('div');
-            div.className = 'warning-item warning-critical';
-            div.innerHTML = `<span class="warning-icon">🔴</span><span>${msg.text}</span>`;
-            warningContainer.appendChild(div);
-        });
-        warningContainer.style.display = 'block';
-        return;
-    }
-
-    // Нет критических — показываем обычный индикатор
-    indicator.style.display = 'flex';
-    indicator.classList.remove('reliability-green', 'reliability-yellow', 'reliability-red');
-
-    let mainText;
-    if (level === 0) {
-        indicator.classList.add('reliability-green');
-        mainText = t('reliabilityGreen');
-    } else if (level === 1) {
-        indicator.classList.add('reliability-yellow');
-        mainText = t('reliabilityYellow');
-    } else {
-        indicator.classList.add('reliability-red');
-        mainText = t('reliabilityRed');
-    }
-    textEl.textContent = mainText;
-
-    if (messages.length === 0) {
-        tooltipEl.textContent = '';
-        tooltipEl.style.display = 'none';
-    } else {
-        const crit = messages.filter(m => m.type === 'critical').length;
-        const caut = messages.filter(m => m.type === 'caution').length;
-        const info = messages.filter(m => m.type === 'info').length;
-        let summary = [];
-        if (crit > 0) summary.push('🔴' + crit);
-        if (caut > 0) summary.push('🟡' + caut);
-        if (info > 0) summary.push('🔵' + info);
-        tooltipEl.textContent = summary.join(', ');
-        tooltipEl.style.display = 'block';
-
-        const list = document.createElement('div');
-        list.className = 'warning-list';
-        messages.forEach(msg => {
-            const item = document.createElement('div');
-            let icon, css;
-            if (msg.type === 'critical') { icon = '🔴'; css = 'warning-critical'; }
-            else if (msg.type === 'caution') { icon = '🟡'; css = 'warning-caution'; }
-            else { icon = '🔵'; css = 'warning-info'; }
-            item.className = `warning-item ${css}`;
-            item.innerHTML = `<span class="warning-icon">${icon}</span><span>${msg.text}</span>`;
-            list.appendChild(item);
-        });
-        warningContainer.appendChild(list);
-        warningContainer.style.display = 'block';
-     // ===== БЕЙДЖ ЗОНЫ ВАЛИДАЦИИ (Фаза 6.3) =====
-    const zoneBadge = document.getElementById('reliabilityZoneBadge');
-    if (zoneBadge) {
-        let currentZone = zone; // может прийти из getAllMessages()
-        
-        // Если зона ещё не определена — вычисляем прямо здесь
-        if (!currentZone && modeSelect.value === 'engineer' 
-            && presetSelect.value !== 'choose' && presetSelect.value !== 'lng' 
-            && mediumSelect.value === 'gas') {
-            const P = parseFloat(document.getElementById('pressure').value) || 0;
-            const T_K = parseFloat(document.getElementById('temperature').value) + 273.15;
-            const crit = gasCritical[presetSelect.value];
-            if (crit) {
-                const P_sat = getSaturationPressure(T_K, presetSelect.value);
-                const ph = determinePhase(P, P_sat, T_K, crit.Tc);
-                currentZone = classifyValidationZone(T_K - 273.15, P, presetSelect.value, ph);
-            }
-        }
-
-        if (currentZone) {
-            const map = {
-                engineering: { text: t('validationZoneEngineering'), cls: 'zone-badge-engineering' },
-                physical:     { text: t('validationZonePhysical'),     cls: 'zone-badge-physical' },
-                extreme:      { text: t('validationZoneExtreme'),      cls: 'zone-badge-extreme' }
-            };
-            const z = map[currentZone];
-            if (z) {
-                zoneBadge.textContent = z.text;
-                zoneBadge.className = z.cls;
-                zoneBadge.style.display = 'inline-block';
-            } else {
-                zoneBadge.style.display = 'none';
-            }
-        } else {
-            zoneBadge.style.display = 'none';
-        }
-    }
-     }
-    }
-
 
 function getCurrentLngLimits(){
   const T=parseFloat(document.getElementById('temperature').value),P=parseFloat(document.getElementById('pressure').value);
