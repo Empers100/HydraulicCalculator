@@ -2555,10 +2555,10 @@ function getAllMessages() {
     const preset = presetSelect.value;
     const mediumType = mediumSelect.value;
     const mode = modeSelect.value;
-    
+
     const T = parseFloat(document.getElementById('temperature').value);
     const P = parseFloat(document.getElementById('pressure').value) || 0;
-    
+
     // === ОПРЕДЕЛЯЕМ ЗОНУ ОДИН РАЗ, СРАЗУ ===
     const currentZone = determineCurrentZone(preset, mode, mediumType, T, P);
 
@@ -2573,7 +2573,7 @@ function getAllMessages() {
 
     // ===== ПРОВЕРКА ЭКСТРЕМАЛЬНОЙ ЗОНЫ (блокировка расчёта) =====
     if (mode === 'engineer' && preset !== 'choose' && preset !== 'lng'
-        && mediumType === 'gas') {
+&& mediumType === 'gas') {
         if (currentZone === 'extreme') {
             return {
                 level: 2,
@@ -2586,7 +2586,7 @@ function getAllMessages() {
 
     // ===== ВТОРАЯ ОЧЕРЕДЬ: ДИАПАЗОН ТЕМПЕРАТУРЫ ДЛЯ ГАЗА =====
     if (mode === 'engineer' && preset !== 'choose' && preset !== 'lng'
-        && mediumType === 'gas') {
+&& mediumType === 'gas') {
         const limits = gasLimits[preset];
         if (limits) {
             const tmin = limits.Tmin - 273.15;
@@ -2604,19 +2604,41 @@ function getAllMessages() {
         }
     }
 
-    // ===== ДАЛЬШЕ — ВЕСЬ СТАРЫЙ КОД БЕЗ ПРОВЕРОК ТЕМПЕРАТУРЫ =====
+    // ===== ДАЛЬШЕ — ОСНОВНАЯ ЛОГИКА =====
     let level = 0;
     const messages = [];
     const T_K = T + 273.15;
 
-        // ===== LNG =====
+        // ===== ПРОВЕРКА НАСЫЩЕНИЯ (для газов, кроме LNG) =====
+    if (mode === 'engineer' && mediumType === 'gas' && preset !== 'choose' && preset !== 'lng') {
+        const crit = gasCritical[preset.toLowerCase()] || gasCritical[preset];
+        if (crit) {
+            const P_sat = getSaturationPressure(T_K, preset);
+            if (P_sat !== null && P_sat > 0) {
+                const P_bar_sat = P_sat; // уже в бар
+                // Давление выше насыщения → сжиженный газ (ЖЁЛТОЕ ПРЕДУПРЕЖДЕНИЕ)
+                if (P > P_bar_sat * 1.005) {
+                    level = Math.max(level, 1);
+                    messages.push({ text: t('warningSaturationAbove'), type: 'caution' });
+                }
+                // Близко к линии насыщения (±5%) → ГОЛУБАЯ ИНФОРМАЦИЯ
+                else if (Math.abs(P - P_bar_sat) / P_bar_sat < 0.05) {
+                    // level НЕ повышаем — это просто справка
+                    messages.push({ text: t('warningNearSaturation'), type: 'info' });
+                }
+            }
+        }
+    }
+
+
+    // ===== LNG =====
     if (preset === 'lng') {
         level = Math.max(level, 1);
         messages.push({ text: t('reliabilityLng'), type: 'caution' });
-        
+
         const phase = determineLngPhase(T, P);
         const pseudo = calcLngPseudoCritical();
-        
+
         if (phase === 'supercritical') {
             level = Math.max(level, 2);
             messages.push({
@@ -2627,18 +2649,18 @@ function getAllMessages() {
             level = Math.max(level, 1);
             messages.push({ text: t('reliabilityLngTwoPhase'), type: 'caution' });
         }
-        
+
         if (phase === 'liquid' || phase === 'two-phase') {
             messages.push({ text: t('reliabilityLiquidGas'), type: 'caution' });
         }
-        
+
         if (!checkLngBalance()) {
             messages.push({
                 text: t('lngBalanceError').replace('{total}', '?'),
                 type: 'critical'
             });
         }
-        
+
         const limits = getCurrentLngLimits();
         if (limits) {
             const tmin = limits.Tmin - 273.15;
@@ -2660,7 +2682,7 @@ function getAllMessages() {
                 });
             }
         }
-        
+
         return { level, messages, zone: currentZone };
     }
 
@@ -2679,13 +2701,103 @@ function getAllMessages() {
                 messages.push({ text: t('warningLiquidViscosity'), type: 'caution' });
             }
         }
-        
+
         if (preset !== 'water' && preset !== 'oil') {
             if (liquidViscosityTables[preset]) {
                 messages.push({ text: t('reliabilityCryoVisc'), type: 'info' });
             } else {
                 level = 1;
                 messages.push({ text: t('reliabilityLiquidGas'), type: 'caution' });
+            }
+        }
+    }
+
+    // ===== ГАЗЫ: reliability-сообщения по условиям =====
+    if (mode === 'engineer' && mediumType === 'gas' && preset !== 'choose' && preset !== 'lng') {
+        const crit = gasCritical[preset.toLowerCase()] || gasCritical[preset];
+        if (crit) {
+            const Tr = T_K / crit.Tc;
+            const Pr = P / crit.Pc;
+            const P_sat = getSaturationPressure(T_K, preset);
+            const phase = determinePhase(P, P_sat, T_K, crit.Tc);
+
+            // Критическая область
+            if (Tr > 0.95 && Pr > 0.8) {
+                level = Math.max(level, 2);
+                messages.push({
+                    text: t('reliabilityCriticalRegion').replace('{tr}', Tr.toFixed(2)).replace('{pr}', Pr.toFixed(2)),
+                    type: 'critical'
+                });
+            }
+            // Близко к критической точке
+            else if (Tr > 0.90 || (Tr > 0.85 && Pr > 0.75)) {
+                level = Math.max(level, 1);
+                messages.push({
+                    text: t('reliabilityNearCritical').replace('{tr}', Tr.toFixed(2)).replace('{pr}', Pr.toFixed(2)),
+                    type: 'caution'
+                });
+            }
+
+            // Квантовые газы при низкой температуре
+            if (['parahydrogen', 'normalhydrogen', 'helium4'].includes(preset) && T_K < 50) {
+                level = Math.max(level, 1);
+                messages.push({
+                    text: t('reliabilityQuantum').replace('{t}', T.toFixed(1)),
+                    type: 'caution'
+                });
+            }
+
+            // Полярные вещества
+            if (preset === 'ammonia') {
+                messages.push({ text: t('reliabilityPolar'), type: 'caution' });
+            }
+
+            // Антуан вне диапазона
+            const antoine = antoineCoeffs[preset];
+            if (antoine && (T_K < antoine.Tmin || T_K > antoine.Tmax)) {
+                messages.push({
+                    text: t('reliabilityAntoine')
+                        .replace('{tmin}', (antoine.Tmin - 273.15).toFixed(0))
+                        .replace('{tmax}', (antoine.Tmax - 273.15).toFixed(0)),
+                    type: 'caution'
+                });
+            }
+
+            // Коэффициент сжимаемости Z сильно отличается от 1
+            const Z = calcZ_PengRobinson(T_K, P, crit.Tc, crit.Pc, crit.w, phase === 'gas' ? 'gas' : 'liquid');
+            if (Math.abs(Z - 1) > 0.15) {
+                messages.push({
+                    text: t('reliabilityZ').replace('{z}', Z.toFixed(3)),
+                    type: 'caution'
+                });
+            }
+
+            // Сжиженный газ
+            if (phase === 'liquid') {
+                messages.push({ text: t('reliabilityLiquidGas'), type: 'caution' });
+            }
+
+            // Диапазоны температуры/давления
+            const limits = gasLimits[preset];
+            if (limits) {
+                const tmin = limits.Tmin - 273.15;
+                const tmax = limits.Tmax - 273.15;
+                if (T < tmin || T > tmax) {
+                    messages.push({
+                        text: t('reliabilityGasLimitsTemp')
+                            .replace('{tmin}', tmin.toFixed(0))
+                            .replace('{tmax}', tmax.toFixed(0)),
+                        type: 'caution'
+                    });
+                }
+                if (P < limits.Pmin || P > limits.Pmax) {
+                    messages.push({
+                        text: t('reliabilityGasLimitsPressure')
+                            .replace('{pmin}', limits.Pmin.toFixed(4))
+                            .replace('{pmax}', limits.Pmax.toFixed(1)),
+                        type: 'caution'
+                    });
+                }
             }
         }
     }
