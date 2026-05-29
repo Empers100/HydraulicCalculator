@@ -1546,7 +1546,7 @@ validationCriteriaExtreme: 'Модель не применима',
 validationPoints: 'точек',
 validationNotApplicable: 'модель не применима',
 validationBlocked: 'Расчёт заблокирован',
-validationExceeds: 'превышают {threshold}',
+validationExceeds: 'превышают {threshold} погрешности',
 copyLink: 'Скопировать ссылку',
 copied: '✓ Скопировано!',
 copyError: 'Ошибка копирования',
@@ -1589,22 +1589,23 @@ helpContent:`
 <tr>
 <td><b>Инженерная</b></td>
 <td>Далеко от критической точки, классическая механика</td>
-<td>≤5% 🟢, ≤10% 🟡</td>
-<td>Зелёный/жёлтый</td>
+<td>≤5% 🟢<br>≤10% 🟡<br>>10% 🔴</td>
+<td>Зелёный<br>Жёлтый<br>Красный</td>
 </tr>
 <tr style="background:rgba(255,193,7,0.1);">
 <td><b>Физическая</b></td>
 <td>Близко к критической точке, фазовые переходы, полярные эффекты</td>
-<td>≤10% 🟢, ≤15% 🟡</td>
-<td>Жёлтый (панель)</td>
+<td>≤10% 🟢<br>≤15% 🟡<br>>15% 🔴</td>
+<td>Зелёный<br>Жёлтый<br>Красный</td>
 </tr>
 <tr style="background:rgba(220,53,69,0.1);">
 <td><b>Экстремальная</b></td>
 <td>Критическая область, квантовые эффекты, вакуум, сверхтекучесть</td>
-<td>Модель неприменима</td>
+<td>Модель не применима</td>
 <td>Красный, расчёт блокируется</td>
 </tr>
 </table>
+
 
 <h3>Индикаторы достоверности</h3>
 <p>🟢 Зелёный --- модели работают в оптимальной области.</p>
@@ -1743,7 +1744,7 @@ validationCriteriaExtreme: 'Model not applicable',
 validationPoints: 'points',
 validationNotApplicable: 'model not applicable',
 validationBlocked: 'Calculation blocked',
-validationExceeds: 'exceed {threshold}',
+validationExceeds: 'exceed {threshold} error',
 copyLink: 'Copy link',
 copied: '✓ Copied!',
 copyError: 'Copy error',
@@ -1786,14 +1787,14 @@ helpContent:`
 <tr>
 <td><b>Engineering</b></td>
 <td>Far from critical point, classical mechanics</td>
-<td>≤5% 🟢, ≤10% 🟡</td>
-<td>Green/Yellow</td>
+<td>≤5% 🟢<br>≤10% 🟡<br>>10% 🔴</td>
+<td>Green<br>Yellow<br>Red</td>
 </tr>
 <tr style="background:rgba(255,193,7,0.1);">
 <td><b>Physical</b></td>
 <td>Near critical point, phase transitions, polar effects</td>
-<td>≤10% 🟢, ≤15% 🟡</td>
-<td>Yellow (panel)</td>
+<td>≤10% 🟢<br>≤15% 🟡<br>>15% 🔴</td>
+<td>Green<br>Yellow<br>Red</td>
 </tr>
 <tr style="background:rgba(220,53,69,0.1);">
 <td><b>Extreme</b></td>
@@ -1940,7 +1941,7 @@ validationCriteriaExtreme: '模型不适用',
 validationPoints: '个点',
 validationNotApplicable: '模型不适用',
 validationBlocked: '计算已阻止',
-validationExceeds: '超过{threshold}',
+validationExceeds: '超过{threshold}误差',
 copyLink: '复制链接',
 copied: '✓ 已复制',
 copyError: '复制错误',
@@ -1983,14 +1984,14 @@ helpContent:`
 <tr>
 <td><b>工程区域</b></td>
 <td>远离临界点，经典力学适用</td>
-<td>≤5% 🟢, ≤10% 🟡</td>
-<td>绿色/黄色</td>
+<td>≤5% 🟢<br>≤10% 🟡<br>>10% 🔴</td>
+<td>绿色<br>黄色<br>红色</td>
 </tr>
 <tr style="background:rgba(255,193,7,0.1);">
 <td><b>物理区域</b></td>
 <td>接近临界点，相变，极性效应</td>
-<td>≤10% 🟢, ≤15% 🟡</td>
-<td>黄色（面板）</td>
+<td>≤10% 🟢<br>≤15% 🟡<br>>15% 🔴</td>
+<td>绿色<br>黄色<br>红色</td>
 </tr>
 <tr style="background:rgba(220,53,69,0.1);">
 <td><b>极端区域</b></td>
@@ -2258,41 +2259,47 @@ function runValidation() {
     summary.style.borderRadius = '8px';
     summary.style.background = 'var(--display-bg)';
 
-    // Engineering итог
-    const eng = zoneStats.engineering;
-    const engDiv = document.createElement('div');
-    engDiv.style.fontWeight = 'bold';
-    engDiv.style.marginBottom = '8px';
-    if (eng.errors === 0) {
-        engDiv.innerHTML = '🟢 ' + t('validationAllOk').replace('{total}', eng.total);
-        engDiv.style.color = '#28a745';
-        summary.style.border = '2px solid #28a745';
-    } else {
-        engDiv.innerHTML = '🔴 ' + t('validationSomeError').replace('{errors}', eng.errors).replace('{total}', eng.total);
-        engDiv.style.color = '#dc3545';
-        summary.style.border = '2px solid #dc3545';
-    }
-    summary.appendChild(engDiv);
+    // ===== Engineering итог =====
+const eng = zoneStats.engineering;
+const engDiv = document.createElement('div');
+engDiv.style.fontSize = '14px';
+engDiv.style.fontWeight = '600';
+engDiv.style.marginBottom = '6px';
+if (eng.errors === 0) {
+    engDiv.innerHTML = `🟢 ${t('validationZoneEngineering')}: ${t('validationAllOk').replace('{total}', eng.total)}`;
+    engDiv.style.color = '#28a745';
+    summary.style.border = '2px solid #28a745';
+} else {
+    engDiv.innerHTML = `🔴 ${t('validationZoneEngineering')}: ${t('validationSomeError').replace('{errors}', eng.errors).replace('{total}', eng.total)}`;
+    engDiv.style.color = '#dc3545';
+    summary.style.border = '2px solid #dc3545';
+}
+summary.appendChild(engDiv);
 
-    // Physical итог
-    const phys = zoneStats.physical;
-    const physDiv = document.createElement('div');
-    physDiv.style.fontSize = '13px';
-    physDiv.style.color = 'var(--text-secondary)';
-    if (phys.errors === 0) {
-        physDiv.innerHTML = `🟢 ${t('validationZonePhysical')}: ${phys.total} ${t('validationPoints')} (${t('validationCriteriaPhysical')})`;
-    } else {
-        physDiv.innerHTML = `🟡 ${t('validationZonePhysical')}: ${phys.errors}/${phys.total} ${t('validationPoints')} ${t('validationExceeds').replace('{threshold}', '15%')}`;
-    }
-    summary.appendChild(physDiv);
+// ===== Physical итог =====
+const phys = zoneStats.physical;
+const physDiv = document.createElement('div');
+physDiv.style.fontSize = '14px';
+physDiv.style.fontWeight = '600';
+physDiv.style.marginBottom = '6px';
+if (phys.errors === 0) {
+    physDiv.innerHTML = `🟢 ${t('validationZonePhysical')}: ${phys.total} ${t('validationPoints')} (${t('validationCriteriaPhysical')})`;
+    physDiv.style.color = '#28a745';
+} else {
+    physDiv.innerHTML = `🔴 ${t('validationZonePhysical')}: ${phys.errors}/${phys.total} ${t('validationPoints')} ${t('validationExceeds').replace('{threshold}', '15%')}`;
+    physDiv.style.color = '#dc3545';
+}
+summary.appendChild(physDiv);
 
-    // Extreme итог
-    const ext = zoneStats.extreme;
-    const extDiv = document.createElement('div');
-    extDiv.style.fontSize = '13px';
-    extDiv.style.color = 'var(--text-secondary)';
-    extDiv.innerHTML = `⚪ ${t('validationZoneExtreme')}: ${ext.total} ${t('validationPoints')} (${ext.na} N/A)`;
-    summary.appendChild(extDiv);
+// ===== Extreme итог =====
+const ext = zoneStats.extreme;
+const extDiv = document.createElement('div');
+extDiv.style.fontSize = '14px';
+extDiv.style.fontWeight = '600';
+extDiv.style.marginBottom = '6px';
+extDiv.style.color = '#6c757d';
+extDiv.innerHTML = `⚪ ${t('validationZoneExtreme')}: ${ext.total} ${t('validationPoints')} (${ext.na} N/A)`;
+summary.appendChild(extDiv);
 
     content.appendChild(summary);
     document.getElementById('validateModal').style.display = 'flex';
