@@ -1191,15 +1191,24 @@ return a0 + w * (a1 - a0);
 function calcZ_PengRobinson(T, P_bar, Tc, Pc, w, phase) {
     const Tr = T / Tc;
     if (Tr <= 0 || Pc <= 0) return 1.0;
+
     const Pr = P_bar / Pc;
-    if (Tr > 10.0) return 1.0;
-    if (Tr > 1.5 && Pr < 0.1) return 1.0;
+    // Быстрый возврат для очень низкого давления
+    if (Pr < 0.1) return 1.0;
+
     let alpha;
     if (phase === 'liquid' && Tr < 1.0) alpha = alphaTwu(Tr, w);
     else {
         const kappa = 0.37464 + 1.54226 * w - 0.26992 * w * w;
-        alpha = Math.pow(1 + kappa * (1 - Math.sqrt(Tr)), 2);
+        const term = 1 + kappa * (1 - Math.sqrt(Tr));
+        alpha = term * term;
     }
+
+    // Защита от артефактов alpha
+    if (alpha < 0 || alpha > 3 || !isFinite(alpha)) {
+        return 1.0;
+    }
+
     const a = 0.45724 * R_GAS * R_GAS * Tc * Tc / (Pc * 1e5) * alpha;
     const b = 0.07780 * R_GAS * Tc / (Pc * 1e5);
     const A = a * (P_bar * 1e5) / (R_GAS * R_GAS * T * T);
@@ -1218,6 +1227,13 @@ function calcZ_PengRobinson(T, P_bar, Tc, Pc, w, phase) {
         else if (phase === 'supercritical' || phase === 'two-phase') Z = roots[2];
         else Z = roots[2];
     }
+
+    // === ЗАЩИТА ОТ ЧИСЛЕННЫХ АРТЕФАКТОВ ===
+    // Если Z получился нереально малым при не-экстремальном давлении — это баг
+    if (Z < 0.1 && Pr < 2.0) {
+        return 1.0;
+    }
+
     return Math.max(Z, 0.05);
 }
 
@@ -2771,15 +2787,13 @@ function getAllMessages() {
                 });
             }
 
-            const isQuantum = ['parahydrogen', 'normalhydrogen', 'helium4'].includes(preset);
-            if (!isQuantum || T_K < crit.Tc * 3) {
-                const Z = calcZ_PengRobinson(T_K, P, crit.Tc, crit.Pc, crit.w, phase === 'gas' ? 'gas' : 'liquid');
-                if (Math.abs(Z - 1) > 0.15) {
-                    messages.push({
-                        text: t('reliabilityZ').replace('{z}', Z.toFixed(3)),
-                        type: 'caution'
-                    });
-                }
+            // Коэффициент сжимаемости Z
+            const Z = calcZ_PengRobinson(T_K, P, crit.Tc, crit.Pc, crit.w, phase === 'gas' ? 'gas' : 'liquid');
+            if (Math.abs(Z - 1) > 0.15) {
+                messages.push({
+                    text: t('reliabilityZ').replace('{z}', Z.toFixed(3)),
+                    type: 'caution'
+                });
             }
 
             // Сжиженный газ
