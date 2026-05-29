@@ -2721,16 +2721,17 @@ function getAllMessages() {
             const P_sat = getSaturationPressure(T_K, preset);
             const phase = determinePhase(P, P_sat, T_K, crit.Tc);
 
-            // Критическая область
-            if (Tr > 0.95 && Pr > 0.8) {
+            // Критическая область — только если температура НИЖЕ критической
+            // (в перегретом газе нет критических флуктуаций)
+            if (T_K < crit.Tc && Tr > 0.95 && Pr > 0.8) {
                 level = Math.max(level, 2);
                 messages.push({
                     text: t('reliabilityCriticalRegion').replace('{tr}', Tr.toFixed(2)).replace('{pr}', Pr.toFixed(2)),
                     type: 'critical'
                 });
             }
-            // Близко к критической точке
-            else if (Tr > 0.90 || (Tr > 0.85 && Pr > 0.75)) {
+            // Близко к критической точке — только если температура НИЖЕ критической
+            else if (T_K < crit.Tc && (Tr > 0.90 || (Tr > 0.85 && Pr > 0.75))) {
                 level = Math.max(level, 1);
                 messages.push({
                     text: t('reliabilityNearCritical').replace('{tr}', Tr.toFixed(2)).replace('{pr}', Pr.toFixed(2)),
@@ -2752,9 +2753,9 @@ function getAllMessages() {
                 messages.push({ text: t('reliabilityPolar'), type: 'caution' });
             }
 
-            // Антуан вне диапазона
+            // Антуан вне диапазона — только если насыщение физически возможно (T < Tc)
             const antoine = antoineCoeffs[preset];
-            if (antoine && (T_K < antoine.Tmin || T_K > antoine.Tmax)) {
+            if (antoine && T_K < crit.Tc && (T_K < antoine.Tmin || T_K > antoine.Tmax)) {
                 messages.push({
                     text: t('reliabilityAntoine')
                         .replace('{tmin}', (antoine.Tmin - 273.15).toFixed(0))
