@@ -2774,14 +2774,18 @@ function getAllMessages() {
             }
 
             // Коэффициент сжимаемости Z сильно отличается от 1
-            const Z = calcZ_PengRobinson(T_K, P, crit.Tc, crit.Pc, crit.w, phase === 'gas' ? 'gas' : 'liquid');
-            if (Math.abs(Z - 1) > 0.15) {
-                messages.push({
-                    text: t('reliabilityZ').replace('{z}', Z.toFixed(3)),
-                    type: 'caution'
-                });
+            // Только для классических газов или квантовых при низких температурах
+            const isQuantum = ['parahydrogen', 'normalhydrogen', 'helium4'].includes(preset);
+            if (!isQuantum || T_K < crit.Tc * 3) {
+                const Z = calcZ_PengRobinson(T_K, P, crit.Tc, crit.Pc, crit.w, phase === 'gas' ? 'gas' : 'liquid');
+                if (Math.abs(Z - 1) > 0.15) {
+                    messages.push({
+                        text: t('reliabilityZ').replace('{z}', Z.toFixed(3)),
+                        type: 'caution'
+                    });
+                }
             }
-
+            
             // Сжиженный газ
             if (phase === 'liquid') {
                 messages.push({ text: t('reliabilityLiquidGas'), type: 'caution' });
