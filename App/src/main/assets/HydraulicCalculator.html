@@ -2913,6 +2913,19 @@ function updateAllWarnings() {
 			}
 		}
 
+		// Тултип для экстремальной зоны
+		if (messages.length > 0) {
+			const crit = messages.filter(m => m.type === 'critical').length;
+			const caut = messages.filter(m => m.type === 'caution').length;
+			const info = messages.filter(m => m.type === 'info').length;
+			let summary = [];
+			if (crit > 0) summary.push('🔴' + crit);
+			if (caut > 0) summary.push('⚠️' + caut);
+			if (info > 0) summary.push('🔵' + info);
+			tooltipEl.textContent = summary.join(', ');
+			tooltipEl.style.display = 'block';
+		}
+
 		warningContainer.style.display = 'block';
 		return;
 	}
@@ -2923,6 +2936,19 @@ function updateAllWarnings() {
 		indicator.classList.add('reliability-yellow');
 		textEl.textContent = t('reliabilityYellow');
 		setZoneBadge('physical');
+
+		// Тултип для физической зоны
+		if (messages.length > 0) {
+			const crit = messages.filter(m => m.type === 'critical').length;
+			const caut = messages.filter(m => m.type === 'caution').length;
+			const info = messages.filter(m => m.type === 'info').length;
+			let summary = [];
+			if (crit > 0) summary.push('🔴' + crit);
+			if (caut > 0) summary.push('⚠️' + caut);
+			if (info > 0) summary.push('🔵' + info);
+			tooltipEl.textContent = summary.join(', ');
+			tooltipEl.style.display = 'block';
+		}
 
 		if (messages.length > 0) {
 			const list = document.createElement('div');
@@ -2963,7 +2989,7 @@ function updateAllWarnings() {
 	}
 	setZoneBadge('engineering');
 
-	// Тултип с количеством сообщений — ВСЕ типы
+	// Тултип для инженерной зоны
 	if (messages.length > 0) {
 		const crit = messages.filter(m => m.type === 'critical').length;
 		const caut = messages.filter(m => m.type === 'caution').length;
@@ -2993,7 +3019,6 @@ function updateAllWarnings() {
 		warningContainer.appendChild(list);
 		warningContainer.style.display = 'block';
 	}
-		return;
 }
 	
 function getCurrentLngLimits(){
