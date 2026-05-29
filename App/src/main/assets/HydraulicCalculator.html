@@ -1189,33 +1189,36 @@ return a0 + w * (a1 - a0);
 }
 
 function calcZ_PengRobinson(T, P_bar, Tc, Pc, w, phase) {
-const Tr = T / Tc;
-if (Tr <= 0 || Pc <= 0) return 1.0;
-let alpha;
-if (phase === 'liquid' && Tr < 1.0) alpha = alphaTwu(Tr, w);
-else {
-const kappa = 0.37464 + 1.54226 * w - 0.26992 * w * w;
-alpha = Math.pow(1 + kappa * (1 - Math.sqrt(Tr)), 2);
-}
-const a = 0.45724 * R_GAS * R_GAS * Tc * Tc / (Pc * 1e5) * alpha;
-const b = 0.07780 * R_GAS * Tc / (Pc * 1e5);
-const A = a * (P_bar * 1e5) / (R_GAS * R_GAS * T * T);
-const B = b * (P_bar * 1e5) / (R_GAS * T);
-const a2 = -(1 - B), a1 = A - 2*B - 3*B*B, a0 = -(A*B - B*B - B*B*B);
-const Q = (3*a1 - a2*a2) / 9, R_ = (9*a2*a1 - 27*a0 - 2*a2*a2*a2) / 54, D = Q*Q*Q + R_*R_;
-let Z;
-if (D >= 0) {
-const sqrtD = Math.sqrt(D), S = Math.cbrt(R_ + sqrtD), T_ = Math.cbrt(R_ - sqrtD);
-Z = S + T_ - a2/3;
-} else {
-const theta = Math.acos(R_ / Math.sqrt(-Q*Q*Q)), sqrtQ = Math.sqrt(-Q);
-const z1 = 2 * sqrtQ * Math.cos(theta/3) - a2/3, z2 = 2 * sqrtQ * Math.cos((theta + 2*Math.PI)/3) - a2/3, z3 = 2 * sqrtQ * Math.cos((theta + 4*Math.PI)/3) - a2/3;
-const roots = [z1, z2, z3].sort((a,b) => a-b);
-if (phase === 'liquid') Z = roots[0];
-else if (phase === 'supercritical' || phase === 'two-phase') Z = roots[2];
-else Z = roots[2];
-}
-return Math.max(Z, 0.05);
+    const Tr = T / Tc;
+    if (Tr <= 0 || Pc <= 0) return 1.0;
+    const Pr = P_bar / Pc;
+    if (Tr > 10.0) return 1.0;
+    if (Tr > 1.5 && Pr < 0.1) return 1.0;
+    let alpha;
+    if (phase === 'liquid' && Tr < 1.0) alpha = alphaTwu(Tr, w);
+    else {
+        const kappa = 0.37464 + 1.54226 * w - 0.26992 * w * w;
+        alpha = Math.pow(1 + kappa * (1 - Math.sqrt(Tr)), 2);
+    }
+    const a = 0.45724 * R_GAS * R_GAS * Tc * Tc / (Pc * 1e5) * alpha;
+    const b = 0.07780 * R_GAS * Tc / (Pc * 1e5);
+    const A = a * (P_bar * 1e5) / (R_GAS * R_GAS * T * T);
+    const B = b * (P_bar * 1e5) / (R_GAS * T);
+    const a2 = -(1 - B), a1 = A - 2*B - 3*B*B, a0 = -(A*B - B*B - B*B*B);
+    const Q = (3*a1 - a2*a2) / 9, R_ = (9*a2*a1 - 27*a0 - 2*a2*a2*a2) / 54, D = Q*Q*Q + R_*R_;
+    let Z;
+    if (D >= 0) {
+        const sqrtD = Math.sqrt(D), S = Math.cbrt(R_ + sqrtD), T_ = Math.cbrt(R_ - sqrtD);
+        Z = S + T_ - a2/3;
+    } else {
+        const theta = Math.acos(R_ / Math.sqrt(-Q*Q*Q)), sqrtQ = Math.sqrt(-Q);
+        const z1 = 2 * sqrtQ * Math.cos(theta/3) - a2/3, z2 = 2 * sqrtQ * Math.cos((theta + 2*Math.PI)/3) - a2/3, z3 = 2 * sqrtQ * Math.cos((theta + 4*Math.PI)/3) - a2/3;
+        const roots = [z1, z2, z3].sort((a,b) => a-b);
+        if (phase === 'liquid') Z = roots[0];
+        else if (phase === 'supercritical' || phase === 'two-phase') Z = roots[2];
+        else Z = roots[2];
+    }
+    return Math.max(Z, 0.05);
 }
 
 /* ============================================================
@@ -2618,27 +2621,23 @@ function getAllMessages() {
     const messages = [];
     const T_K = T + 273.15;
 
-        // ===== ПРОВЕРКА НАСЫЩЕНИЯ (для газов, кроме LNG) =====
+    // ===== ПРОВЕРКА НАСЫЩЕНИЯ (для газов, кроме LNG) =====
     if (mode === 'engineer' && mediumType === 'gas' && preset !== 'choose' && preset !== 'lng') {
         const crit = gasCritical[preset.toLowerCase()] || gasCritical[preset];
         if (crit) {
             const P_sat = getSaturationPressure(T_K, preset);
             if (P_sat !== null && P_sat > 0) {
-                const P_bar_sat = P_sat; // уже в бар
-                // Давление выше насыщения → сжиженный газ (ЖЁЛТОЕ ПРЕДУПРЕЖДЕНИЕ)
+                const P_bar_sat = P_sat;
                 if (P > P_bar_sat * 1.005) {
                     level = Math.max(level, 1);
                     messages.push({ text: t('warningSaturationAbove'), type: 'caution' });
                 }
-                // Близко к линии насыщения (±5%) → ГОЛУБАЯ ИНФОРМАЦИЯ
                 else if (Math.abs(P - P_bar_sat) / P_bar_sat < 0.05) {
-                    // level НЕ повышаем — это просто справка
                     messages.push({ text: t('warningNearSaturation'), type: 'info' });
                 }
             }
         }
     }
-
 
     // ===== LNG =====
     if (preset === 'lng') {
@@ -2730,8 +2729,7 @@ function getAllMessages() {
             const P_sat = getSaturationPressure(T_K, preset);
             const phase = determinePhase(P, P_sat, T_K, crit.Tc);
 
-            // Критическая область — только если температура НИЖЕ критической
-            // (в перегретом газе нет критических флуктуаций)
+            // Критическая область
             if (T_K < crit.Tc && Tr > 0.95 && Pr > 0.8) {
                 level = Math.max(level, 2);
                 messages.push({
@@ -2739,7 +2737,7 @@ function getAllMessages() {
                     type: 'critical'
                 });
             }
-            // Близко к критической точке — только если температура НИЖЕ критической
+            // Близко к критической точке
             else if (T_K < crit.Tc && (Tr > 0.90 || (Tr > 0.85 && Pr > 0.75))) {
                 level = Math.max(level, 1);
                 messages.push({
@@ -2762,7 +2760,7 @@ function getAllMessages() {
                 messages.push({ text: t('reliabilityPolar'), type: 'caution' });
             }
 
-            // Антуан вне диапазона — только если насыщение физически возможно (T < Tc)
+            // Антуан вне диапазона
             const antoine = antoineCoeffs[preset];
             if (antoine && T_K < crit.Tc && (T_K < antoine.Tmin || T_K > antoine.Tmax)) {
                 messages.push({
@@ -2773,8 +2771,6 @@ function getAllMessages() {
                 });
             }
 
-            // Коэффициент сжимаемости Z сильно отличается от 1
-            // Только для классических газов или квантовых при низких температурах
             const isQuantum = ['parahydrogen', 'normalhydrogen', 'helium4'].includes(preset);
             if (!isQuantum || T_K < crit.Tc * 3) {
                 const Z = calcZ_PengRobinson(T_K, P, crit.Tc, crit.Pc, crit.w, phase === 'gas' ? 'gas' : 'liquid');
@@ -2785,7 +2781,7 @@ function getAllMessages() {
                     });
                 }
             }
-            
+
             // Сжиженный газ
             if (phase === 'liquid') {
                 messages.push({ text: t('reliabilityLiquidGas'), type: 'caution' });
