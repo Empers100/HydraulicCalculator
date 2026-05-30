@@ -1095,15 +1095,15 @@ propane: { Zra: 0.276, Vc: 0.0002000 }, freon22: { Zra: 0.267, Vc: 0.0001640 }
 };
 
 const gasLimits = {
-air: { Tmin:70,Tmax:1300,Pmin:0.3401,Pmax:1000 }, nitrogen: { Tmin:65.9,Tmax:1300,Pmin:0.2,Pmax:1000 },
-oxygen: { Tmin:55,Tmax:1300,Pmin:0.0018,Pmax:1000 }, methane: { Tmin:91,Tmax:600,Pmin:0.122,Pmax:1000 },
-co2: { Tmin:219,Tmax:600,Pmin:0.5,Pmax:1000 }, parahydrogen: { Tmin:13.803,Tmax:500,Pmin:0.007,Pmax:100 },
-normalhydrogen: { Tmin:13.803,Tmax:500,Pmin:0.007,Pmax:100 }, helium4: { Tmin:2.1768,Tmax:600,Pmin:0.01,Pmax:100 },
-neon: { Tmin:24.56,Tmax:600,Pmin:0.5,Pmax:1000 }, argon: { Tmin:84,Tmax:1300,Pmin:0.71,Pmax:1000 },
-krypton: { Tmin:115.76,Tmax:600,Pmin:0.72498,Pmax:1000 }, xenon: { Tmin:161.41,Tmax:600,Pmin:0.82,Pmax:1000 },
-ammonia: { Tmin:210,Tmax:750,Pmin:0.08,Pmax:1000 }, ethane: { Tmin:93,Tmax:600,Pmin:0.0017,Pmax:1000 },
-ethylene: { Tmin:110,Tmax:600,Pmin:0.0012,Pmax:1000 }, propane: { Tmin:100,Tmax:600,Pmin:0.1,Pmax:1000 },
-freon22: { Tmin:273,Tmax:553,Pmin:1,Pmax:350 }, water:null, oil:null
+air: { Tmin:70,Tmax:1300,Pmin:0.3401,Pmax:28.28 }, nitrogen: { Tmin:65.9,Tmax:1300,Pmin:0.2,Pmax:25.43 },
+oxygen: { Tmin:55,Tmax:1300,Pmin:0.0018,Pmax:37.82 }, methane: { Tmin:91,Tmax:600,Pmin:0.122,Pmax:34.49 },
+co2: { Tmin:219,Tmax:600,Pmin:0.5,Pmax:55.37 }, parahydrogen: { Tmin:13.803,Tmax:500,Pmin:0.007,Pmax:9.63 },
+normalhydrogen: { Tmin:13.803,Tmax:500,Pmin:0.007,Pmax:9.85 }, helium4: { Tmin:2.1768,Tmax:600,Pmin:0.01,Pmax:1.71 },
+neon: { Tmin:24.56,Tmax:600,Pmin:0.5,Pmax:20.67 }, argon: { Tmin:84,Tmax:1300,Pmin:0.71,Pmax:36.74 },
+krypton: { Tmin:115.76,Tmax:600,Pmin:0.72498,Pmax:41.25 }, xenon: { Tmin:161.41,Tmax:600,Pmin:0.82,Pmax:43.80 },
+ammonia: { Tmin:210,Tmax:750,Pmin:0.08,Pmax:84.60 }, ethane: { Tmin:93,Tmax:600,Pmin:0.0017,Pmax:36.63 },
+ethylene: { Tmin:110,Tmax:600,Pmin:0.0012,Pmax:37.82 }, propane: { Tmin:100,Tmax:600,Pmin:0.1,Pmax:31.86 },
+freon22: { Tmin:233,Tmax:553,Pmin:1,Pmax:37.40 }, water:null, oil:null
 };
 
 const liquidLimits = {
@@ -1647,19 +1647,26 @@ helpContent:`
 
 <h3>Граничные значения и риски</h3>
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
-<tr><th>Вещество</th><th>T<sub>мин</sub>...T<sub>макс</sub> (°C)</th><th>P<sub>мин</sub>...P<sub>макс</sub> (бар)</th><th>Основной риск</th></tr>
-<tr><td>Воздух</td><td>-203...1027</td><td>0.34...1000</td><td>При T<-140°C сжижается, модель даёт оценку</td></tr>
-<tr><td>Азот</td><td>-207...1027</td><td>0.2...1000</td><td>Криогенная жидкость --- вязкость по таблицам NIST</td></tr>
-<tr><td>Кислород</td><td>-218...1027</td><td>0.0018...1000</td><td>Аналогично азоту</td></tr>
-<tr><td>Метан</td><td>-182...327</td><td>0.12...1000</td><td>При высоком P/T --- критическая область</td></tr>
-<tr><td>CO₂</td><td>-54...327</td><td>0.5...1000</td><td>Критическая точка при 31°C, 73.8 бар</td></tr>
-<tr><td>Водород (пара/норм.)</td><td>-259...227</td><td>0.007...100</td><td>Вязкость жидкости по таблицам NIST (точность ±3%)</td></tr>
-<tr><td>Гелий-4</td><td>-271...327</td><td>0.01...100</td><td>Сверхтекучесть ниже 2.17 K --- модель не применима</td></tr>
-<tr><td>Неон, аргон, криптон, ксенон</td><td>см. limits</td><td>см. limits</td><td>Благородные газы --- PR-Twu точен</td></tr>
-<tr><td>Аммиак</td><td>-63...477</td><td>0.08...1000</td><td>Полярное вещество, вблизи критической точки погрешность 5-10%</td></tr>
-<tr><td>Этан, этилен, пропан</td><td>см. limits</td><td>см. limits</td><td>Углеводороды, критическая область</td></tr>
-<tr><td>Фреон-22</td><td>0...280</td><td>1...350</td><td>Хладагент, PR-Twu адекватен</td></tr>
-<tr><td>Вода / Масло</td><td>жидкость</td><td>--</td><td>Реалистичные пределы плотности/вязкости</td></tr>
+<tr><th>Вещество</th><th>T<sub>мин</sub>...T<sub>макс</sub> (°C)</th><th>P<sub>мин</sub>...P<sub>макс</sub> (бар)</th><th>Примечание</th></tr>
+<tr><td colspan="4" style="background:var(--btn-bg);font-weight:bold;">🟢 Инженерная зона (P < 0.75•P<sub>c</sub>, любая T)</td></tr>
+<tr><td>Воздух</td><td>-207...1027</td><td>0.34...28</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Азот</td><td>-210...1027</td><td>0.2...25</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Кислород</td><td>-218...1027</td><td>0.002...38</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Метан</td><td>-182...327</td><td>0.12...34</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>CO₂</td><td>-54...327</td><td>0.5...55</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Водород (пара/норм.)</td><td>-259...227</td><td>0.007...10</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Гелий-4</td><td>-271...327</td><td>0.01...1.7</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Неон</td><td>-249...327</td><td>0.5...21</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Аргон</td><td>-189...1027</td><td>0.71...37</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Криптон</td><td>-158...327</td><td>0.72...41</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Ксенон</td><td>-112...327</td><td>0.82...44</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Аммиак</td><td>-63...477</td><td>0.08...85</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Этан</td><td>-90...327</td><td>0.002...37</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Этилен</td><td>-104...327</td><td>0.001...38</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Пропан</td><td>-42...327</td><td>0.1...32</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td>Фреон-22</td><td>0...280</td><td>1...37</td><td>Гарантированная точность ≤5%</td></tr>
+<tr><td colspan="4" style="background:rgba(255,193,7,0.1);font-weight:bold;">🟡 Физическая зона (0.75•P<sub>c</sub>< P < 0.90•P<sub>c</sub>, T < 0.98•T<sub>c</sub>)</td></tr>
+<tr><td colspan="4">Те же вещества, но с повышенной погрешностью ≤15%. При T > 0.98•T<sub>c</sub> и P > 0.90•P<sub>c</sub> — 🔴 экстремальная зона (расчёт блокируется).</td></tr>
 </table>
 <h3>СПГ (смесь)</h3>
 <p>Состав: метан, этан, пропан, бутаны, изопентан, азот. Фаза определяется автоматически по линии насыщения. Псевдокритические параметры по правилу Кея. Погрешность ±5-10%.</p>
@@ -1842,21 +1849,32 @@ helpContent:`
 <p><b>Extreme zone</b>:</p>
 <p>⚪ N/A --- model not applicable, accuracy not checked. Use NIST REFPROP.</p>
 
-<h3>Limits and risks</h3>
+<h3>Operating limits</h3>
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
-<tr><th>Substance</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (bar)</th><th>Main risk</th></tr>
-<tr><td>Air</td><td>-203...1027</td><td>0.34...1000</td><td>Liquefies below -140°C, model gives estimate</td></tr>
-<tr><td>Nitrogen</td><td>-207...1027</td><td>0.2...1000</td><td>Cryogenic liquid — viscosity from NIST tables</td></tr>
-<tr><td>Oxygen</td><td>-218...1027</td><td>0.0018...1000</td><td>Same as nitrogen</td></tr>
-<tr><td>Methane</td><td>-182...327</td><td>0.12...1000</td><td>Critical region at high P/T</td></tr>
-<tr><td>CO₂</td><td>-54...327</td><td>0.5...1000</td><td>Critical point at 31°C, 73.8 bar</td></tr>
-<tr><td>Hydrogen (para/normal)</td><td>-259...227</td><td>0.007...100</td><td>Liquid viscosity from NIST tables (±3% accuracy)</td></tr>
-<tr><td>Helium-4</td><td>-271...327</td><td>0.01...100</td><td>Superfluid below 2.17 K — model not applicable</td></tr>
-<tr><td>Neon, Ar, Kr, Xe</td><td>see limits</td><td>see limits</td><td>Noble gases — PR-Twu accurate</td></tr>
-<tr><td>Ammonia</td><td>-63...477</td><td>0.08...1000</td><td>Polar substance, 5-10% error near critical point</td></tr>
-<tr><td>Ethane, ethylene, propane</td><td>see limits</td><td>see limits</td><td>Hydrocarbons, critical region</td></tr>
-<tr><td>Freon-22</td><td>0...280</td><td>1...350</td><td>Refrigerant, PR-Twu adequate</td></tr>
-<tr><td>Water / Oil</td><td>liquid</td><td>--</td><td>Realistic density/viscosity limits</td></tr>
+<tr style="background:var(--btn-bg); font-weight:bold;">
+<td colspan="4">🟢 Engineering zone (P < 0.75•P<sub>c</sub>, any T)</td>
+</tr>
+<tr><th>Substance</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (bar)</th><th>Note</th></tr>
+<tr><td>Air</td><td>-203...1027</td><td>0.34...28</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Nitrogen</td><td>-207...1027</td><td>0.2...25</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Oxygen</td><td>-218...1027</td><td>0.002...38</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Methane</td><td>-182...327</td><td>0.12...34</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>CO₂</td><td>-54...327</td><td>0.5...55</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Hydrogen (para/normal)</td><td>-259...227</td><td>0.007...10</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Helium-4</td><td>-271...327</td><td>0.01...1.7</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Neon</td><td>-249...327</td><td>0.5...21</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Argon</td><td>-189...1027</td><td>0.71...37</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Krypton</td><td>-158...327</td><td>0.72...41</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Xenon</td><td>-112...327</td><td>0.82...44</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Ammonia</td><td>-63...477</td><td>0.08...85</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Ethane</td><td>-90...327</td><td>0.002...37</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Ethylene</td><td>-104...327</td><td>0.001...38</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Propane</td><td>-42...327</td><td>0.1...32</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr><td>Freon-22</td><td>0...280</td><td>1...37</td><td>Guaranteed accuracy ≤5%</td></tr>
+<tr style="background:rgba(255,193,7,0.1); font-weight:bold;">
+<td colspan="4">🟡 Physical zone (0.75•P<sub>c</sub>< P < 0.90•P<sub>c</sub>, T < 0.98•T<sub>c</sub>)</td>
+</tr>
+<tr><td colspan="4">Same substances with increased uncertainty ≤15%. At T > 0.98•T<sub>c</sub> and P > 0.90•P<sub>c</sub> — 🔴 extreme zone (calculation blocked).</td></tr>
 </table>
 <h3>LNG (mixture)</h3>
 <p>Composition: methane, ethane, propane, butanes, isopentane, nitrogen. Phase auto-detected from saturation line. Pseudocritical parameters by Kay's rule. Accuracy ±5-10%.</p>
@@ -2039,21 +2057,32 @@ helpContent:`
 <p><b>极端区域</b>：</p>
 <p>⚪ 不适用 --- 模型不适用，不检查精度。请使用 NIST REFPROP。</p>
 
-<h3>限值与风险</h3>
+<h3>操作限值</h3>
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
-<tr><th>物质</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (巴)</th><th>主要风险</th></tr>
-<tr><td>空气</td><td>-203...1027</td><td>0.34...1000</td><td>低于-140°C液化，模型给出估计值</td></tr>
-<tr><td>氮气</td><td>-207...1027</td><td>0.2...1000</td><td>低温液体 — 粘度按NIST表格</td></tr>
-<tr><td>氧气</td><td>-218...1027</td><td>0.0018...1000</td><td>与氮气相同</td></tr>
-<tr><td>甲烷</td><td>-182...327</td><td>0.12...1000</td><td>高压/高温时接近临界区</td></tr>
-<tr><td>CO₂</td><td>-54...327</td><td>0.5...1000</td><td>临界点 31°C, 73.8 巴</td></tr>
-<tr><td>氢 (仲/正)</td><td>-259...227</td><td>0.007...100</td><td>液体粘度按NIST表格（精度±3%）</td></tr>
-<tr><td>氦-4</td><td>-271...327</td><td>0.01...100</td><td>2.17K以下超流性 — 模型不适用</td></tr>
-<tr><td>氖、氩、氪、氙</td><td>参见限值</td><td>参见限值</td><td>稀有气体 — PR-Twu 精确</td></tr>
-<tr><td>氨</td><td>-63...477</td><td>0.08...1000</td><td>极性物质，临界点附近误差5-10%</td></tr>
-<tr><td>乙烷、乙烯、丙烷</td><td>参见限值</td><td>参见限值</td><td>碳氢化合物，临界区</td></tr>
-<tr><td>氟利昂-22</td><td>0...280</td><td>1...350</td><td>制冷剂，PR-Twu 适用</td></tr>
-<tr><td>水 / 油</td><td>液体</td><td>--</td><td>实际密度/粘度限值</td></tr>
+<tr style="background:var(--btn-bg); font-weight:bold;">
+<td colspan="4">🟢 工程区域 (P < 0.75•P<sub>c</sub>, 任意 T)</td>
+</tr>
+<tr><th>物质</th><th>T<sub>min</sub>...T<sub>max</sub> (°C)</th><th>P<sub>min</sub>...P<sub>max</sub> (巴)</th><th>备注</th></tr>
+<tr><td>空气</td><td>-203...1027</td><td>0.34...28</td><td>保证精度 ≤5%</td></tr>
+<tr><td>氮气</td><td>-207...1027</td><td>0.2...25</td><td>保证精度 ≤5%</td></tr>
+<tr><td>氧气</td><td>-218...1027</td><td>0.002...38</td><td>保证精度 ≤5%</td></tr>
+<tr><td>甲烷</td><td>-182...327</td><td>0.12...34</td><td>保证精度 ≤5%</td></tr>
+<tr><td>CO₂</td><td>-54...327</td><td>0.5...55</td><td>保证精度 ≤5%</td></tr>
+<tr><td>氢 (仲/正)</td><td>-259...227</td><td>0.007...10</td><td>保证精度 ≤5%</td></tr>
+<tr><td>氦-4</td><td>-271...327</td><td>0.01...1.7</td><td>保证精度 ≤5%</td></tr>
+<tr><td>氖</td><td>-249...327</td><td>0.5...21</td><td>保证精度 ≤5%</td></tr>
+<tr><td>氩</td><td>-189...1027</td><td>0.71...37</td><td>保证精度 ≤5%</td></tr>
+<tr><td>氪</td><td>-158...327</td><td>0.72...41</td><td>保证精度 ≤5%</td></tr>
+<tr><td>氙</td><td>-112...327</td><td>0.82...44</td><td>保证精度 ≤5%</td></tr>
+<tr><td>氨</td><td>-63...477</td><td>0.08...85</td><td>保证精度 ≤5%</td></tr>
+<tr><td>乙烷</td><td>-90...327</td><td>0.002...37</td><td>保证精度 ≤5%</td></tr>
+<tr><td>乙烯</td><td>-104...327</td><td>0.001...38</td><td>保证精度 ≤5%</td></tr>
+<tr><td>丙烷</td><td>-42...327</td><td>0.1...32</td><td>保证精度 ≤5%</td></tr>
+<tr><td>氟利昂-22</td><td>0...280</td><td>1...37</td><td>保证精度 ≤5%</td></tr>
+<tr style="background:rgba(255,193,7,0.1); font-weight:bold;">
+<td colspan="4">🟡 物理区域 (0.75•P<sub>c</sub>< P < 0.90•P<sub>c</sub>, T < 0.98•T<sub>c</sub>)</td>
+</tr>
+<tr><td colspan="4">相同物质，但不确定性增加至 ≤15%。当 T > 0.98•T<sub>c</sub> 且 P > 0.90•P<sub>c</sub> 时 — 🔴 极端区域（阻止计算）。</td></tr>
 </table>
 <h3>液化天然气（混合物）</h3>
 <p>组成：甲烷、乙烷、丙烷、丁烷、异戊烷、氮气。相态根据饱和线自动确定。伪临界参数由 Kay 规则计算。精度 ±5-10%。</p>
