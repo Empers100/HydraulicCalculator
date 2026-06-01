@@ -1220,7 +1220,9 @@ function calcZ_PengRobinson(T, P_bar, Tc, Pc, w, phase) {
         const sqrtD = Math.sqrt(D), S = Math.cbrt(R_ + sqrtD), T_ = Math.cbrt(R_ - sqrtD);
         Z = S + T_ - a2/3;
     } else {
-        const theta = Math.acos(R_ / Math.sqrt(-Q*Q*Q)), sqrtQ = Math.sqrt(-Q);
+        let arg = R_ / Math.sqrt(-Q*Q*Q);
+        arg = Math.max(-1, Math.min(1, arg));
+        const theta = Math.acos(arg), sqrtQ = Math.sqrt(-Q);
         const z1 = 2 * sqrtQ * Math.cos(theta/3) - a2/3, z2 = 2 * sqrtQ * Math.cos((theta + 2*Math.PI)/3) - a2/3, z3 = 2 * sqrtQ * Math.cos((theta + 4*Math.PI)/3) - a2/3;
         const roots = [z1, z2, z3].sort((a,b) => a-b);
         if (phase === 'liquid') Z = roots[0];
@@ -1229,8 +1231,8 @@ function calcZ_PengRobinson(T, P_bar, Tc, Pc, w, phase) {
     }
 
     // === ЗАЩИТА ОТ ЧИСЛЕННЫХ АРТЕФАКТОВ ===
-    // Если Z получился нереально малым при не-экстремальном давлении — это баг
-    if (Z < 0.1 && Pr < 2.0) {
+    // Защита только для газа; для жидкости Z может быть < 0.1
+    if (Z < 0.1 && Pr < 2.0 && phase !== 'liquid') {
         return 1.0;
     }
 
@@ -1318,7 +1320,13 @@ if (phase === 'liquid') {
 const rackett = rackettParams[gas.toLowerCase()] || rackettParams[gas];
 if (rackett && T_K < crit.Tc) {
 const Tr = T_K / crit.Tc, Vsat = rackett.Vc * Math.pow(rackett.Zra, Math.pow(1 - Tr, 0.2857));
-return Math.max((M / 1000) / Vsat, 0.5);
+let density = (M / 1000) / Vsat;
+// Поправка на давление для жидкости (сжимаемость)
+const P_sat_ref = P_sat || (getSaturationPressure(T_K, gas) || 1.0);
+if (P_bar > P_sat_ref) {
+density *= (1 + 0.0008 * (P_bar - P_sat_ref));
+}
+return Math.max(density, 0.5);
 }
 }
 
@@ -1361,7 +1369,7 @@ if (table) {
 const mu_table = interpolateViscosity(table, T_K);
 if (mu_table !== null) {
 // Reduced pressure effect for liquid viscosity
-const pressureFactor = 1 + 0.005 * Math.max(0, P_bar / Pc - 1);
+const pressureFactor = 1 + 0.05 * Math.max(0, P_bar / Pc - 1);
 return mu_table * pressureFactor;
 }
 }
@@ -3264,12 +3272,8 @@ calculateBtn.addEventListener('click',()=>{
             }
         }
     }
-// Получаем зону валидации
-const { zone } = getAllMessages();
-if (zone === 'extreme') {
-  updateAllWarnings();
-  return; // БЛОКИРОВКА
-}
+// Обновляем предупреждения без блокировки расчёта
+updateAllWarnings();
 
   try{
     const bends=parseInt(document.getElementById('bends').value)||0,valves=parseInt(document.getElementById('valves').value)||0,contractions=parseInt(document.getElementById('contractions').value)||0,expansions=parseInt(document.getElementById('expansions').value)||0,orifices=parseInt(document.getElementById('orifices').value)||0;
