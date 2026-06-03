@@ -968,7 +968,46 @@ ammonia: [
     { T_C: 96.65, P_bar: 42.48, phase: 'supercritical', rho_ref: 220.0, nu_ref: 0.14, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
-  ethylene: [
+  propane: [
+  // Тройная точка
+  { T_C: -187.68, P_bar: 1.69e-9, phase: 'liquid', rho_ref: 733.3, nu_ref: 3.41, 
+    descKey: 'validationDesc_triplePoint', zone: 'extreme' },
+  { T_C: -187.68, P_bar: 1.69e-9, phase: 'gas', rho_ref: 1.05e-8, nu_ref: 5.72e7, 
+    descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
+
+  // Точка кипения
+  { T_C: -42.15, P_bar: 1.013, phase: 'liquid', rho_ref: 581.0, nu_ref: 0.558, 
+    descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
+  { T_C: -42.15, P_bar: 0.98767, phase: 'gas', rho_ref: 2.34, nu_ref: 3.59, 
+    descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+
+  // 0°C — насыщенная жидкость (P > P_sat ≈ 4.89 бар)
+  { T_C: 0.0, P_bar: 5.13, phase: 'liquid', rho_ref: 530.0, nu_ref: 0.35, 
+    descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+  // 0°C — перегретый пар (P < P_sat ≈ 4.89 бар)
+  { T_C: 0.0, P_bar: 4.64, phase: 'gas', rho_ref: 10.5, nu_ref: 1.8, 
+    descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+
+  // 20°C — насыщенная жидкость (P > P_sat ≈ 8.59 бар)
+  { T_C: 20.0, P_bar: 9.02, phase: 'liquid', rho_ref: 500.0, nu_ref: 0.25, 
+    descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+  // 20°C — перегретый пар (P < P_sat ≈ 8.59 бар)
+  { T_C: 20.0, P_bar: 8.16, phase: 'gas', rho_ref: 18.5, nu_ref: 1.15, 
+    descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+
+  // 50°C — вблизи критической (P > P_sat ≈ 17.2 бар)
+  { T_C: 50.0, P_bar: 18.02, phase: 'liquid', rho_ref: 450.0, nu_ref: 0.13, 
+    descKey: 'validationDesc_nearCritical', zone: 'physical' },
+  // 50°C — перегретый пар (P < P_sat ≈ 17.2 бар)
+  { T_C: 50.0, P_bar: 16.30, phase: 'gas', rho_ref: 35.0, nu_ref: 0.75, 
+    descKey: 'validationDesc_nearCritical', zone: 'physical' },
+
+  // Критическая точка
+  { T_C: 96.65, P_bar: 42.48, phase: 'supercritical', rho_ref: 220.0, nu_ref: 0.14, 
+    descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
+],
+
+ethylene: [
     { T_C: -169.15, P_bar: 0.0012, phase: 'liquid', rho_ref: 656.0, nu_ref: 1.04, descKey: 'validationDesc_triplePoint', zone: 'extreme' },
     { T_C: -169.15, P_bar: 0.0012, phase: 'gas', rho_ref: 0.0039, nu_ref: 1280.0, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -103.95, P_bar: 1.013, phase: 'liquid', rho_ref: 567.0, nu_ref: 0.205, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
@@ -1272,7 +1311,7 @@ xenon: { A: 4.2120, B: 723.52, C: -18.42, Tmin: 161, Tmax: 289 },
   },
 ethane: { A: 4.0668, B: 663.72, C: -16.81, Tmin: 93, Tmax: 305 },
 ethylene: { A: 3.9728, B: 584.146, C: -18.27, Tmin: 104, Tmax: 282 },
-propane: { A: 4.0115, B: 790.98, C: -24.45, Tmin: 86, Tmax: 370 },
+propane: { A: 3.98292, B: 819.296, C: -24.417, Tmin: 230.6, Tmax: 320.7 },
 freon22: { A: 3.9997, B: 783.42, C: -29.39, Tmin: 233, Tmax: 369 }
 };
 
