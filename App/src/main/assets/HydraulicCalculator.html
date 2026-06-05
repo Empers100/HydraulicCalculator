@@ -4385,11 +4385,23 @@ function oilProperties(T_C) {
 
 // Обновление свойств для вкладки диаметра
 function updateMediumDiam() {
+    const tempDiamEl = document.getElementById('tempDiam');
+    if (tempDiamEl) {
+        tempDiamEl.addEventListener('blur', function() {
+            updateMediumDiam();
+        });
+    }
     const select = document.getElementById('mediumSelectDiam');
-    const temp = parseFloat(document.getElementById('tempDiam').value) || 20;
+    let temp = parseFloat(document.getElementById('tempDiam').value);
+    if (isNaN(temp)) temp = 20;
+    const maxTemp = (select.value === 'water') ? 100 : 80;
+    if (temp < 0) temp = 0;
+    if (temp > maxTemp) temp = maxTemp;
+    const tempField = document.getElementById('tempDiam');
+    if (tempField.value != temp) tempField.value = temp;
+
     const densityField = document.getElementById('densityDiam');
     const viscosityField = document.getElementById('viscosityDiam');
-    if (!select) return;
     if (select.value === 'water') {
         const props = waterProperties(temp);
         densityField.value = props.rho;
@@ -4403,11 +4415,23 @@ function updateMediumDiam() {
 
 // То же для вкладки расхода
 function updateMediumFlow() {
+    const tempFlowEl = document.getElementById('tempFlow');
+    if (tempFlowEl) {
+        tempFlowEl.addEventListener('blur', function() {
+            updateMediumFlow();
+        });
+    }
     const select = document.getElementById('mediumSelectFlow');
-    const temp = parseFloat(document.getElementById('tempFlow').value) || 20;
+    let temp = parseFloat(document.getElementById('tempFlow').value);
+    if (isNaN(temp)) temp = 20;
+    const maxTemp = (select.value === 'water') ? 100 : 80;
+    if (temp < 0) temp = 0;
+    if (temp > maxTemp) temp = maxTemp;
+    const tempField = document.getElementById('tempFlow');
+    if (tempField.value != temp) tempField.value = temp;
+
     const densityField = document.getElementById('densityFlow');
     const viscosityField = document.getElementById('viscosityFlow');
-    if (!select) return;
     if (select.value === 'water') {
         const props = waterProperties(temp);
         densityField.value = props.rho;
@@ -4418,6 +4442,7 @@ function updateMediumFlow() {
         viscosityField.value = props.nu;
     }
 }
+
 // Инициализация для вкладки диаметра
 const mediumDiam = document.getElementById('mediumSelectDiam');
 const tempDiam = document.getElementById('tempDiam');
