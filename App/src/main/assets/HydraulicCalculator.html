@@ -3,18 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Гидравлический калькулятор</title>
+<title>Гидравлический калькулятор v2.0</title>
 <style>
 :root {
   --bg: #f4f4f4; --surface: #ffffff; --text: #333333; --text-secondary: #666666;
   --border: #cccccc; --btn-bg: #e0e0e0; --btn-func: #d0d0d0;
   --btn-active: #0096c9; --btn-active-text: white; --shadow: 0 2px 8px rgba(0,0,0,0.1);
   --display-bg: #f5f5f5;
+  --success: #28a745; --warning: #ffc107; --danger: #dc3545; --info: #17a2b8;
 }
 body.dark {
   --bg: #1a1a2e; --surface: #2d2d44; --text: #f0f0f0; --text-secondary: #cccccc;
   --border: #444466; --btn-bg: #4a4a6a; --btn-func: #5a5a7a;
   --btn-active: #0f3460; --shadow: 0 2px 8px rgba(0,0,0,0.4); --display-bg: #1e1e2f;
+  --success: #2d8a3e; --warning: #d4a017; --danger: #b02a37; --info: #138496;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -24,7 +26,7 @@ body {
   transition: background 0.3s;
 }
 .container {
-  width: 100%; max-width: 580px; background: var(--surface);
+  width: 100%; max-width: 640px; background: var(--surface);
   border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
   padding: 16px; display: flex; flex-direction: column; gap: 12px;
   position: relative;
@@ -168,12 +170,12 @@ body.dark .warning-info { background: #1a2d33; color: #7ec8d8; border-left-color
 body.dark .lng-balance.ok { background: #1e3a2a; color: #8fd19e; }
 body.dark .lng-balance.warn { background: #3d3520; color: #f0c040; }
 body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
-#helpModal {
+#helpModal, #validateModal {
   display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center;
 }
-#helpModal > div {
-  background: var(--surface); border-radius: 16px; padding: 20px; max-width: 500px;
+#helpModal > div, #validateModal > div {
+  background: var(--surface); border-radius: 16px; padding: 20px; max-width: 600px;
   width: 90%; max-height: 80vh; overflow-y: auto; color: var(--text);
 }
 .inverse-section {
@@ -211,70 +213,101 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 .validation-ok { color: #28a745; }
 .validation-warn { color: #ffc107; }
 .validation-error { color: #dc3545; }
+
+/* ===== НОВЫЕ СТИЛИ РЕЛИЗА 2.0.0 ===== */
+.flow-regime-indicator {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
+  margin-top: 4px;
+}
+.flow-laminar { background: #d4edda; color: #155724; }
+.flow-transition { background: #fff3cd; color: #856404; }
+.flow-turbulent { background: #cce5ff; color: #004085; }
+body.dark .flow-laminar { background: #1e3a2a; color: #8fd19e; }
+body.dark .flow-transition { background: #3d3520; color: #f0c040; }
+body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
+
+.cavitation-panel, .erosion-panel {
+  background: var(--display-bg); border-radius: 12px; padding: 10px;
+  margin-top: 6px; border: 1px solid var(--border); font-size: 13px;
+}
+.cavitation-panel h4, .erosion-panel h4 {
+  font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;
+}
+.cavitation-safe { color: var(--success); }
+.cavitation-warning { color: var(--warning); }
+.cavitation-danger { color: var(--danger); }
+.cavitation-critical { color: var(--danger); font-weight: bold; }
+
+.erosion-safe { color: var(--success); }
+.erosion-warning { color: var(--warning); }
+.erosion-danger { color: var(--danger); }
+.erosion-critical { color: var(--danger); font-weight: bold; }
+
+.pipe-roughness-select {
+  font-size: 13px; padding: 6px;
+}
+.geodetic-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; min-height: 48px; margin-bottom: 4px;
+}
+.geodetic-row label { flex: 1; font-size: 14px; color: var(--text-secondary); }
+.geodetic-row input {
+  flex: 1; padding: 10px 8px; border: 1px solid var(--border);
+  border-radius: 10px; background: var(--btn-bg); color: var(--text);
+  font-size: 16px; text-align: right;
+}
+
+.roughness-category-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; min-height: 40px; margin-bottom: 4px;
+}
+.roughness-category-row label { flex: 1; font-size: 13px; color: var(--text-secondary); }
+.roughness-category-row select {
+  flex: 1; padding: 8px; border: 1px solid var(--border);
+  border-radius: 10px; background: var(--btn-bg); color: var(--text);
+  font-size: 13px;
+}
+
 @media (max-width: 640px) {
-#targetDeltaPDiam, #targetDeltaPFlow {
-    margin-left: 8px
+  #targetDeltaPDiam, #targetDeltaPFlow { margin-left: 8px }
 }
-}
-/* Гарантированная видимость предупреждений на мобильных */
-.warning-item {
-    word-break: break-word;
-    line-height: 1.4;
-}
-
-/* Анимация появления ошибки */
-.error-border {
-    animation: errorPulse 0.3s ease;
-}
-
+.warning-item { word-break: break-word; line-height: 1.4; }
+.error-border { animation: errorPulse 0.3s ease; }
 @keyframes errorPulse {
-    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
-    100% { box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2); }
+  0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+  100% { box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2); }
 }
-
-/* Мобильная адаптация */
 @media (max-width: 480px) {
-    .warning-item {
-        font-size: 14px;
-        padding: 8px;
-    }
-    .warning-icon {
-        font-size: 16px;
-    }
+  .warning-item { font-size: 14px; padding: 8px; }
+  .warning-icon { font-size: 16px; }
 }
-/* === Зоны валидации (таблица + строки) === */
 .validation-zone-engineering { border-left: 4px solid #28a745 !important; }
-.validation-zone-physical     { border-left: 4px solid #ffc107 !important; }
-.validation-zone-extreme      { border-left: 4px solid #dc3545 !important; background: rgba(220,53,69,0.04); }
-
-/* === Бейджи зон рядом с индикатором === */
+.validation-zone-physical { border-left: 4px solid #ffc107 !important; }
+.validation-zone-extreme { border-left: 4px solid #dc3545 !important; background: rgba(220,53,69,0.04); }
 .zone-badge-engineering {
-    display: inline-block; padding: 2px 10px; border-radius: 12px;
-    font-size: 11px; font-weight: 600; background: #28a745; color: #fff;
-    margin-left: 8px; vertical-align: middle;
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 600; background: #28a745; color: #fff;
+  margin-left: 8px; vertical-align: middle;
 }
 .zone-badge-physical {
-    display: inline-block; padding: 2px 10px; border-radius: 12px;
-    font-size: 11px; font-weight: 600; background: #ffc107; color: #212529;
-    margin-left: 8px; vertical-align: middle;
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 600; background: #ffc107; color: #212529;
+  margin-left: 8px; vertical-align: middle;
 }
 .zone-badge-extreme {
-    display: inline-block; padding: 2px 10px; border-radius: 12px;
-    font-size: 11px; font-weight: 600; background: #dc3545; color: #fff;
-    margin-left: 8px; vertical-align: middle;
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 600; background: #dc3545; color: #fff;
+  margin-left: 8px; vertical-align: middle;
 }
-
-/* === Ссылка на REFPROP в панели предупреждений === */
 .refprop-link {
-    background: rgba(13, 110, 253, 0.07);
-    border-left: 4px solid #0d6efd !important;
+  background: rgba(13, 110, 253, 0.07);
+  border-left: 4px solid #0d6efd !important;
 }
 .refprop-link a {
-    color: #0d6efd; text-decoration: underline; font-weight: 700;
+  color: #0d6efd; text-decoration: underline; font-weight: 700;
 }
-.refprop-link a:hover {
-    color: #0a58ca; text-decoration: none;
-}
+.refprop-link a:hover { color: #0a58ca; text-decoration: none; }
 </style>
 </head>
 <body>
@@ -291,7 +324,7 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 </select>
 </div>
 <div class="menu-item">
-<span id="themeLabel">Светлаятема</span>
+<span id="themeLabel">Светлая тема</span>
 <div class="theme-toggle" id="themeToggle"></div>
 </div>
 <div class="menu-item">
@@ -316,37 +349,43 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 
 <div id="validateModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:200; justify-content:center; align-items:center;">
 <div style="background:var(--surface); border-radius:16px; padding:20px; max-width:600px; width:90%; max-height:80vh; overflow-y:auto; color:var(--text);">
-<h2 id="validateTitle">Валидациямодели</h2>
+<h2 id="validateTitle">Валидация модели</h2>
 <div id="validateContent"></div>
 <button id="validateClose" style="margin-top:12px; padding:10px; border-radius:8px; width:100%;">Закрыть</button>
 </div>
 </div>
 
 <div class="tabs" id="tabContainer">
-<button class="tab-btn active" data-tab="direct" id="tabDirectBtn">Прямойрасчёт</button>
-<button class="tab-btn" data-tab="diam" id="tabDiamBtn">Подбордиаметра</button>
-<button class="tab-btn" data-tab="flow" id="tabFlowBtn">Подборрасхода</button>
+<button class="tab-btn active" data-tab="direct" id="tabDirectBtn">Прямой расчёт</button>
+<button class="tab-btn" data-tab="diam" id="tabDiamBtn">Подбор диаметра</button>
+<button class="tab-btn" data-tab="flow" id="tabFlowBtn">Подбор расхода</button>
 </div>
-
-<!-- ===== ПРЯМОЙРАСЧЁТ ===== -->
+<!-- ===== ПРЯМОЙ РАСЧЁТ v2.0 ===== -->
 <div class="tab-content active" id="tab-direct">
 <div class="display-container">
-<div class="formula-display" id="formulaDisplay">Готовкрасчёту</div>
+<div class="formula-display" id="formulaDisplay">Готов к расчёту</div>
 <div class="main-display-row">
-<label id="lblFlowRate">Скоростьпотока:</label>
+<label id="lblFlowRate">Скорость потока:</label>
 <input type="text" class="main-display" id="mainDisplay" value="0" readonly>
 </div>
 </div>
-<div class="field-row"><label id="lblOuterDiam">Наружныйдиаметр (мм):</label><input type="number" id="outerDiam" value="57" min="0.1" step="any"></div>
-<div class="field-row"><label id="lblWall">Толщинастенки (мм):</label><input type="number" id="wall" value="3.5" min="0" step="any"></div>
+<div class="field-row"><label id="lblOuterDiam">Наружный диаметр (мм):</label><input type="number" id="outerDiam" value="57" min="0.1" step="any"></div>
+<div class="field-row"><label id="lblWall">Толщина стенки (мм):</label><input type="number" id="wall" value="3.5" min="0" step="any"></div>
 <div class="field-row"><label id="lblLength">Длина (м):</label><input type="number" id="length" value="100" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblMassFlow">Массовыйрасход<br>(кг/ч):</label><input type="number" id="massFlow" value="5000" min="0.001" step="any"></div>
+
+<!-- Геодезический напор v2.0 -->
+<div class="geodetic-row">
+<label id="lblGeodetic">Перепад высот Δz (м):</label>
+<input type="number" id="geodetic" value="0" step="any" placeholder="0">
+</div>
+
+<div class="field-row"><label id="lblMassFlow">Массовый расход<br>(кг/ч):</label><input type="number" id="massFlow" value="5000" min="0.001" step="any"></div>
 <div class="field-row"><label id="lblMode">Режим:</label><select id="modeSelect"><option value="simple" id="modeSimpleText">Упрощённый</option><option value="engineer" id="modeEngineerText">Инженерный</option></select></div>
 <div class="field-row"><label id="lblDensity">Плотность (кг/м³):</label><input type="number" id="density" value="1000" min="0.001" step="any"></div>
 <div class="engineer-block" id="engineerBlock">
-<div class="field-row"><label id="lblMedium">Типсреды:</label><select id="mediumSelect"><option value="liquid" id="mediumLiquidText">Жидкость</option><option value="gas" id="mediumGasText">Газ</option></select></div>
-<div class="field-row"><label id="lblPreset">Типичныесреды:</label><select id="presetSelect">
-<option value="choose" id="presetChooseText">Выберитесреду...</option>
+<div class="field-row"><label id="lblMedium">Тип среды:</label><select id="mediumSelect"><option value="liquid" id="mediumLiquidText">Жидкость</option><option value="gas" id="mediumGasText">Газ</option></select></div>
+<div class="field-row"><label id="lblPreset">Типичные среды:</label><select id="presetSelect">
+<option value="choose" id="presetChooseText">Выберите среду...</option>
 <option value="water" id="presetWaterText">Вода</option>
 <option value="oil" id="presetOilText">Масло</option>
 <option value="air" id="presetAirText">Воздух</option>
@@ -370,19 +409,31 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 </select></div>
 <div id="lngComposition" class="lng-composition"></div>
 <div class="field-row"><label id="lblViscosity">Вязкость (сСт):</label><input type="number" id="viscosity" value="1.0" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblRoughness">Шероховатость (мм):</label><input type="number" id="roughness" value="0.1" min="0.01" max="1.0" step="0.01"></div>
+
+<div class="field-row"><label id="lblRoughness">Шероховатость ε (мм):</label><input type="number" id="roughness" value="0.1" min="0.0001" max="10.0" step="0.001"></div>
 <div class="field-row" id="gasPropsRow"><label id="lblPressure">Абс. давление (бар):</label><input type="number" id="pressure" value="1.0" min="0.001" step="any"></div>
 <div class="field-row" id="tempRow"><label id="lblTemperature">Температура (°C):</label><input type="number" id="temperature" value="20.0" min="-273.14" step="any"></div>
-<div class="field-row" id="molarRow"><label id="lblMolarMass">Молярнаямасса<br>(г/моль):</label><input type="number" id="molarMass" value="28.97" min="2" max="300" step="any"></div>
+<div class="field-row" id="molarRow"><label id="lblMolarMass">Молярная масса<br>(г/моль):</label><input type="number" id="molarMass" value="28.97" min="2" max="300" step="any"></div>
 </div>
+
+<!-- Расширенные местные сопротивления v2.0 (15+ типов) -->
 <div class="field-row"><label id="lblBends">Поворотов 90° (ζ=0.3):</label><input type="number" id="bends" value="0" min="0" step="1"></div>
 <div class="field-row"><label id="lblValves">Клапанов (ζ=3.0):</label><input type="number" id="valves" value="0" min="0" step="1"></div>
 <div id="extraResistances" class="extra-resistances">
+<div class="field-row"><label id="lblBends45">Поворотов 45° (ζ=0.2):</label><input type="number" id="bends45" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblTeesStraight">Тройники прямые (ζ=0.3):</label><input type="number" id="teesStraight" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblTeesTurn">Тройники поворотные (ζ=1.5):</label><input type="number" id="teesTurn" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblCheckValves">Обратные клапаны (ζ=2.5):</label><input type="number" id="checkValves" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblGateValves">Задвижки (ζ=0.2):</label><input type="number" id="gateValves" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblBallValves">Шаровые краны (ζ=0.05):</label><input type="number" id="ballValves" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblGlobeValves">Вентили (ζ=10):</label><input type="number" id="globeValves" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblFilters">Сетчатые фильтры (ζ=2.0):</label><input type="number" id="filters" value="0" min="0" step="1"></div>
+<div class="field-row"><label id="lblCompensators">Сильфонные компенсаторы (ζ=1.5):</label><input type="number" id="compensators" value="0" min="0" step="1"></div>
 <div class="field-row"><label id="lblContractions">Сужений (ζ=0.5):</label><input type="number" id="contractions" value="0" min="0" step="1"></div>
 <div class="field-row"><label id="lblExpansions">Расширений (ζ=1.0):</label><input type="number" id="expansions" value="0" min="0" step="1"></div>
 <div class="field-row"><label id="lblOrifices">Дросселей/диафрагм (ζ=2.0):</label><input type="number" id="orifices" value="0" min="0" step="1"></div>
 </div>
-<div class="field-row"><label id="lblPressureUnit">Единицыдавления:</label><select id="pressureUnit"><option value="Pa">Pa</option><option value="kPa">kPa</option><option value="bar">bar</option><option value="kgf/cm²">kgf/cm²</option><option value="psi">psi</option></select></div>
+<div class="field-row"><label id="lblPressureUnit">Единицы давления:</label><select id="pressureUnit"><option value="Pa">Pa</option><option value="kPa">kPa</option><option value="bar">bar</option><option value="kgf/cm²">kgf/cm²</option><option value="psi">psi</option></select></div>
 <div id="infoBlock" class="info-block">
 <div class="info-panel" id="infoPanel"></div>
 <div id="reliabilityIndicator" class="reliability-indicator reliability-green" style="display:none;">
@@ -397,15 +448,28 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 </div>
 <div class="btn-row">
 <button class="calc-btn" id="calculateBtn">Рассчитать</button>
-<button class="save-btn" id="saveBtn" disabled>Сохранитьвфайл</button>
+<button class="save-btn" id="saveBtn" disabled>Сохранить в файл</button>
 </div>
 <div class="result-area" id="resultArea">
 <span id="velocityResult">Скорость: ---</span>
-<span id="pressureDropResult">Потерядавления: ---</span>
-<span id="reynoldsResult">ЧислоРейнольдса: ---</span>
-<span id="lambdaResult">Коэффициенттренияλ: ---</span>
+<span id="pressureDropResult">Потеря давления: ---</span>
+<span id="reynoldsResult">Число Рейнольдса: ---</span>
+<span id="lambdaResult">Коэффициент трения λ: ---</span>
 <span id="compressNote" class="note"></span>
 </div>
+
+<!-- Кавитация v2.0 (только для жидкостей) -->
+<div class="cavitation-panel" id="cavitationPanel" style="display:none;">
+<h4 id="cavitationTitle">Проверка кавитации</h4>
+<div id="cavitationContent"></div>
+</div>
+
+<!-- Эрозия v2.0 -->
+<div class="erosion-panel" id="erosionPanel" style="display:none;">
+<h4 id="erosionTitle">Контроль эрозии</h4>
+<div id="erosionContent"></div>
+</div>
+
 <div class="validation-panel" id="validationPanel" style="display:none;">
 <h4>Точность модели (проверка по справочным данным)</h4>
 <div id="validationContent"></div>
@@ -640,14 +704,14 @@ ethane: [
   [90.4, 2.8],      // тройная точка (оценка по низкому давлению)
   [100.0, 3.0],     // низкое давление
   [150.0, 4.5],     // перегретый пар
-  [184.6, 9.3],     // точка кипения (NIST: 9.2-9.4 мкПа·с)
+  [184.6, 9.3],     // точка кипения (NIST: 9.2-9.4 мкПа•с)
   [200.0, 10.0],    // перегретый пар
   [250.0, 12.0],    // 
-  [300.0, 14.0],    // NIST REFPROP: ~13.8 мкПа·с
+  [300.0, 14.0],    // NIST REFPROP: ~13.8 мкПа•с
   [305.4, 15.0],    // критическая точка (оценка)
   [350.0, 16.5],    // сверхкритическая область
   [400.0, 18.5],    // 
-  [500.0, 22.0],    // NIST: ~22 мкПа·с
+  [500.0, 22.0],    // NIST: ~22 мкПа•с
   [600.0, 25.5]     // высокая температура
 ],
 propane: [
@@ -655,13 +719,13 @@ propane: [
   [100.0, 2.8],     // низкое давление
   [150.0, 4.2],     // перегретый пар
   [200.0, 6.0],     // 
-  [231.0, 8.0],     // точка кипения (NIST: ~7.9-8.1 мкПа·с)
+  [231.0, 8.0],     // точка кипения (NIST: ~7.9-8.1 мкПа•с)
   [250.0, 8.8],     // перегретый пар
-  [300.0, 10.5],    // NIST REFPROP: ~10.3 мкПа·с
+  [300.0, 10.5],    // NIST REFPROP: ~10.3 мкПа•с
   [350.0, 12.0],    // 
   [369.8, 14.0],    // критическая точка (оценка)
   [400.0, 15.0],    // сверхкритическая область
-  [500.0, 18.0],    // NIST: ~18 мкПа·с
+  [500.0, 18.0],    // NIST: ~18 мкПа•с
   [600.0, 20.5]     // высокая температура
 ],
 ammonia: [
@@ -1908,7 +1972,10 @@ liquidDensityRange:'Плотность: {min}...{max} кг/м³',
 liquidViscosityRange:'Вязкость: {min}...{max} сСт',
 liquidPressureNote:'⚠ Для сжиженных газов свойства фиксированы.',
 liquidLimitInfo:'Допустимый диапазон (жидкость): T {tmin}...{tmax} °C, P {pmin}...{pmax} бар',
-contractions:'Сужений (ζ=0.5):', expansions:'Расширений (ζ=1.0):', orifices:'Дросселей/диафрагм (ζ=2.0):',
+bends45: 'Поворотов 45° (ζ=0.2):', teesStraight: 'Тройники прямые (ζ=0.3):', teesTurn: 'Тройники поворотные (ζ=1.5):',
+checkValves: 'Обратные клапаны (ζ=2.5):', gateValves: 'Задвижки (ζ=0.2):', ballValves: 'Шаровые краны (ζ=0.05):',
+globeValves: 'Вентили (ζ=10):', filters: 'Сетчатые фильтры (ζ=2.0):',
+compensators: 'Сильфонные компенсаторы (ζ=1.5):', contractions:'Сужений (ζ=0.5):', expansions:'Расширений (ζ=1.0):', orifices:'Дросселей/диафрагм (ζ=2.0):', lblGeodetic:'Перепад высот Δz (м):',
 warningSaturationAbove:'⚠ Давление выше давления насыщения --- расчёт сжиженного газа. Для точности выберите режим «Жидкость».',
 warningNearSaturation:'⚠ Близко к линии насыщения --- возможна конденсация.',
 infoPanelSaturatedLiquid:' ⚠ Давление выше давления насыщения.',
@@ -2062,7 +2129,7 @@ helpContent: `
 <tr><td>Вода, 0…100°C, любое давление</td><td>Отопление, ГВС, водоснабжение</td><td>🟢 Высокое</td></tr>
 <tr><td>Масло И-20, 20…80°C</td><td>Гидравлические системы</td><td>🟢 Высокое</td></tr>
 <tr><td>Воздух / азот, −50…+200°C, P &lt; 10 бар</td><td>Вентиляция, сжатый воздух</td><td>🟢 Высокое</td></tr>
-<tr><td>Газ при P &lt; 0.1·Pc, T &gt; 1.5·Tc</td><td>Природный газ в трубопроводах</td><td>🟡 Среднее</td></tr>
+<tr><td>Газ при P &lt; 0.1•Pc, T &gt; 1.5•Tc</td><td>Природный газ в трубопроводах</td><td>🟡 Среднее</td></tr>
 <tr><td>Упрощённый режим (любая среда)</td><td>Быстрая оценка потерь давления</td><td>🟢 Высокое</td></tr>
 </table>
 <h4>⚠️ Что работает с оговорками (ошибка ±10–20%)</h4>
@@ -2077,7 +2144,7 @@ helpContent: `
 <tr style="background:#f8d7da; font-weight:bold;"><th style="color:#000000;">Сценарий</th><th style="color:#000000;">Почему</th><th style="color:#000000;">Доверие</th></tr>
 <tr><td>Криогенные жидкости (жидкий N₂, O₂, CH₄)</td><td>Rackett даёт погрешность 10–20%</td><td>🔴 Низкое</td></tr>
 <tr><td>Водород, гелий при T &lt; 50 K</td><td>Квантовые эффекты, классика не работает</td><td>🔴 Низкое</td></tr>
-<tr><td>Газ при P &gt; 0.5·Pc (плотность)</td><td>Peng-Robinson «ломается»</td><td>🔴 Низкое</td></tr>
+<tr><td>Газ при P &gt; 0.5•Pc (плотность)</td><td>Peng-Robinson «ломается»</td><td>🔴 Низкое</td></tr>
 <tr><td>Вблизи критической точки (Tr &gt; 0.9, Pr &gt; 0.75)</td><td>Флуктуации, модель неприменима</td><td>🔴 Низкое</td></tr>
 <tr><td>Полярные вещества — пар (NH₃, H₂O)</td><td>Peng-Robinson не учитывает диполи</td><td>🔴 Низкое</td></tr>
 <tr><td>Вязкость сжиженного газа при высоком P</td><td>Таблицы для насыщения, не для P &gt; P_sat</td><td>🔴 Низкое</td></tr>
@@ -2141,7 +2208,7 @@ liquidDensityRange:'Density: {min}...{max} kg/m³',
 liquidViscosityRange:'Viscosity: {min}...{max} cSt',
 liquidPressureNote:'⚠ For liquefied gases, properties are fixed.',
 liquidLimitInfo:'Valid range (liquid): T {tmin}...{tmax} °C, P {pmin}...{pmax} bar',
-contractions:'Contractions (ζ=0.5):', expansions:'Expansions (ζ=1.0):', orifices:'Orifices/diaphragms (ζ=2.0):',
+bends45: '45° Bends (ζ=0.2):', teesStraight: 'Straight Tees (ζ=0.3):', teesTurn: 'Turn Tees (ζ=1.5):', checkValves: 'Check Valves (ζ=2.5):', gateValves: 'Gate Valves (ζ=0.2):', ballValves: 'Ball Valves (ζ=0.05):', globeValves: 'Globe Valves (ζ=10):', filters: 'Strainers (ζ=2.0):', compensators: 'Bellows Compensators (ζ=1.5):', contractions:'Contractions (ζ=0.5):', expansions:'Expansions (ζ=1.0):', orifices:'Orifices/diaphragms (ζ=2.0):', lblGeodetic: 'Elevation difference Δz (m):',
 warningSaturationAbove:'⚠ Pressure above saturation — liquefied gas calculation. For accuracy, select Liquid mode.',
 warningNearSaturation:'⚠ Near saturation line — condensation possible.',
 infoPanelSaturatedLiquid:' ⚠ Pressure above saturation.',
@@ -2295,7 +2362,7 @@ helpContent: `
 <tr><td>Water, 0…100°C, any pressure</td><td>Heating, hot water supply, plumbing</td><td>🟢 High</td></tr>
 <tr><td>Oil ISO VG 32/46, 20…80°C</td><td>Hydraulic systems</td><td>🟢 High</td></tr>
 <tr><td>Air / nitrogen, −50…+200°C, P &lt; 10 bar</td><td>Ventilation, compressed air</td><td>🟢 High</td></tr>
-<tr><td>Gas at P &lt; 0.1·Pc, T &gt; 1.5·Tc</td><td>Natural gas pipelines</td><td>🟡 Medium</td></tr>
+<tr><td>Gas at P &lt; 0.1•Pc, T &gt; 1.5•Tc</td><td>Natural gas pipelines</td><td>🟡 Medium</td></tr>
 <tr><td>Simplified mode (any fluid)</td><td>Quick pressure drop estimate</td><td>🟢 High</td></tr>
 </table>
 <h4>⚠️ What Works with Caveats (error ±10–20%)</h4>
@@ -2310,7 +2377,7 @@ helpContent: `
 <tr style="background:#f8d7da; font-weight:bold;"><th style="color:#000000;">Scenario</th><th style="color:#000000;">Why</th><th style="color:#000000;">Confidence</th></tr>
 <tr><td>Cryogenic liquids (liquid N₂, O₂, CH₄)</td><td>Rackett equation gives 10–20% error</td><td>🔴 Low</td></tr>
 <tr><td>Hydrogen, helium at T &lt; 50 K</td><td>Quantum effects, classical mechanics fails</td><td>🔴 Low</td></tr>
-<tr><td>Gas at P &gt; 0.5·Pc (density)</td><td>Peng–Robinson equation "breaks"</td><td>🔴 Low</td></tr>
+<tr><td>Gas at P &gt; 0.5•Pc (density)</td><td>Peng–Robinson equation "breaks"</td><td>🔴 Low</td></tr>
 <tr><td>Near critical point (Tr &gt; 0.9, Pr &gt; 0.75)</td><td>Fluctuations, model not applicable</td><td>🔴 Low</td></tr>
 <tr><td>Polar substances — vapor (NH₃, H₂O)</td><td>Peng–Robinson ignores dipole moments</td><td>🔴 Low</td></tr>
 <tr><td>Viscosity of liquefied gas at high P</td><td>Tables are for saturation, not P &gt; P_sat</td><td>🔴 Low</td></tr>
@@ -2369,12 +2436,7 @@ infoPanelGas:'⚠气体密度根据实际气体状态方程（Z）计算。粘�
 infoPanelLiquid:'⚠检查液体密度和粘度的实际范围。',
 infoPanelLng:'⚠ LNG/NG 混合物。相态和参数限制取决于组成。',
 limitInfo:'有效范围：T {tmin}...{tmax} °C, P {pmin}...{pmax} 巴',
-noLimitInfo:'无参考限制。',
-liquidDensityRange:'密度：{min}...{max} 千克/立方米',
-liquidViscosityRange:'粘度：{min}...{max} 厘斯',
-liquidPressureNote:'⚠液化气体属性为固定值。',
-liquidLimitInfo:'有效范围（液体）：T {tmin}...{tmax} °C, P {pmin}...{pmax} 巴',
-contractions:'收缩 (ζ=0.5)：', expansions:'扩张 (ζ=1.0)：', orifices:'孔板/节流阀 (ζ=2.0)：',
+noLimitInfo:'无参考限制。', liquidDensityRange:'密度：{min}...{max} 千克/立方米', liquidViscosityRange:'粘度：{min}...{max} 厘斯', liquidPressureNote:'⚠液化气体属性为固定值。', liquidLimitInfo:'有效范围（液体）：T {tmin}...{tmax} °C, P {pmin}...{pmax} 巴', bends45: '45°弯头 (ζ=0.2)：', teesStraight: '直通三通 (ζ=0.3)：', teesTurn: '转向三通 (ζ=1.5)：', checkValves: '止回阀 (ζ=2.5)：', gateValves: '闸阀 (ζ=0.2)：', ballValves: '球阀 (ζ=0.05)：', globeValves: '截止阀 (ζ=10)：', filters: '过滤器 (ζ=2.0)：', compensators: '波纹管补偿器 (ζ=1.5)：', contractions:'收缩 (ζ=0.5)：', expansions:'扩张 (ζ=1.0)：', orifices:'孔板/节流阀 (ζ=2.0)：', lblGeodetic: '高程差 Δz (米)：',
 warningSaturationAbove:'⚠压力高于饱和压力 — 按液化气体计算。为获得更高精度，请切换至液体模式。',
 warningNearSaturation:'⚠接近饱和压力 — 可能发生冷凝。',
 infoPanelSaturatedLiquid:' ⚠压力高于饱和压力。',
@@ -2528,7 +2590,7 @@ helpContent: `
 <tr><td>水，0…100°C，任何压力</td><td>供暖、热水供应、给水</td><td>🟢 高</td></tr>
 <tr><td>ISO VG 32/46 油，20…80°C</td><td>液压系统</td><td>🟢 高</td></tr>
 <tr><td>空气/氮气，−50…+200°C，P &lt; 10 巴</td><td>通风、压缩空气</td><td>🟢 高</td></tr>
-<tr><td>气体在 P &lt; 0.1·Pc，T &gt; 1.5·Tc</td><td>天然气管道</td><td>🟡 中</td></tr>
+<tr><td>气体在 P &lt; 0.1•Pc，T &gt; 1.5•Tc</td><td>天然气管道</td><td>🟡 中</td></tr>
 <tr><td>简化模式（任何流体）</td><td>快速估算压降</td><td>🟢 高</td></tr>
 </table>
 <h4>⚠️ 有保留条件的场景（误差 ±10–20%）</h4>
@@ -2543,7 +2605,7 @@ helpContent: `
 <tr style="background:#f8d7da; font-weight:bold;"><th style="color:#000000;">场景</th><th style="color:#000000;">原因</th><th style="color:#000000;">可信度</th></tr>
 <tr><td>低温液体（液态 N₂、O₂、CH₄）</td><td>Rackett 方程误差 10–20%</td><td>🔴 低</td></tr>
 <tr><td>氢气、氦气在 T &lt; 50 K</td><td>量子效应，经典力学失效</td><td>🔴 低</td></tr>
-<tr><td>气体在 P &gt; 0.5·Pc（密度）</td><td>Peng–Robinson 方程“失效”</td><td>🔴 低</td></tr>
+<tr><td>气体在 P &gt; 0.5•Pc（密度）</td><td>Peng–Robinson 方程“失效”</td><td>🔴 低</td></tr>
 <tr><td>临界点附近（Tr &gt; 0.9，Pr &gt; 0.75）</td><td>涨落，模型不适用</td><td>🔴 低</td></tr>
 <tr><td>极性物质——蒸汽（NH₃、H₂O）</td><td>Peng–Robinson 忽略偶极矩</td><td>🔴 低</td></tr>
 <tr><td>高压下液化气体粘度</td><td>表格数据仅适用于饱和状态，不适用于 P &gt; P_sat</td><td>🔴 低</td></tr>
@@ -3763,7 +3825,21 @@ calculateBtn.addEventListener('click',()=>{
 updateAllWarnings();
 
   try{
-    const bends=parseInt(document.getElementById('bends').value)||0,valves=parseInt(document.getElementById('valves').value)||0,contractions=parseInt(document.getElementById('contractions').value)||0,expansions=parseInt(document.getElementById('expansions').value)||0,orifices=parseInt(document.getElementById('orifices').value)||0;
+    const bends = parseInt(document.getElementById('bends').value) || 0;
+const valves = parseInt(document.getElementById('valves').value) || 0;
+const bends45 = parseInt(document.getElementById('bends45').value) || 0;
+const teesStraight = parseInt(document.getElementById('teesStraight').value) || 0;
+const teesTurn = parseInt(document.getElementById('teesTurn').value) || 0;
+const checkValves = parseInt(document.getElementById('checkValves').value) || 0;
+const gateValves = parseInt(document.getElementById('gateValves').value) || 0;
+const ballValves = parseInt(document.getElementById('ballValves').value) || 0;
+const globeValves = parseInt(document.getElementById('globeValves').value) || 0;
+const filters = parseInt(document.getElementById('filters').value) || 0;
+const compensators = parseInt(document.getElementById('compensators').value) || 0;
+const contractions = parseInt(document.getElementById('contractions').value) || 0;
+const expansions = parseInt(document.getElementById('expansions').value) || 0;
+const orifices = parseInt(document.getElementById('orifices').value) || 0;
+const geodetic = parseFloat(document.getElementById('geodetic').value) || 0;
     const outerD=parseFloat(document.getElementById('outerDiam').value),wall=parseFloat(document.getElementById('wall').value),density=parseFloat(document.getElementById('density').value),length=parseFloat(document.getElementById('length').value),massFlow=parseFloat(document.getElementById('massFlow').value);
     const Tval=parseFloat(document.getElementById('temperature').value),Pval=parseFloat(document.getElementById('pressure').value);
     if(isNaN(Pval)||Pval<=0){alert(t('errorPresAbs'));return}
@@ -3777,7 +3853,26 @@ updateAllWarnings();
       lastResult.mediumType=medium;lastResult.preset=presetSelect.value;
       if(medium=='gas'&&presetSelect.value!=='lng'){const P=parseFloat(document.getElementById('pressure').value)*1e5,T=parseFloat(document.getElementById('temperature').value)+273.15,M=parseFloat(document.getElementById('molarMass').value)/1000;compressDiff=Math.abs(density-P*M/(R_GAS*T))/(P*M/(R_GAS*T))*100}
       re=velocity*(innerD/1000)/kinVisc;lambda=(re<2300)?64/re:0.25/Math.pow(Math.log10(roughness/innerD/3.7+5.74/Math.pow(re,0.9)),2);
-      const totalZeta=lambda*length*1000/innerD+bends*0.3+valves*3.0+contractions*0.5+expansions*1.0+orifices*2.0,dP0=totalZeta*density*velocity*velocity/2;
+      const totalZeta = lambda * length * 1000 / innerD
+    + bends * 0.3
+    + valves * 3.0
+    + bends45 * 0.2
+    + teesStraight * 0.3
+    + teesTurn * 1.5
+    + checkValves * 2.5
+    + gateValves * 0.2
+    + ballValves * 0.05
+    + globeValves * 10
+    + filters * 2.0
+    + compensators * 1.5
+    + contractions * 0.5
+    + expansions * 1.0
+    + orifices * 2.0;
+      let dP0 = totalZeta * density * velocity * velocity / 2;
+      // Добавляем перепад высот
+      const g = 9.81;
+      const dP_geo = density * g * geodetic;
+      dP0 += dP_geo;
       let dPf=dP0;
       if(medium=='gas'){compressCorrection=calcCompressibilityCorrection(velocity,dP0);dPf=compressCorrection.dP_corrected;machExceeded=compressCorrection.mach>0.3;updateCompressNoteFromCorr(compressCorrection)}
       else{const n=document.getElementById('compressNote');n.textContent='';n.classList.remove('show');n.style.display='none'}
@@ -3888,7 +3983,21 @@ roughness_mm = Math.min(Math.max(roughness_mm, 0.01), 1.0);
   const kinVisc = viscosity_cSt * 1e-6;
   const re = velocity * (innerDiam_mm/1000) / kinVisc;
   const lambda = (re < 2300) ? 64/re : 0.25 / Math.pow(Math.log10(roughness_mm/innerDiam_mm/3.7 + 5.74/Math.pow(re,0.9)), 2);
-  const totalZeta = lambda * length_m * 1000 / innerDiam_mm + bends*0.3 + valves*3.0;
+  const totalZeta = lambda * length * 1000 / innerD
+    + bends * 0.3
+    + valves * 3.0
+    + bends45 * 0.2
+    + teesStraight * 0.3
+    + teesTurn * 1.5
+    + checkValves * 2.5
+    + gateValves * 0.2
+    + ballValves * 0.05
+    + globeValves * 10
+    + filters * 2.0
+    + compensators * 1.5
+    + contractions * 0.5
+    + expansions * 1.0
+    + orifices * 2.0;
   return { deltaP: totalZeta * density * velocity * velocity / 2, velocity, re, lambda };
 }
 
@@ -4031,9 +4140,19 @@ function applyLanguage(){
   document.getElementById('lblPressure').textContent=t('pressure');document.getElementById('lblTemperature').textContent=t('temperature');
   document.getElementById('lblMolarMass').innerHTML=t('molarMass');
   document.getElementById('lblPressureUnit').textContent=t('pressureUnit');
+  document.getElementById('lblBends45').textContent = t('bends45');
+  document.getElementById('lblTeesStraight').textContent = t('teesStraight');
+  document.getElementById('lblTeesTurn').textContent = t('teesTurn');
+  document.getElementById('lblCheckValves').textContent = t('checkValves');
+  document.getElementById('lblGateValves').textContent = t('gateValves');
+  document.getElementById('lblBallValves').textContent = t('ballValves');
+  document.getElementById('lblGlobeValves').textContent = t('globeValves');
+  document.getElementById('lblFilters').textContent = t('filters');
+  document.getElementById('lblCompensators').textContent = t('compensators');
   document.getElementById('lblContractions').textContent=t('contractions');
   document.getElementById('lblExpansions').textContent=t('expansions');
   document.getElementById('lblOrifices').textContent=t('orifices');
+  document.getElementById('lblGeodetic').textContent = t('lblGeodetic');
   calculateBtn.textContent=t('calculate');saveBtn.textContent=t('save');
   document.getElementById('shareBtn').textContent='📤 '+t('share');
   helpBtnEl.textContent = '❓ ' + t('helpBtn');
