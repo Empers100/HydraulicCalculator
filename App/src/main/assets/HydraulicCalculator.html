@@ -97,6 +97,28 @@ body.dark .theme-toggle::after { transform: translateX(24px); }
   border-radius: 10px; background: var(--btn-bg); color: var(--text);
   font-size: 16px; text-align: right; min-width: 0;
 }
+.geodetic-row input {
+  flex: 1;
+  padding: 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--btn-bg);
+  color: var(--text);
+  font-size: 16px;
+  text-align: right;
+  min-width: 0;
+}
+.geodetic-row select {
+  flex: 1;
+  padding: 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--btn-bg);
+  color: var(--text);
+  font-size: 16px;
+  text-align: right;
+  min-width: 0;
+}
 .engineer-block { display: none; flex-direction: column; gap: 5px; }
 .extra-resistances { display: none; flex-direction: column; gap: 5px; }
 .engineer-block.show { display: flex; }
@@ -3761,10 +3783,10 @@ function resetResults(){
 }
 
 function updateResultLabels(){
-  velocityResult.textContent=t('velocity')+': '+(lastResult.velocity>0?lastResult.velocity.toFixed(3)+' '+locales[currentLang].units.m_s:'---');
-  pressureDropResult.textContent=t('pressureDrop')+': '+(lastResult.deltaP>0?formatPressure(lastResult.deltaP,lastResult.pressureUnit):'---');
-  reynoldsResult.textContent=t('reynolds')+': '+(lastResult.re>0?lastResult.re.toFixed(0):'---');
-  lambdaResult.textContent=t('lambda')+': '+(lastResult.lambda>0?lastResult.lambda.toFixed(4):'---');
+  velocityResult.textContent = t('velocity') + ': ' + (lastResult.velocity !== 0 ? lastResult.velocity.toFixed(3) + ' ' + locales[currentLang].units.m_s : '---');
+  pressureDropResult.textContent = t('pressureDrop') + ': ' + (lastResult.deltaP !== 0 ? formatPressure(lastResult.deltaP, lastResult.pressureUnit) : '0 ' + (locales[currentLang].units[lastResult.pressureUnit] || lastResult.pressureUnit));
+  reynoldsResult.textContent = t('reynolds') + ': ' + (lastResult.re !== 0 ? lastResult.re.toFixed(0) : '---');
+  lambdaResult.textContent = t('lambda') + ': ' + (lastResult.lambda !== 0 ? lastResult.lambda.toFixed(4) : '---');
 }
 
 function updateDisplayWithResult(){
@@ -3773,116 +3795,135 @@ function updateDisplayWithResult(){
   mainDisplay.value=lastResult.velocity.toFixed(3);
 }
 
-calculateBtn.addEventListener('click',()=>{
+calculateBtn.addEventListener('click', () => {
     // ===== БЛОКИРОВКА: экстремальная зона =====
     if (modeSelect.value === 'engineer' && presetSelect.value !== 'choose'
-        && presetSelect.value !== 'lng' && mediumSelect.value === 'gas') {
+&& presetSelect.value !== 'lng' && mediumSelect.value === 'gas') {
         const zoneCheck = getAllMessages();
-        if (zoneCheck.blocked) {
-            // Расчёт заблокирован — предупреждения уже показаны
-            return;
-        }
+        if (zoneCheck.blocked) return;
     }
-    // ===== НАЧАЛО: ПРОВЕРКА ТЕМПЕРАТУРЫ =====
+
+    // ===== ПРОВЕРКА ТЕМПЕРАТУРЫ =====
     const T = parseFloat(document.getElementById('temperature').value);
     const tempField = document.getElementById('temperature');
-
-    // Сначала убираем старую подсветку
     if (tempField) tempField.classList.remove('error-border');
-
     if (isNaN(T) || T < -273.15) {
-        // Для мобильных: показываем сообщение в панели предупреждений
-        updateAllWarnings(); // Это создаст красный блок с ошибкой
-
-        // Для ПК: alert остаётся как fallback
-        // Но НЕ блокируем мобильный вывод — alert можно закомментировать если мешает
-        // alert(t('errorTempAbs'));
-
+        updateAllWarnings();
         if (tempField) tempField.classList.add('error-border');
         return;
     }
-
-    // Проверка диапазона для газа
     if (modeSelect.value === 'engineer' && presetSelect.value !== 'choose' && mediumSelect.value === 'gas') {
-        const preset = presetSelect.value;
-        const limits = gasLimits[preset];
+        const limits = gasLimits[presetSelect.value];
         if (limits) {
-            const tmin = limits.Tmin - 273.15;
-            const tmax = limits.Tmax - 273.15;
+            const tmin = limits.Tmin - 273.15, tmax = limits.Tmax - 273.15;
             if (T < tmin || T > tmax) {
-                updateAllWarnings(); // Покажет ошибку в панели
-
-                // alert(t('errorTempLimit')
-                //     .replace('{min}', tmin.toFixed(1))
-                //     .replace('{max}', tmax.toFixed(1)));
-
+                updateAllWarnings();
                 if (tempField) tempField.classList.add('error-border');
                 return;
             }
         }
     }
-// Обновляем предупреждения без блокировки расчёта
-updateAllWarnings();
+    updateAllWarnings();
 
-  try{
-    const bends = parseInt(document.getElementById('bends').value) || 0;
-const valves = parseInt(document.getElementById('valves').value) || 0;
-const bends45 = parseInt(document.getElementById('bends45').value) || 0;
-const teesStraight = parseInt(document.getElementById('teesStraight').value) || 0;
-const teesTurn = parseInt(document.getElementById('teesTurn').value) || 0;
-const checkValves = parseInt(document.getElementById('checkValves').value) || 0;
-const gateValves = parseInt(document.getElementById('gateValves').value) || 0;
-const ballValves = parseInt(document.getElementById('ballValves').value) || 0;
-const globeValves = parseInt(document.getElementById('globeValves').value) || 0;
-const filters = parseInt(document.getElementById('filters').value) || 0;
-const compensators = parseInt(document.getElementById('compensators').value) || 0;
-const contractions = parseInt(document.getElementById('contractions').value) || 0;
-const expansions = parseInt(document.getElementById('expansions').value) || 0;
-const orifices = parseInt(document.getElementById('orifices').value) || 0;
-const geodetic = parseFloat(document.getElementById('geodetic').value) || 0;
-    const outerD=parseFloat(document.getElementById('outerDiam').value),wall=parseFloat(document.getElementById('wall').value),density=parseFloat(document.getElementById('density').value),length=parseFloat(document.getElementById('length').value),massFlow=parseFloat(document.getElementById('massFlow').value);
-    const Tval=parseFloat(document.getElementById('temperature').value),Pval=parseFloat(document.getElementById('pressure').value);
-    if(isNaN(Pval)||Pval<=0){alert(t('errorPresAbs'));return}
-    if(outerD<=0||wall<0||outerD-2*wall<=0){alert(t('errorDiam'));return}
-    if(density<=0||length<=0||massFlow<=0){alert(t('errorPos'));return}
-    const innerD=outerD-2*wall,area=Math.PI*Math.pow(innerD/1000,2)/4,velocity=massFlow/3600/area/density;
-    let deltaP,lambda=0,re=0,compressDiff=null,machExceeded=false,compressCorrection=null;
-    if(modeSelect.value=='simple'){deltaP=density*Math.pow(velocity,2)/2*(41*length/innerD+5*valves+0.17*bends);lastResult.mode='simple'}
-    else{
-      const viscosity=parseFloat(document.getElementById('viscosity').value),roughness=parseFloat(document.getElementById('roughness').value),kinVisc=viscosity*1e-6,medium=mediumSelect.value;
-      lastResult.mediumType=medium;lastResult.preset=presetSelect.value;
-      if(medium=='gas'&&presetSelect.value!=='lng'){const P=parseFloat(document.getElementById('pressure').value)*1e5,T=parseFloat(document.getElementById('temperature').value)+273.15,M=parseFloat(document.getElementById('molarMass').value)/1000;compressDiff=Math.abs(density-P*M/(R_GAS*T))/(P*M/(R_GAS*T))*100}
-      re=velocity*(innerD/1000)/kinVisc;lambda=(re<2300)?64/re:0.25/Math.pow(Math.log10(roughness/innerD/3.7+5.74/Math.pow(re,0.9)),2);
-      const totalZeta = lambda * length * 1000 / innerD
-    + bends * 0.3
-    + valves * 3.0
-    + bends45 * 0.2
-    + teesStraight * 0.3
-    + teesTurn * 1.5
-    + checkValves * 2.5
-    + gateValves * 0.2
-    + ballValves * 0.05
-    + globeValves * 10
-    + filters * 2.0
-    + compensators * 1.5
-    + contractions * 0.5
-    + expansions * 1.0
-    + orifices * 2.0;
-      let dP0 = totalZeta * density * velocity * velocity / 2;
-      // Добавляем перепад высот
-      const g = 9.81;
-      const dP_geo = density * g * geodetic;
-      dP0 += dP_geo;
-      let dPf=dP0;
-      if(medium=='gas'){compressCorrection=calcCompressibilityCorrection(velocity,dP0);dPf=compressCorrection.dP_corrected;machExceeded=compressCorrection.mach>0.3;updateCompressNoteFromCorr(compressCorrection)}
-      else{const n=document.getElementById('compressNote');n.textContent='';n.classList.remove('show');n.style.display='none'}
-      deltaP=dPf;lastResult.re=re;lastResult.lambda=lambda;
+    try {
+        // ===== СЧИТЫВАЕМ ВСЕ ВХОДНЫЕ ДАННЫЕ =====
+        const bends = parseInt(document.getElementById('bends').value) || 0;
+        const valves = parseInt(document.getElementById('valves').value) || 0;
+        const bends45 = parseInt(document.getElementById('bends45').value) || 0;
+        const teesStraight = parseInt(document.getElementById('teesStraight').value) || 0;
+        const teesTurn = parseInt(document.getElementById('teesTurn').value) || 0;
+        const checkValves = parseInt(document.getElementById('checkValves').value) || 0;
+        const gateValves = parseInt(document.getElementById('gateValves').value) || 0;
+        const ballValves = parseInt(document.getElementById('ballValves').value) || 0;
+        const globeValves = parseInt(document.getElementById('globeValves').value) || 0;
+        const filters = parseInt(document.getElementById('filters').value) || 0;
+        const compensators = parseInt(document.getElementById('compensators').value) || 0;
+        const contractions = parseInt(document.getElementById('contractions').value) || 0;
+        const expansions = parseInt(document.getElementById('expansions').value) || 0;
+        const orifices = parseInt(document.getElementById('orifices').value) || 0;
+        const geodetic = parseFloat(document.getElementById('geodetic').value) || 0;
+
+        const outerD = parseFloat(document.getElementById('outerDiam').value);
+        const wall = parseFloat(document.getElementById('wall').value);
+        const density = parseFloat(document.getElementById('density').value);
+        const length = parseFloat(document.getElementById('length').value);
+        const massFlow = parseFloat(document.getElementById('massFlow').value);
+        const Pval = parseFloat(document.getElementById('pressure').value);
+
+        if (isNaN(Pval) || Pval <= 0) { alert(t('errorPresAbs')); return; }
+        if (outerD <= 0 || wall < 0 || outerD - 2 * wall <= 0) { alert(t('errorDiam')); return; }
+        if (density <= 0 || length <= 0 || massFlow <= 0) { alert(t('errorPos')); return; }
+
+        const innerD = outerD - 2 * wall;
+        const area = Math.PI * Math.pow(innerD / 1000, 2) / 4;
+        const velocity = massFlow / 3600 / area / density;
+
+        let deltaP, lambda = 0, re = 0, compressCorrection = null, machExceeded = false, compressDiff = null;
+
+        if (modeSelect.value == 'simple') {
+            // Упрощённый режим
+            let dP_fric = density * velocity * velocity / 2 * (41 * length / innerD + 5 * valves + 0.17 * bends);
+            deltaP = dP_fric + density * 9.81 * geodetic;
+            lastResult.mode = 'simple';
+        } else {
+            // Инженерный режим
+            const viscosity = parseFloat(document.getElementById('viscosity').value);
+            const roughness = parseFloat(document.getElementById('roughness').value);
+            const kinVisc = viscosity * 1e-6;
+            const medium = mediumSelect.value;
+
+            lastResult.mediumType = medium;
+            lastResult.preset = presetSelect.value;
+
+            if (medium == 'gas' && presetSelect.value !== 'lng') {
+                const P = Pval * 1e5;
+                const Tk = T + 273.15;
+                const M = parseFloat(document.getElementById('molarMass').value) / 1000;
+                compressDiff = Math.abs(density - P * M / (R_GAS * Tk)) / (P * M / (R_GAS * Tk)) * 100;
+            }
+
+            re = velocity * (innerD / 1000) / kinVisc;
+            lambda = (re < 2300) ? 64 / re : 0.25 / Math.pow(Math.log10(roughness / innerD / 3.7 + 5.74 / Math.pow(re, 0.9)), 2);
+
+            const totalZeta = lambda * length * 1000 / innerD
+                + bends * 0.3 + valves * 3.0 + bends45 * 0.2 + teesStraight * 0.3 + teesTurn * 1.5
+                + checkValves * 2.5 + gateValves * 0.2 + ballValves * 0.05 + globeValves * 10
+                + filters * 2.0 + compensators * 1.5 + contractions * 0.5 + expansions * 1.0 + orifices * 2.0;
+
+            let dP_fric = totalZeta * density * velocity * velocity / 2;
+
+            if (medium == 'gas') {
+                compressCorrection = calcCompressibilityCorrection(velocity, dP_fric);
+                dP_fric = compressCorrection.dP_corrected;
+                machExceeded = compressCorrection.mach > 0.3;
+                updateCompressNoteFromCorr(compressCorrection);
+            } else {
+                const note = document.getElementById('compressNote');
+                if (note) { note.textContent = ''; note.classList.remove('show'); note.style.display = 'none'; }
+            }
+
+            deltaP = dP_fric + density * 9.81 * geodetic;
+            lastResult.re = re;
+            lastResult.lambda = lambda;
+        }
+
+        lastResult.velocity = velocity;
+        lastResult.deltaP = deltaP;
+        lastResult.pressureUnit = document.getElementById('pressureUnit').value;
+        lastResult.compressDiff = (compressDiff !== null && compressDiff > 10) ? compressDiff : null;
+        lastResult.compressMach = machExceeded;
+        lastResult.compressCorrection = compressCorrection || null;
+
+        saveBtn.disabled = false;
+        updateResultLabels();
+        updateDisplayWithResult();
+        updateAllWarnings();
+        updateFieldBorders();
+
+    } catch (e) {
+        console.error(e);
+        alert(t('errorNum'));
     }
-    lastResult.velocity=velocity;lastResult.deltaP=deltaP;lastResult.pressureUnit=document.getElementById('pressureUnit').value;
-    lastResult.compressDiff=(compressDiff!==null&&compressDiff>10)?compressDiff:null;lastResult.compressMach=machExceeded;
-    lastResult.compressCorrection=compressCorrection||null;
-    saveBtn.disabled=false;updateResultLabels();updateDisplayWithResult();updateAllWarnings();updateFieldBorders();
-  }catch(e){alert(t('errorNum'))}
 });
 
 function formatPressure(pa,unit){
@@ -3920,10 +3961,72 @@ shareBtn.addEventListener('click',()=>{
 });
 
 document.querySelectorAll('input[type="number"]').forEach(input=>{
-  if(input.id==='temperature')return;
-  input.addEventListener('keydown',e=>{if(e.key==='-'||e.key==='+'||e.key==='e'||e.key==='E')e.preventDefault()});
-  input.addEventListener('input',function(){this.value=this.value.replace(/[^\d.,]/g,'').replace(',','.');const d=this.value.indexOf('.');if(d!==-1)this.value=this.value.substring(0,d+1)+this.value.substring(d+1).replace(/\./g,'')});
-  input.addEventListener('blur',function(){if(this.id==='bends'||this.id==='valves'){let i=parseInt(this.value);this.value=(!isNaN(i)&&i>=0)?i:0} if(this.id==='molarMass'){let val=parseFloat(this.value);if(isNaN(val))val=28.97;if(val<2)val=2;if(val>300)val=300;this.value=val} if(this.value.endsWith('.'))this.value=this.value.slice(0,-1)});
+  // Разрешаем ввод минуса для поля перепада высот и температуры
+  if(input.id !== 'geodetic' && input.id !== 'temperature') {
+    input.addEventListener('keydown', e => {
+      if(e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+        e.preventDefault();
+      }
+    });
+  } else {
+    // Для geodetic и temperature запрещаем только +, e, E (минус разрешён)
+    input.addEventListener('keydown', e => {
+      if(e.key === '+' || e.key === 'e' || e.key === 'E') {
+        e.preventDefault();
+      }
+    });
+  }
+
+  // Обработчик input: заменяем запятую на точку, но не удаляем минус в начале
+  input.addEventListener('input', function() {
+    let val = this.value;
+    // Заменяем запятую на точку
+    val = val.replace(',', '.');
+    // Удаляем всё, кроме цифр, точки и минуса в начале
+    val = val.replace(/[^\d.-]/g, '');
+    // Обрабатываем случай, когда минус не в начале
+    if (val.indexOf('-') > 0) {
+      val = val.replace(/-/g, '');
+    }
+    // Если первый символ минус, сохраняем его, а остальные минусы удаляем
+    if (val.startsWith('-')) {
+      val = '-' + val.slice(1).replace(/-/g, '');
+    }
+    // Ограничиваем только одну десятичную точку
+    const parts = val.split('.');
+    if (parts.length > 2) {
+      val = parts[0] + '.' + parts.slice(1).join('');
+    }
+    this.value = val;
+  });
+
+  // Обработчик blur: проверка на допустимые значения
+  input.addEventListener('blur', function() {
+    if (this.id === 'bends' || this.id === 'valves' || this.id === 'bends45' || this.id === 'teesStraight' ||
+        this.id === 'teesTurn' || this.id === 'checkValves' || this.id === 'gateValves' ||
+        this.id === 'ballValves' || this.id === 'globeValves' || this.id === 'filters' ||
+        this.id === 'compensators' || this.id === 'contractions' || this.id === 'expansions' ||
+        this.id === 'orifices') {
+      let i = parseInt(this.value);
+      if (isNaN(i)) i = 0;
+      if (i < 0) i = 0;
+      this.value = i;
+    }
+    if (this.id === 'molarMass') {
+      let val = parseFloat(this.value);
+      if (isNaN(val)) val = 28.97;
+      if (val < 2) val = 2;
+      if (val > 300) val = 300;
+      this.value = val;
+    }
+    if (this.id === 'geodetic') {
+      let val = parseFloat(this.value);
+      if (isNaN(val)) val = 0;
+      // Отрицательные значения разрешены
+      this.value = val;
+    }
+    if (this.value.endsWith('.')) this.value = this.value.slice(0, -1);
+  });
 });
 
 function updateEngineerVisibility(){
