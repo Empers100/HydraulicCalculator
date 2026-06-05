@@ -4476,6 +4476,61 @@ roughnessFields.forEach(id => {
     if (el) {
         el.addEventListener('blur', function() { clampRoughness(this); });
         // также можно на 'input', но лучше на blur, чтобы не мешать вводу
+// ===== ИСПРАВЛЕНИЕ ВВОДА ТЕМПЕРАТУРЫ ДЛЯ ПОДБОРА ДИАМЕТРА И РАСХОДА =====
+(function fixTemperatureInputs() {
+    var tempDiam = document.getElementById('tempDiam');
+    var tempFlow = document.getElementById('tempFlow');
+    var medDiam = document.getElementById('mediumSelectDiam');
+    var medFlow = document.getElementById('mediumSelectFlow');
+
+    if (!tempDiam && !tempFlow) return;
+
+    function clamp(value, max) {
+        var v = parseFloat(value);
+        if (isNaN(v)) v = 20;
+        if (v < 0) v = 0;
+        if (v > max) v = max;
+        return v;
+    }
+
+    function updateDiam() {
+        if (!tempDiam || !medDiam) return;
+        var max = medDiam.value === 'water' ? 100 : 80;
+        var val = clamp(tempDiam.value, max);
+        if (tempDiam.value != val) tempDiam.value = val;
+        // Вызываем существующую функцию обновления свойств
+        if (typeof updateMediumDiam === 'function') updateMediumDiam();
+    }
+
+    function updateFlow() {
+        if (!tempFlow || !medFlow) return;
+        var max = medFlow.value === 'water' ? 100 : 80;
+        var val = clamp(tempFlow.value, max);
+        if (tempFlow.value != val) tempFlow.value = val;
+        if (typeof updateMediumFlow === 'function') updateMediumFlow();
+    }
+
+    // Устанавливаем атрибуты для свободного ввода
+    if (tempDiam) {
+        tempDiam.setAttribute('step', 'any');
+        tempDiam.removeAttribute('min');
+        tempDiam.removeAttribute('max');
+        tempDiam.addEventListener('blur', updateDiam);
+        if (medDiam) medDiam.addEventListener('change', updateDiam);
+    }
+    if (tempFlow) {
+        tempFlow.setAttribute('step', 'any');
+        tempFlow.removeAttribute('min');
+        tempFlow.removeAttribute('max');
+        tempFlow.addEventListener('blur', updateFlow);
+        if (medFlow) medFlow.addEventListener('change', updateFlow);
+    }
+
+    // Принудительно обновляем один раз
+    if (tempDiam) updateDiam();
+    if (tempFlow) updateFlow();
+})();
+
     }
 });
 
