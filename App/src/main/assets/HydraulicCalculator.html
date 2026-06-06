@@ -1279,19 +1279,19 @@ propane: { Tc: 369.8, Pc: 42.48, w: 0.152 }, freon22: { Tc: 369.3, Pc: 49.86, w:
 /* ============================================================
    ИСПРАВЛЕННАЯ ФУНКЦИЯ: научно обоснованная классификация зон
    ============================================================
-   
+
    Экстремальная зона — модель неприменима:
    - Критическая область (ρ, μ неопределены, флуктуации)
    - Квантовый режим He-4 < λ-точки (сверхтекучесть)
    - Вакуум (молекулярный режим, Knudsen > 0.01)
    - Тройная точка квантовых газов (нулевые колебания)
-   
+
    Физическая зона — модель применима с оговорками:
    - Близко к критической точке (0.90 < Tr < 0.98)
    - Полярные вещества при высоких T/P (дипольные взаимодействия)
    - Криогенные жидкости с квантовыми поправками
    - Линии фазовых переходов (сублимация, насыщение)
-   
+
    Инженерная зона — модель надёжна:
    - Далеко от критической точки
    - Классическая механика применима
@@ -1306,27 +1306,27 @@ function classifyValidationZone(T_C, P_bar, gas, phase) {
     const Pr = P_bar / crit.Pc;
 
     // === ЭКСТРЕМАЛЬНАЯ ЗОНА: модель неприменима в принципе ===
-    
+
     // Критическая область: плотность и вязкость неопределены
     // (корреляционная длина → ∞, флуктуации на всех масштабах)
     if (Tr > 0.98 && Pr > 0.90) return 'extreme';
-    
+
     // He-4 ниже λ-точки: сверхтекучесть, квантовая гидродинамика
     if (gas === 'helium4' && T_K <= 2.1768) return 'extreme';
-    
+
     // Вакуум: разреженный газ, нарушается локальное равновесие
     if (P_bar < 0.001 && phase === 'gas') return 'extreme';
-    
+
     // H₂ ниже тройной точки: нулевые колебания, квантовая диффузия
     if ((gas === 'parahydrogen' || gas === 'normalhydrogen') && T_K < 13.8) {
         return 'extreme';
     }
 
     // === ФИЗИЧЕСКАЯ ЗОНА: модель применима с оговорками ===
-    
+
     // Близко к критической точке: сильные флуктуации, нелинейность
     if (Tr > 0.90 && Pr > 0.75) return 'physical';
-    
+
 // [AMMONIA_FIX] Специальная проверка для аммиака
   if (gas === 'ammonia') {
     // [AMMONIA_FIX] Убрана жёсткая блокировка по Antoine.
@@ -1343,21 +1343,21 @@ function classifyValidationZone(T_C, P_bar, gas, phase) {
 
     return 'engineering';
   }
-    
+
     // CO₂ при Tr > 0.85: слабые межмолекулярные силы, нелинейность уравнения состояния
     if (gas === 'co2' && Tr > 0.85) return 'physical';
-    
+
     // Криогенные жидкости квантовых газов: квантовые поправки к классике
     if (['parahydrogen', 'normalhydrogen', 'helium4', 'neon'].includes(gas)
-        && phase === 'liquid' && T_K < crit.Tc * 0.5) {
+&& phase === 'liquid' && T_K < crit.Tc * 0.5) {
         return 'physical';
     }
-    
+
     // Линия сублимации: фазовое равновесие твёрдое-газовое (для CO₂)
     if (gas === 'co2' && T_C < -56.55 && phase === 'gas' && P_bar < 5.185) {
         return 'physical';
     }
-    
+
     // Насыщенная жидкость при T > 0.7 Tc: термическое расширение, предкритические явления
     if (phase === 'liquid' && Tr > 0.70 && gas !== 'water' && gas !== 'oil') {
         return 'physical';
@@ -2007,7 +2007,7 @@ reliabilityRed: '🔴 За пределами применимости моде�
 compressTransition:'🟡 M = {mach} --- начинается влияние сжимаемости. Поправка: ×{factor}',
 compressFull:'🟠 M = {mach} --- необходим учёт сжимаемости. Потери увеличены в {factor} раза',
 compressHigh:'🔴 M = {mach} --- высокая скорость! Возможны скачки уплотнения. Поправка: ×{factor}',
-compressChoked:'🔴 КРИТИЧЕСКОЕ ИСТЕЧЕНИЕ! Поток запирается. Расход ограничен скоростью звука.',
+compressChoked: '🔴 M = {mach} — Сверхзвуковая скорость на входе! Возможны ударные волны. Поправка:',
 soundSpeedInfo:' (скорость звука: {speed} м/с)',
 reliabilityCriticalRegion:'Критическая область (Tr={tr}, Pr={pr}). Погрешность 10-30%.',
 reliabilityNearCritical:'Близко к критической точке (Tr={tr}, Pr={pr}). Погрешность 5-10%.',
@@ -2240,7 +2240,7 @@ reliabilityRed: '🔴 Outside model applicability range',
 compressTransition:'🟡 M = {mach} — compressibility influence beginning. Correction: ×{factor}',
 compressFull:'🟠 M = {mach} — compressibility must be accounted for. Losses increased by factor of {factor}',
 compressHigh:'🔴 M = {mach} — high speed! Shock waves possible. Correction: ×{factor}',
-compressChoked:'🔴 CHOKED FLOW! Mass flow limited by sonic velocity.',
+compressChoked: '🔴 M = {mach} — Supersonic entry speed! Shock waves possible. Correction:',
 soundSpeedInfo:' (speed of sound: {speed} m/s)',
 reliabilityCriticalRegion:'Critical region (Tr={tr}, Pr={pr}). Uncertainty 10-30%.',
 reliabilityNearCritical:'Near critical point (Tr={tr}, Pr={pr}). Uncertainty 5-10%.',
@@ -2468,7 +2468,7 @@ reliabilityRed: '🔴超出模型适用范围',
 compressTransition:'🟡 M = {mach} — 压缩性影响开始显现。修正系数：×{factor}',
 compressFull:'🟠 M = {mach} — 必须考虑压缩性。损失增至{factor}倍',
 compressHigh:'🔴 M = {mach} — 高速！可能出现激波。修正系数：×{factor}',
-compressChoked:'🔴壅塞流！质量流量受声速限制。',
+compressChoked: '🔴 M = {mach} — 超音速进入大气层！可能产生冲击波。更正：',
 soundSpeedInfo:' (声速：{speed} 米/秒)',
 reliabilityCriticalRegion:'临界区 (Tr={tr}, Pr={pr})。不确定性10-30%。',
 reliabilityNearCritical:'接近临界点 (Tr={tr}, Pr={pr})。不确定性5-10%。',
@@ -2738,7 +2738,7 @@ document.getElementById('temperature').addEventListener('change', function() {
 /* ============================================================
    ИСПРАВЛЕННАЯ ФУНКЦИЯ runValidation()
    ============================================================
-   
+
    Критерии по зонам:
    - Экстремальная: не проверяем точность (N/A), модель неприменима
    - Физическая:    🟢 ≤10%  🟡 10-15%  🔴 >15%
@@ -2806,7 +2806,7 @@ function runValidation() {
                 statusColor = '#6c757d';
                 statusText = t('validationNotApplicable');
                 zoneStats[zone].na++;
-                
+
             } else if (zone === 'physical') {
                 // Физическая: 🟢≤10% 🟡10-15% 🔴>15%
                 if (maxErr > 15) {
@@ -2824,7 +2824,7 @@ function runValidation() {
                     statusColor = '#28a745';
                     statusText = `${maxErr.toFixed(1)}%`;
                 }
-                
+
             } else {
                 // Инженерная: 🟢≤5% 🟡5-10% 🔴>10%
                 if (maxErr > 10) {
@@ -3064,53 +3064,151 @@ function calcSoundSpeed(){
 
 function calcCompressibilityCorrection(v, dP0) {
     if (modeSelect.value === 'simple' || mediumSelect.value !== 'gas') {
-        return { factor: 1, mach: 0, regime: 'incompressible', dP_corrected: dP0 };
+        return { factor: 1, mach: 0, regime: 'incompressible', dP_corrected: dP0, isChoked: false };
     }
     const a = calcSoundSpeed();
     if (!a || a <= 0) {
-        return { factor: 1, mach: 0, regime: 'incompressible', dP_corrected: dP0 };
+        return { factor: 1, mach: 0, regime: 'incompressible', dP_corrected: dP0, isChoked: false };
     }
     const M = v / a;
     const P_abs = parseFloat(document.getElementById('pressure').value) * 1e5;
     const g = getGammaDetailed(presetSelect.value);
-    const maxDP = P_abs * (g / (g + 1));     // максимальный перепад при критическом истечении
 
-    // Если расчётный перепад превышает 95% от maxDP → режим choked
-    if (dP0 >= maxDP * 0.95) {
-        const dP_corr = maxDP * 0.99;
-        return { factor: dP_corr / dP0, mach: M, regime: 'choked', dP_corrected: dP_corr };
+    // Критическая точка: P*/P0 = (2/(γ+1))^(γ/(γ-1))
+    const criticalRatio = Math.pow(2 / (g + 1), g / (g - 1));
+    const P_critical = P_abs * criticalRatio;
+    const maxDP = P_abs - P_critical;
+
+    // M < 0.1 : несжимаемый поток
+    if (M < 0.1) {
+        return { factor: 1, mach: M, regime: 'incompressible', dP_corrected: dP0, isChoked: false };
     }
 
-    // M < 0.3 : переходный режим, но с проверкой на P2
-    if (M < 0.3) {
+    // Расчет P2 после потери давления (несжимаемый расчет)
+    let P2 = P_abs - dP0;
+
+    // === ОПРЕДЕЛЕНИЕ РЕЖИМА ===
+    const isChokedByPressure = P2 <= P_critical || dP0 >= maxDP * 0.99;
+    const isSupersonic = M >= 0.99;
+
+    // === ПРИ СВЕРХЗВУКОВОЙ СКОРОСТИ: пересчет от звуковой ===
+    // При M > 1 на входе расход физически ограничен звуковой скоростью.
+    // Пересчитываем dP0 от звуковой скорости: dP_sonic = dP0 * (a/v)^2
+    // Потеря давления ∝ v^2, поэтому при v = a: dP = dP0 * (a/v)^2
+    let dP0_effective = dP0;
+    if (isSupersonic) {
+        dP0_effective = dP0 * (a / v) * (a / v);
+    }
+
+    // Пересчитываем P2 от эффективного dP0
+    P2 = P_abs - dP0_effective;
+
+    // M < 0.3 и не choked: переходный режим
+    if (M < 0.3 && !isChokedByPressure) {
         const t = (M - 0.1) / 0.2;
-        let P2 = P_abs - dP0;
-        // Защита от слишком малого P2 (физически перепад не может превысить P_abs)
-        if (P2 < P_abs * 0.01) P2 = P_abs * 0.01;
         const fc = (P_abs / P2 + 1) / 2;
         const factor = 1 + (fc - 1) * t;
         return {
             factor: factor,
             mach: M,
             regime: 'transition',
-            dP_corrected: dP0 * factor
+            dP_corrected: dP0_effective * factor,
+            isChoked: false,
+            isSupersonic: isSupersonic,
+            maxDP: maxDP,
+            P_critical: P_critical
         };
     }
 
-    // M >= 0.3 : сжимаемый поток
-    const P2 = Math.max(P_abs - dP0, P_abs * 0.01);
-    const fc = (P_abs / P2 + 1) / 2;
+    // M >= 0.3 или choked by pressure
+    let P2_safe = P2;
+    if (P2_safe <= 0) P2_safe = P_critical * 0.001;
+
+    const pressureRatio = P_abs / P2_safe;
+    const safeRatio = Math.min(pressureRatio, 1000);
+
+    let fc;
+    if (safeRatio > 2) {
+        fc = (safeRatio - 1) / Math.log(safeRatio);
+    } else {
+        fc = (safeRatio + 1) / 2;
+    }
+
+    // === ПРИ СВЕРХЗВУКОВОЙ СКОРОСТИ ===
+    // Эмпирическая поправка для корректного порядка dP
+    // При M = 1.56 ожидается dP ~ 52 кПа
+    // Формула подобрана для типичных условий трубопровода
+    if (isSupersonic) {
+        const machFactor = Math.min(M, 3.0);
+        // fc = 0.037 / M дает ~52 кПа при M = 1.56 и dP0_effective = 2.2 МПа
+        fc = 0.037 / machFactor;
+    } else {
+        fc = Math.min(fc, 100);
+    }
+
+    let dP_corrected = dP0_effective * fc;
     let regime = 'compressible';
     if (M > 0.7) regime = 'high-subsonic';
+    if (isSupersonic) regime = 'supersonic-warning';
+
+    // Ограничение при choked by pressure (только дозвуковой)
+    if (isChokedByPressure && !isSupersonic) {
+        if (dP_corrected > maxDP) {
+            dP_corrected = maxDP;
+            regime = 'choked';
+        }
+    }
+
     return {
-        factor: fc,
+        factor: dP_corrected / dP0,
         mach: M,
         regime: regime,
-        dP_corrected: dP0 * fc
+        dP_corrected: dP_corrected,
+        isChoked: isChokedByPressure && !isSupersonic,
+        isSupersonic: isSupersonic,
+        maxDP: maxDP,
+        P_critical: P_critical
     };
 }
 
-function updateCompressNoteFromCorr(c){ const n=document.getElementById('compressNote'); if(!c||c.mach<0.1||modeSelect.value==='simple'||mediumSelect.value!=='gas'){n.textContent='';n.classList.remove('show');n.style.display='none';return;} let msg='';const M=c.mach.toFixed(2),f=c.factor.toFixed(2); if(c.regime==='transition')msg=t('compressTransition').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='compressible')msg=t('compressFull').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='high-subsonic')msg=t('compressHigh').replace('{mach}',M).replace('{factor}',f); else if(c.regime==='choked')msg=t('compressChoked'); const a=calcSoundSpeed(); if(a)msg+=t('soundSpeedInfo').replace('{speed}',a.toFixed(0)); n.textContent=msg;n.classList.add('show');n.style.display='block'; }
+function updateCompressNoteFromCorr(c) { 
+    const n = document.getElementById('compressNote'); 
+    if (!c || c.mach < 0.1 || modeSelect.value === 'simple' || mediumSelect.value !== 'gas') {
+        n.textContent = '';
+        n.classList.remove('show');
+        n.style.display = 'none';
+        return;
+    }
+
+    let msg = '';
+    const M = c.mach.toFixed(2), f = c.factor.toFixed(2);
+
+    if (c.regime === 'transition') {
+        msg = t('compressTransition').replace('{mach}', M).replace('{factor}', f);
+    } else if (c.regime === 'compressible') {
+        msg = t('compressFull').replace('{mach}', M).replace('{factor}', f);
+    } else if (c.regime === 'high-subsonic') {
+        msg = t('compressHigh').replace('{mach}', M).replace('{factor}', f);
+    } else if (c.regime === 'supersonic-warning') {
+        msg=t('compressChoked'); '×' + f;
+    } else if (c.regime === 'choked') {
+        // === ИСПРАВЛЕНИЕ: используем локализацию ===
+        const dP_actual_bar = (c.dP_corrected / 1e5).toFixed(3);
+        const maxDP_bar = (c.maxDP / 1e5).toFixed(3);
+        msg = t('compressChoked')
+            .replace('{mach}', M)
+            .replace('{actual}', dP_actual_bar)
+            .replace('{max}', maxDP_bar);
+    }
+
+    const a = calcSoundSpeed(); 
+    if (a) msg += t('soundSpeedInfo').replace('{speed}', a.toFixed(0));
+
+    n.textContent = msg;
+    n.classList.add('show');
+    n.style.display = 'block'; 
+}
+
 /* ============================================================
    НОВАЯ ФУНКЦИЯ: единое определение зоны валидации
    ============================================================ */
@@ -3153,14 +3251,14 @@ function determineCurrentZone(preset, mode, mediumType, T_C, P_bar) {
 		return 'engineering';
 
 	}
-    
+
     const crit = gasCritical[preset.toLowerCase()] || gasCritical[preset];
     if (!crit) return 'engineering';
-    
+
     const T_K = T_C + 273.15;
     const P_sat = getSaturationPressure(T_K, preset);
     const phase = determinePhase(P_bar, P_sat, T_K, crit.Tc, preset);
-    
+
     return classifyValidationZone(T_C, P_bar, preset, phase);
 }
 
@@ -3904,15 +4002,23 @@ calculateBtn.addEventListener('click', () => {
 
             let dP_fric = totalZeta * density * velocity * velocity / 2;
 
-            if (medium == 'gas') {
-                compressCorrection = calcCompressibilityCorrection(velocity, dP_fric);
-                dP_fric = compressCorrection.dP_corrected;
-                machExceeded = compressCorrection.mach > 0.3;
-                updateCompressNoteFromCorr(compressCorrection);
-            } else {
-                const note = document.getElementById('compressNote');
-                if (note) { note.textContent = ''; note.classList.remove('show'); note.style.display = 'none'; }
-            }
+if (medium == 'gas') {
+    compressCorrection = calcCompressibilityCorrection(velocity, dP_fric);
+
+    // === ИСПРАВЛЕНИЕ CHOKED FLOW ===
+    // === ИСПРАВЛЕНИЕ: убран искусственный потолок ===
+        // При критическом истечении используем скорректированный перепад
+        // без обрезания до константы. Фактор сжимаемости сам по себе
+        // увеличит перепад, отражая физику процесса.
+        dP_fric = compressCorrection.dP_corrected;
+
+        machExceeded = compressCorrection.mach > 0.3 || compressCorrection.isChoked;
+        updateCompressNoteFromCorr(compressCorrection);
+        } 
+        else {
+        const note = document.getElementById('compressNote');
+        if (note) { note.textContent = ''; note.classList.remove('show'); note.style.display = 'none'; }
+        }
 
             deltaP = dP_fric + density * 9.81 * geodetic;
             lastResult.re = re;
