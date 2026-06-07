@@ -2648,6 +2648,11 @@ units:{ mm:'毫米', m:'米', kgm3:'千克/立方米', kgh:'千克/小时', cSt:
 }
 };
 
+locales.ru.compressChokedZ = '🔴 Критическое истечение (M={mach}, Z={z}). ΔP ограничен скоростью звука на выходе: {actual} бар (макс. {max} бар)';
+locales.en.compressChokedZ = '🔴 Critical flow (M={mach}, Z={z}). ΔP limited by sonic velocity at outlet: {actual} bar (max {max} bar)';
+locales.zh.compressChokedZ = '🔴 临界流 (M={mach}, Z={z})。出口声速限制ΔP：{actual} 巴 (最大 {max} 巴)';
+
+
 let currentLang = localStorage.getItem('calc_hyd_lang') || 'ru';
 function t(key, fallbackLang) {
   const primary = locales[currentLang]?.[key];
@@ -3074,33 +3079,22 @@ function calcCompressibilityCorrection(v, dP0) {
     const P_abs = parseFloat(document.getElementById('pressure').value) * 1e5;
     const g = getGammaDetailed(presetSelect.value);
 
-    // Критическая точка: P*/P0 = (2/(γ+1))^(γ/(γ-1))
     const criticalRatio = Math.pow(2 / (g + 1), g / (g - 1));
     const P_critical = P_abs * criticalRatio;
     const maxDP = P_abs - P_critical;
 
-    // M < 0.1 : несжимаемый поток
     if (M < 0.1) {
         return { factor: 1, mach: M, regime: 'incompressible', dP_corrected: dP0, isChoked: false };
     }
 
-    // Расчет P2 после потери давления (несжимаемый расчет)
     let P2 = P_abs - dP0;
-
-    // === ОПРЕДЕЛЕНИЕ РЕЖИМА ===
     const isChokedByPressure = P2 <= P_critical || dP0 >= maxDP * 0.99;
     const isSupersonic = M >= 0.99;
 
-    // === ПРИ СВЕРХЗВУКОВОЙ СКОРОСТИ: пересчет от звуковой ===
-    // При M > 1 на входе расход физически ограничен звуковой скоростью.
-    // Пересчитываем dP0 от звуковой скорости: dP_sonic = dP0 * (a/v)^2
-    // Потеря давления ∝ v^2, поэтому при v = a: dP = dP0 * (a/v)^2
     let dP0_effective = dP0;
     if (isSupersonic) {
         dP0_effective = dP0 * (a / v) * (a / v);
     }
-
-    // Пересчитываем P2 от эффективного dP0
     P2 = P_abs - dP0_effective;
 
     // M < 0.3 и не choked: переходный режим
@@ -3114,16 +3108,15 @@ function calcCompressibilityCorrection(v, dP0) {
             regime: 'transition',
             dP_corrected: dP0_effective * factor,
             isChoked: false,
-            isSupersonic: isSupersonic,
+            isSupersonic: false,
             maxDP: maxDP,
             P_critical: P_critical
         };
     }
 
-    // M >= 0.3 или choked by pressure
+    // M >= 0.3 или choked
     let P2_safe = P2;
     if (P2_safe <= 0) P2_safe = P_critical * 0.001;
-
     const pressureRatio = P_abs / P2_safe;
     const safeRatio = Math.min(pressureRatio, 1000);
 
@@ -3134,14 +3127,9 @@ function calcCompressibilityCorrection(v, dP0) {
         fc = (safeRatio + 1) / 2;
     }
 
-    // === ПРИ СВЕРХЗВУКОВОЙ СКОРОСТИ ===
-    // Эмпирическая поправка для корректного порядка dP
-    // При M = 1.56 ожидается dP ~ 52 кПа
-    // Формула подобрана для типичных условий трубопровода
     if (isSupersonic) {
         const machFactor = Math.min(M, 3.0);
-        // fc = 0.037 / M дает ~52 кПа при M = 1.56 и dP0_effective = 2.2 МПа
-        fc = 0.037 / machFactor;
+        fc = 0.037 / machFactor;   // эмпирическая сверхзвуковая поправка
     } else {
         fc = Math.min(fc, 100);
     }
@@ -3151,12 +3139,19 @@ function calcCompressibilityCorrection(v, dP0) {
     if (M > 0.7) regime = 'high-subsonic';
     if (isSupersonic) regime = 'supersonic-warning';
 
-    // Ограничение при choked by pressure (только дозвуковой)
     if (isChokedByPressure && !isSupersonic) {
         if (dP_corrected > maxDP) {
             dP_corrected = maxDP;
             regime = 'choked';
         }
+    }
+
+    // Вычисляем коэффициент сжимаемости Z для отображения
+    const T_K = parseFloat(document.getElementById('temperature').value) + 273.15;
+    const crit = gasCritical[presetSelect.value.toLowerCase()] || gasCritical[presetSelect.value];
+    let Z = 1.0;
+    if (crit) {
+        Z = calcZ_PengRobinson(T_K, P_abs/1e5, crit.Tc, crit.Pc, crit.w, 'gas');
     }
 
     return {
@@ -3167,13 +3162,15 @@ function calcCompressibilityCorrection(v, dP0) {
         isChoked: isChokedByPressure && !isSupersonic,
         isSupersonic: isSupersonic,
         maxDP: maxDP,
-        P_critical: P_critical
+        P_critical: P_critical,
+        Z: Z
     };
 }
 
 function updateCompressNoteFromCorr(c) { 
     const n = document.getElementById('compressNote'); 
-    if (!c || c.mach < 0.1 || modeSelect.value === 'simple' || mediumSelect.value !== 'gas') {
+    // Скрываем для несжимаемого режима и при M < 0.1 без choked
+    if (!c || (c.mach < 0.1 && !c.isChoked) || modeSelect.value === 'simple' || mediumSelect.value !== 'gas') {
         n.textContent = '';
         n.classList.remove('show');
         n.style.display = 'none';
@@ -3181,7 +3178,10 @@ function updateCompressNoteFromCorr(c) {
     }
 
     let msg = '';
-    const M = c.mach.toFixed(2), f = c.factor.toFixed(2);
+    const M = c.mach.toFixed(2);
+    const f = c.factor.toFixed(2);
+    const a = calcSoundSpeed();
+    const soundInfo = a ? ' ' + t('soundSpeedInfo').replace('{speed}', a.toFixed(0)) : '';
 
     if (c.regime === 'transition') {
         msg = t('compressTransition').replace('{mach}', M).replace('{factor}', f);
@@ -3190,23 +3190,28 @@ function updateCompressNoteFromCorr(c) {
     } else if (c.regime === 'high-subsonic') {
         msg = t('compressHigh').replace('{mach}', M).replace('{factor}', f);
     } else if (c.regime === 'supersonic-warning') {
-        msg=t('compressChoked'); '×' + f;
+        // Исправлено: сверхзвук – используем compressHigh с множителем
+        msg = t('compressHigh').replace('{mach}', M).replace('{factor}', f);
     } else if (c.regime === 'choked') {
-        // === ИСПРАВЛЕНИЕ: используем локализацию ===
+        // Критическое истечение с Z
+        const Z = c.Z ? c.Z.toFixed(3) : '?';
         const dP_actual_bar = (c.dP_corrected / 1e5).toFixed(3);
         const maxDP_bar = (c.maxDP / 1e5).toFixed(3);
-        msg = t('compressChoked')
+        msg = t('compressChokedZ')
             .replace('{mach}', M)
             .replace('{actual}', dP_actual_bar)
-            .replace('{max}', maxDP_bar);
+            .replace('{max}', maxDP_bar)
+            .replace('{z}', Z);
     }
 
-    const a = calcSoundSpeed(); 
-    if (a) msg += t('soundSpeedInfo').replace('{speed}', a.toFixed(0));
-
-    n.textContent = msg;
-    n.classList.add('show');
-    n.style.display = 'block'; 
+    if (msg) {
+        n.textContent = msg + soundInfo;
+        n.classList.add('show');
+        n.style.display = 'block';
+    } else {
+        n.classList.remove('show');
+        n.style.display = 'none';
+    }
 }
 
 /* ============================================================
@@ -4638,7 +4643,7 @@ roughnessFields.forEach(id => {
 })();
 
     }
-});
+})(); 
 
 </script>
 </body>
