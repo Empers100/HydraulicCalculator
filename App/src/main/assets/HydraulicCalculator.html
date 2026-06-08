@@ -236,7 +236,7 @@ body.dark .lng-balance.error { background: #3d1f22; color: #f08c90; }
 .validation-warn { color: #ffc107; }
 .validation-error { color: #dc3545; }
 
-/* ===== НОВЫЕ СТИЛИ РЕЛИЗА 2.0.0 ===== */
+/* ===== НОВЫЕ СТИЛИ ===== */
 .flow-regime-indicator {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
@@ -382,7 +382,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <button class="tab-btn" data-tab="diam" id="tabDiamBtn">Подбор диаметра</button>
 <button class="tab-btn" data-tab="flow" id="tabFlowBtn">Подбор расхода</button>
 </div>
-<!-- ===== ПРЯМОЙ РАСЧЁТ v2.0 ===== -->
+<!-- ===== ПРЯМОЙ РАСЧЁТ ===== -->
 <div class="tab-content active" id="tab-direct">
 <div class="display-container">
 <div class="formula-display" id="formulaDisplay">Готов к расчёту</div>
@@ -395,7 +395,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <div class="field-row"><label id="lblWall">Толщина стенки (мм):</label><input type="number" id="wall" value="3.5" min="0" step="any"></div>
 <div class="field-row"><label id="lblLength">Длина (м):</label><input type="number" id="length" value="100" min="0.001" step="any"></div>
 
-<!-- Геодезический напор v2.0 -->
+<!-- Геодезический напор -->
 <div class="geodetic-row">
 <label id="lblGeodetic">Перепад высот Δz (м):</label>
 <input type="number" id="geodetic" value="0" step="any" placeholder="0">
@@ -438,7 +438,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <div class="field-row" id="molarRow"><label id="lblMolarMass">Молярная масса<br>(г/моль):</label><input type="number" id="molarMass" value="28.97" min="2" max="300" step="any"></div>
 </div>
 
-<!-- Расширенные местные сопротивления v2.0 (15+ типов) -->
+<!-- Расширенные местные сопротивления (15+ типов) -->
 <div class="field-row"><label id="lblBends">Поворотов 90° (ζ=0.3):</label><input type="number" id="bends" value="0" min="0" step="1"></div>
 <div class="field-row"><label id="lblValves">Клапанов (ζ=3.0):</label><input type="number" id="valves" value="0" min="0" step="1"></div>
 <div id="extraResistances" class="extra-resistances">
@@ -480,25 +480,13 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <span id="compressNote" class="note"></span>
 </div>
 
-<!-- Кавитация v2.0 (только для жидкостей) -->
-<div class="cavitation-panel" id="cavitationPanel" style="display:none;">
-<h4 id="cavitationTitle">Проверка кавитации</h4>
-<div id="cavitationContent"></div>
-</div>
-
-<!-- Эрозия v2.0 -->
-<div class="erosion-panel" id="erosionPanel" style="display:none;">
-<h4 id="erosionTitle">Контроль эрозии</h4>
-<div id="erosionContent"></div>
-</div>
-
 <div class="validation-panel" id="validationPanel" style="display:none;">
 <h4>Точность модели (проверка по справочным данным)</h4>
 <div id="validationContent"></div>
 </div>
 </div>
 
-<!-- ===== ПОДБОРДИАМЕТРА ===== -->
+<!-- ===== ПОДБОР ДИАМЕТРА ===== -->
 <div class="tab-content" id="tab-diam">
 <div class="display-container">
 <div class="formula-display" id="formulaDisplayDiam">ПодборвнутреннегодиаметрапоΔP</div>
@@ -548,7 +536,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <div class="inverse-result" id="resultDiam"></div>
 </div>
 
-<!-- ===== ПОДБОРРАСХОДА ===== -->
+<!-- ===== ПОДБОР РАСХОДА ===== -->
 <div class="tab-content" id="tab-flow">
 <div class="display-container">
 <div class="formula-display" id="formulaDisplayFlow">ПодборрасходапоΔP</div>
@@ -1518,7 +1506,6 @@ function getSaturationPressure(T_K, gas) {
     return P_sat;
   }
 
-  // [AMMONIA_FIX] He-4, H2, CO2, Kr, Xe — без изменений
   if (gas === 'helium4') return interpolateSatTable(HE4_SAT_TABLE, T_K, 1);
   if (gas === 'parahydrogen') return interpolateSatTable(PH2_SAT_TABLE, T_K, 1);
   if (gas === 'normalhydrogen') return interpolateSatTable(NH2_SAT_TABLE, T_K, 1);
@@ -1606,11 +1593,18 @@ function calcZ_PengRobinson(T, P_bar, Tc, Pc, w, phase) {
     }
 
     // === ЗАЩИТА ОТ ЧИСЛЕННЫХ АРТЕФАКТОВ ===
-    // Защита только для газа; для жидкости Z может быть < 0.1
-    if (Z < 0.1 && Pr < 2.0 && phase !== 'liquid') {
+    if (!isFinite(Z)) {
+        console.warn('Z = NaN/Infinity, gas=', phase);
         return 1.0;
     }
-
+    if (Z > 10) {
+        console.warn('Z слишком велик:', Z);
+        return 1.0;
+    }
+    if (Z < 0.001) {
+        console.warn('Z артефакт:', Z, 'phase=', phase);
+        return phase === 'liquid' ? 0.01 : 0.1;
+    }
     return Math.max(Z, 0.05);
 }
 
@@ -2056,7 +2050,7 @@ lblTempFlow: 'Температура (°C):',
 realCapabilitiesTitle: 'Реальные возможности модели',
 helpContent: `
 <h3>Режимы расчёта</h3>
-<p><b>Упрощённый</b> — только гидравлика. Быстрая оценка без учёта свойств среды.</p>
+<p><b>Упрощённый</b> — гидравлика с фиксированной вязкостью ν = 1.0·10⁻⁶ м²/с (вода 20°C). Быстрая оценка для предварительных расчётов. Для газов плотность вводится вручную, сжимаемость не учитывается.</p>
 <p><b>Инженерный</b> — полный расчёт с учётом реальных свойств газа/жидкости, сжимаемости и фазового состояния.</p>
 <h3>Зоны применимости моделей</h3>
 <p>Модели разделены на три зоны в зависимости от термодинамических условий:</p>
@@ -2102,22 +2096,22 @@ helpContent: `
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
 <tr style="background:var(--btn-bg); font-weight:bold;"><th style="color:#ffffff;">Вещество</th><th style="color:#ffffff;">T<sub>min</sub>...T<sub>max</sub> (°C)</th><th style="color:#ffffff;">P<sub>min</sub>...P<sub>max</sub> (бар)</th><th style="color:#ffffff;">Примечание</th></tr>
 <tr><td colspan="4" style="background:var(--btn-bg);font-weight:bold;">🟢 Инженерная зона (P < 0.75•P<sub>c</sub>, любая T)</th></tr>
-<tr><td>Воздух</td><td>-207...1027</td><td>0.34...28</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Азот</td><td>-210...1027</td><td>0.2...25</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Кислород</td><td>-218...1027</td><td>0.002...38</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Метан</td><td>-182...327</td><td>0.12...34</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>CO₂</td><td>-54...327</td><td>0.5...55</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Водород (пара/норм.)</td><td>-259...227</td><td>0.007...10</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Гелий-4</td><td>-271...327</td><td>0.01...1.7</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Неон</td><td>-249...327</td><td>0.5...21</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Аргон</td><td>-189...1027</td><td>0.71...37</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Криптон</td><td>-158...327</td><td>0.72...41</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Ксенон</td><td>-112...327</td><td>0.82...44</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Аммиак</td><td>-77...426</td><td>0.06...100</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Этан</td><td>-90...327</td><td>0.002...37</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Этилен</td><td>-104...327</td><td>0.001...38</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Пропан</td><td>-173...327</td><td>0.1...32</td><td>Гарантированная точность ≤10%</td></tr>
-<tr><td>Фреон-22</td><td>0...280</td><td>1...37</td><td>Гарантированная точность ≤10%</td></tr>
+<tr><td>Воздух</td><td>-207...1027</td><td>0.34...28</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Азот</td><td>-210...1027</td><td>0.2...25</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Кислород</td><td>-218...1027</td><td>0.002...38</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Метан</td><td>-182...327</td><td>0.12...34</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>CO₂</td><td>-54...327</td><td>0.5...55</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Водород (пара/норм.)</td><td>-259...227</td><td>0.007...10</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Гелий-4</td><td>-271...327</td><td>0.01...1.7</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Неон</td><td>-249...327</td><td>0.5...21</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Аргон</td><td>-189...1027</td><td>0.71...37</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Криптон</td><td>-158...327</td><td>0.72...41</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Ксенон</td><td>-112...327</td><td>0.82...44</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Аммиак</td><td>-77...426</td><td>0.06...100</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Этан</td><td>-90...327</td><td>0.002...37</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Этилен</td><td>-104...327</td><td>0.001...38</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Пропан</td><td>-173...327</td><td>0.1...32</td><td>Типичная погрешность ±5%</td></tr>
+<tr><td>Фреон-22</td><td>0...280</td><td>1...37</td><td>Типичная погрешность ±5%</td></tr>
 <tr style="background:rgba(255,193,7,0.1); font-weight:bold;"><td colspan="4">🟡 Физическая зона (0.75•P<sub>c</sub>< P < 0.90•P<sub>c</sub>, T < 0.98•T<sub>c</sub>)</td></tr>
 <tr><td colspan="4">Те же вещества, но с повышенной погрешностью ≤15%. При T > 0.98•T<sub>c</sub> и P > 0.90•P<sub>c</sub> — 🔴 экстремальная зона (расчёт блокируется).</td></tr>
 </table>
@@ -2289,7 +2283,7 @@ lblTempFlow: 'Temperature (°C):',
 realCapabilitiesTitle: 'Real Model Capabilities', 
 helpContent: `
 <h3>Calculation modes</h3>
-<p><b>Simplified</b> — hydraulics only. Quick estimate without fluid properties.</p>
+<p><b>Simplified</b> — hydraulics with fixed viscosity ν = 1.0·10⁻⁶ m²/s (water at 20°C). Quick estimate for preliminary calculations. For gases, density is entered manually; compressibility is not accounted for.</p>
 <p><b>Engineering</b> — full calculation with real gas/liquid properties, compressibility, and phase state.</p>
 <h3>Applicability zones</h3>
 <p>Models are divided into three zones depending on thermodynamic conditions:</p>
@@ -2335,22 +2329,22 @@ helpContent: `
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
 <tr style="background:var(--btn-bg); font-weight:bold;"><th style="color:#ffffff;">Substance</th><th style="color:#ffffff;">T<sub>min</sub>...T<sub>max</sub> (°C)</th><th style="color:#ffffff;">P<sub>min</sub>...P<sub>max</sub> (bar)</th><th style="color:#ffffff;">Note</th></tr>
 <tr><td colspan="4" style="background:var(--btn-bg);font-weight:bold;">🟢 Engineering zone (P < 0.75•P<sub>c</sub>, any T)</td></tr>
-<tr><td>Air</td><td>-203...1027</td><td>0.34...28</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Nitrogen</td><td>-207...1027</td><td>0.2...25</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Oxygen</td><td>-218...1027</td><td>0.002...38</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Methane</td><td>-182...327</td><td>0.12...34</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>CO₂</td><td>-54...327</td><td>0.5...55</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Hydrogen (para/normal)</td><td>-259...227</td><td>0.007...10</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Helium-4</td><td>-271...327</td><td>0.01...1.7</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Neon</td><td>-249...327</td><td>0.5...21</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Argon</td><td>-189...1027</td><td>0.71...37</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Krypton</td><td>-158...327</td><td>0.72...41</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Xenon</td><td>-112...327</td><td>0.82...44</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Ammonia</td><td>-77...426</td><td>0.06...100</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Ethane</td><td>-90...327</td><td>0.002...37</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Ethylene</td><td>-104...327</td><td>0.001...38</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Propane</td><td>-173...327</td><td>0.1...32</td><td>Guaranteed accuracy ≤10%</td></tr>
-<tr><td>Freon-22</td><td>0...280</td><td>1...37</td><td>Guaranteed accuracy ≤10%</td></tr>
+<tr><td>Air</td><td>-203...1027</td><td>0.34...28</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Nitrogen</td><td>-207...1027</td><td>0.2...25</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Oxygen</td><td>-218...1027</td><td>0.002...38</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Methane</td><td>-182...327</td><td>0.12...34</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>CO₂</td><td>-54...327</td><td>0.5...55</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Hydrogen (para/normal)</td><td>-259...227</td><td>0.007...10</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Helium-4</td><td>-271...327</td><td>0.01...1.7</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Neon</td><td>-249...327</td><td>0.5...21</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Argon</td><td>-189...1027</td><td>0.71...37</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Krypton</td><td>-158...327</td><td>0.72...41</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Xenon</td><td>-112...327</td><td>0.82...44</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Ammonia</td><td>-77...426</td><td>0.06...100</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Ethane</td><td>-90...327</td><td>0.002...37</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Ethylene</td><td>-104...327</td><td>0.001...38</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Propane</td><td>-173...327</td><td>0.1...32</td><td>Typical uncertainty ±5%</td></tr>
+<tr><td>Freon-22</td><td>0...280</td><td>1...37</td><td>Typical uncertainty ±5%</td></tr>
 <tr style="background:rgba(255,193,7,0.1); font-weight:bold;"><td colspan="4">🟡 Physical zone (0.75•P<sub>c</sub>< P < 0.90•P<sub>c</sub>, T < 0.98•T<sub>c</sub>)</td></tr>
 <tr><td colspan="4">Same substances with increased uncertainty ≤15%. At T > 0.98•T<sub>c</sub> and P > 0.90•P<sub>c</sub> — 🔴 extreme zone (calculation blocked).</td></tr>
 </table>
@@ -2517,7 +2511,7 @@ lblTempFlow: '温度 (°C):',
 realCapabilities: `...中文...`,
 helpContent: `
 <h3>计算模式</h3>
-<p><b>简化模式</b> — 仅水力学计算。快速估算，不考虑介质特性。</p>
+<p><b>简化模式</b> — 水力学计算，固定运动粘度 ν = 1.0·10⁻⁶ m²/s（水，20°C）。快速估算，用于初步计算。气体需手动输入密度，不考虑压缩性。</p>
 <p><b>工程模式</b> — 完整计算，包含实际气体/液体性质、压缩性和相态。</p>
 <h3>模型适用范围分区</h3>
 <p>根据热力学条件，模型分为三个区域：</p>
@@ -2563,22 +2557,22 @@ helpContent: `
 <table style="width:100%; font-size:12px; border-collapse:collapse;">
 <tr style="background:var(--btn-bg); font-weight:bold;"><th style="color:#ffffff;">物质</th><th style="color:#ffffff;">T<sub>min</sub>...T<sub>max</sub> (°C)</th><th style="color:#ffffff;">P<sub>min</sub>...P<sub>max</sub> (巴)</th><th style="color:#ffffff;">备注</th></tr>
 <tr><td colspan="4" style="background:var(--btn-bg);font-weight:bold;">🟢 工程区域 (P < 0.75•P<sub>c</sub>, 任意 T)</td></tr>
-<tr><td>空气</td><td>-207...1027</td><td>0.34...28</td><td>保证精度 ≤10%</td></tr>
-<tr><td>氮气</td><td>-210...1027</td><td>0.2...25</td><td>保证精度 ≤10%</td></tr>
-<tr><td>氧气</td><td>-218...1027</td><td>0.002...38</td><td>保证精度 ≤10%</td></tr>
-<tr><td>甲烷</td><td>-182...327</td><td>0.12...34</td><td>保证精度 ≤10%</td></tr>
-<tr><td>CO₂</td><td>-54...327</td><td>0.5...55</td><td>保证精度 ≤10%</td></tr>
-<tr><td>氢 (仲/正)</td><td>-259...227</td><td>0.007...10</td><td>保证精度 ≤10%</td></tr>
-<tr><td>氦-4</td><td>-271...327</td><td>0.01...1.7</td><td>保证精度 ≤10%</td></tr>
-<tr><td>氖</td><td>-249...327</td><td>0.5...21</td><td>保证精度 ≤10%</td></tr>
-<tr><td>氩</td><td>-189...1027</td><td>0.71...37</td><td>保证精度 ≤10%</td></tr>
-<tr><td>氪</td><td>-158...327</td><td>0.72...41</td><td>保证精度 ≤10%</td></tr>
-<tr><td>氙</td><td>-112...327</td><td>0.82...44</td><td>保证精度 ≤10%</td></tr>
-<tr><td>氨</td><td>-77...426</td><td>0.06...100</td><td>保证精度 ≤10%</td></tr>
-<tr><td>乙烷</td><td>-90...327</td><td>0.002...37</td><td>保证精度 ≤10%</td></tr>
-<tr><td>乙烯</td><td>-104...327</td><td>0.001...38</td><td>保证精度 ≤10%</td></tr>
-<tr><td>丙烷</td><td>-173...327</td><td>0.1...32</td><td>保证精度 ≤10%</td></td>
-<tr><td>氟利昂-22</td><td>0...280</td><td>1...37</td><td>保证精度 ≤10%</td></tr>
+<tr><td>空气</td><td>-207...1027</td><td>0.34...28</td><td>典型误差 ±5%</td></tr>
+<tr><td>氮气</td><td>-210...1027</td><td>0.2...25</td><td>典型误差 ±5%</td></tr>
+<tr><td>氧气</td><td>-218...1027</td><td>0.002...38</td><td>典型误差 ±5%</td></tr>
+<tr><td>甲烷</td><td>-182...327</td><td>0.12...34</td><td>典型误差 ±5%</td></tr>
+<tr><td>CO₂</td><td>-54...327</td><td>0.5...55</td><td>典型误差 ±5%</td></tr>
+<tr><td>氢 (仲/正)</td><td>-259...227</td><td>0.007...10</td><td>典型误差 ±5%</td></tr>
+<tr><td>氦-4</td><td>-271...327</td><td>0.01...1.7</td><td>典型误差 ±5%</td></tr>
+<tr><td>氖</td><td>-249...327</td><td>0.5...21</td><td>典型误差 ±5%</td></tr>
+<tr><td>氩</td><td>-189...1027</td><td>0.71...37</td><td>典型误差 ±5%</td></tr>
+<tr><td>氪</td><td>-158...327</td><td>0.72...41</td><td>典型误差 ±5%</td></tr>
+<tr><td>氙</td><td>-112...327</td><td>0.82...44</td><td>典型误差 ±5%</td></tr>
+<tr><td>氨</td><td>-77...426</td><td>0.06...100</td><td>典型误差 ±5%</td></tr>
+<tr><td>乙烷</td><td>-90...327</td><td>0.002...37</td><td>典型误差 ±5%</td></tr>
+<tr><td>乙烯</td><td>-104...327</td><td>0.001...38</td><td>典型误差 ±5%</td></tr>
+<tr><td>丙烷</td><td>-173...327</td><td>0.1...32</td><td>典型误差 ±5%</td></td>
+<tr><td>氟利昂-22</td><td>0...280</td><td>1...37</td><td>典型误差 ±5%</td></tr>
 <tr style="background:rgba(255,193,7,0.1); font-weight:bold;"><td colspan="4">🟡 物理区域 (0.75•P<sub>c</sub>< P < 0.90•P<sub>c</sub>, T < 0.98•T<sub>c</sub>)</td></tr>
 <tr><td colspan="4">相同物质，但不确定性增加至 ≤15%。当 T > 0.98•T<sub>c</sub> 且 P > 0.90•P<sub>c</sub> 时 — 🔴 极端区域（阻止计算）。</td></tr>
 </table>
@@ -3943,11 +3937,21 @@ calculateBtn.addEventListener('click', () => {
         let deltaP, lambda = 0, re = 0, compressCorrection = null, machExceeded = false, compressDiff = null;
 
         if (modeSelect.value == 'simple') {
-            // Упрощённый режим (без новых сопротивлений, только bends и valves)
-            let dP_fric = density * velocity * velocity / 2 * (41 * length / innerD + 5 * valves + 0.17 * bends);
-            deltaP = dP_fric + density * 9.81 * geodetic;
-            lastResult.mode = 'simple';
-        } else {
+    // Упрощённый режим: Дарси-Вейсбах + базовые местные сопротивления
+    const nu_fixed = 1.0e-6; // м²/с (вода 20°C)
+    const re_simple = velocity * (innerD / 1000) / nu_fixed;
+    let lambda_simple;
+    if (re_simple < 2300) {
+        lambda_simple = 64 / re_simple;
+    } else {
+        lambda_simple = 0.25 / Math.pow(Math.log10(5.74 / Math.pow(re_simple, 0.9)), 2);
+        if (!isFinite(lambda_simple) || lambda_simple > 0.1) lambda_simple = 0.02;
+    }
+    const zeta_local = bends * 0.3 + valves * 3.0;
+    const dP_fric = (lambda_simple * length * 1000 / innerD + zeta_local) * density * velocity * velocity / 2;
+    deltaP = dP_fric + density * 9.81 * geodetic;
+    lastResult.mode = 'simple';
+    } else {
             // ИНЖЕНЕРНЫЙ РЕЖИМ – ВСЕ 15 КОЭФФИЦИЕНТОВ
             const viscosity = parseFloat(document.getElementById('viscosity').value);
             const roughness = parseFloat(document.getElementById('roughness').value);
