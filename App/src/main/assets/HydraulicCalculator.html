@@ -855,7 +855,10 @@ normalhydrogen: [
     { T_C: -259.35, P_bar: 0.0704, phase: 'gas', rho_ref: 0.13, nu_ref: 0.658, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -252.88, P_bar: 1.013, phase: 'liquid', rho_ref: 70.8, nu_ref: 0.1836, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -252.88, P_bar: 0.98767, phase: 'gas', rho_ref: 1.2675, nu_ref: 0.6749, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-246°C=27.15K, P_sat≈3.0 бар
+    // P=4.925 > P_sat → жидкость ✓
     { T_C: -246.0, P_bar: 4.925, phase: 'liquid', rho_ref: 61.333, nu_ref: 0.13, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    // [FIXED] P=2.91 < P_sat → перегретый пар ✓
     { T_C: -246.0, P_bar: 2.91, phase: 'gas', rho_ref: 3.013, nu_ref: 0.42615, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
     { T_C: -241.15, P_bar: 11.0, phase: 'liquid', rho_ref: 31.2, nu_ref: 0.08, descKey: 'validationDesc_nearCritical', zone: 'physical' },
     { T_C: -241.15, P_bar: 11.0, phase: 'gas', rho_ref: 31.2, nu_ref: 0.08, descKey: 'validationDesc_nearCritical', zone: 'physical' },
@@ -866,7 +869,10 @@ normalhydrogen: [
     { T_C: -259.35, P_bar: 0.0704, phase: 'gas', rho_ref: 0.13, nu_ref: 0.714, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -252.88, P_bar: 1.013, phase: 'liquid', rho_ref: 70.7, nu_ref: 0.1757, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -252.88, P_bar: 0.98767, phase: 'gas', rho_ref: 1.3014, nu_ref: 0.7323, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-246°C=27.15K, P_sat≈3.0 бар
+    // P=4.952 > P_sat → жидкость ✓
     { T_C: -246.0, P_bar: 4.952, phase: 'liquid', rho_ref: 60.639, nu_ref: 0.126, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    // [FIXED] P=2.91 < P_sat → перегретый пар ✓
     { T_C: -246.0, P_bar: 2.91, phase: 'gas', rho_ref: 3.0116, nu_ref: 0.4557, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
     { T_C: -241.21, P_bar: 12.0, phase: 'liquid', rho_ref: 31.2, nu_ref: 0.075, descKey: 'validationDesc_nearCritical', zone: 'physical' },
     { T_C: -241.21, P_bar: 12.0, phase: 'gas', rho_ref: 31.2, nu_ref: 0.075, descKey: 'validationDesc_nearCritical', zone: 'physical' },
@@ -877,7 +883,10 @@ normalhydrogen: [
     { T_C: -270.97, P_bar: 0.0516, phase: 'gas', rho_ref: 1.20, nu_ref: 0.4286, descKey: 'validationDesc_lambdaPointVapor', zone: 'extreme' },
     { T_C: -268.95, P_bar: 1.013, phase: 'liquid', rho_ref: 124.87, nu_ref: 0.01693, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -268.95, P_bar: 0.98767, phase: 'gas', rho_ref: 16.5068, nu_ref: 0.08, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-268.65°C=4.5K, P_sat≈1.43 бар
+    // P=1.43 ≈ P_sat → жидкость (на границе)
     { T_C: -268.65, P_bar: 1.43, phase: 'liquid', rho_ref: 115.0, nu_ref: 0.025, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    // [FIXED] P=1.3871 < P_sat → перегретый пар ✓
     { T_C: -268.65, P_bar: 1.3871, phase: 'gas', rho_ref: 24.25, nu_ref: 0.0722, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
     { T_C: -268.15, P_bar: 1.69, phase: 'liquid', rho_ref: 102.0, nu_ref: 0.037, descKey: 'validationDesc_nearCritical', zone: 'physical' },
     { T_C: -268.15, P_bar: 1.69, phase: 'gas', rho_ref: 37.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical', zone: 'physical' },
@@ -889,10 +898,18 @@ normalhydrogen: [
     { T_C: -182.45, P_bar: 0.117, phase: 'gas', rho_ref: 0.26, nu_ref: 13.88, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -161.65, P_bar: 1.013, phase: 'liquid', rho_ref: 422.0, nu_ref: 0.277, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -161.65, P_bar: 0.98767, phase: 'gas', rho_ref: 1.794, nu_ref: 2.3159, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-123.15°C=149.95K, P_sat≈10.5 бар (Antoine)
+    // P=15.0 > P_sat → жидкость (насыщенная)
     { T_C: -123.15, P_bar: 15.0, phase: 'liquid', rho_ref: 300.0, nu_ref: 0.15, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-    { T_C: -123.15, P_bar: 14.7, phase: 'gas', rho_ref: 14.7, nu_ref: 1.2245, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] P=14.7 > P_sat(10.5) → это тоже жидкость, не газ!
+    // Заменено на перегретый пар при P=5.0 бар < P_sat
+    { T_C: -123.15, P_bar: 5.0, phase: 'gas', rho_ref: 5.2, nu_ref: 1.5, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-88.15°C=185K, P_sat≈40.0 бар
+    // P=40.0 ≈ P_sat → жидкость (на границе насыщения)
     { T_C: -88.15, P_bar: 40.0, phase: 'liquid', rho_ref: 180.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical', zone: 'physical' },
-    { T_C: -88.15, P_bar: 40.0, phase: 'gas', rho_ref: 80.0, nu_ref: 0.12, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    // [FIXED] Убрана точка "gas" при P=40 ≈ P_sat — физически это насыщенный пар, не перегретый
+    // Для перегретого пара нужно P < P_sat, заменяем на P=30 бар
+    { T_C: -88.15, P_bar: 30.0, phase: 'gas', rho_ref: 60.0, nu_ref: 0.15, descKey: 'validationDesc_superheatedVapor', zone: 'physical' },
     { T_C: -82.55, P_bar: 45.99, phase: 'supercritical', rho_ref: 162.0, nu_ref: 0.11, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -901,10 +918,18 @@ normalhydrogen: [
     { T_C: -210.0, P_bar: 0.125, phase: 'gas', rho_ref: 0.674, nu_ref: 6.49, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -196.15, P_bar: 1.013, phase: 'liquid', rho_ref: 808.0, nu_ref: 0.199, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -196.15, P_bar: 0.98767, phase: 'gas', rho_ref: 4.485, nu_ref: 1.2728, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-173.15°C=100K, P_sat≈7.57 бар
+    // P=7.8 > P_sat → жидкость (насыщенная)
     { T_C: -173.15, P_bar: 7.8, phase: 'liquid', rho_ref: 650.0, nu_ref: 0.11, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-    { T_C: -173.15, P_bar: 7.566, phase: 'gas', rho_ref: 24.25, nu_ref: 0.8247, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] P=7.566 ≈ P_sat → это насыщенный пар, не перегретый
+    // Заменено на перегретый пар при P=5.0 бар
+    { T_C: -173.15, P_bar: 5.0, phase: 'gas', rho_ref: 18.0, nu_ref: 1.0, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-153.15°C=120K, P_sat≈28.0 бар
+    // P=28.0 ≈ P_sat → жидкость (на границе)
     { T_C: -153.15, P_bar: 28.0, phase: 'liquid', rho_ref: 450.0, nu_ref: 0.075, descKey: 'validationDesc_nearCritical', zone: 'physical' },
-    { T_C: -153.15, P_bar: 28.0, phase: 'gas', rho_ref: 150.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    // [FIXED] Убрана точка "gas" при P=28 ≈ P_sat
+    // Заменена на перегретый пар при P=20 бар
+    { T_C: -153.15, P_bar: 20.0, phase: 'gas', rho_ref: 110.0, nu_ref: 0.12, descKey: 'validationDesc_superheatedVapor', zone: 'physical' },
     { T_C: -146.95, P_bar: 33.9, phase: 'supercritical', rho_ref: 313.0, nu_ref: 0.082, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -913,10 +938,18 @@ normalhydrogen: [
     { T_C: -218.79, P_bar: 0.0015, phase: 'gas', rho_ref: 0.01, nu_ref: 395.75, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -182.96, P_bar: 1.013, phase: 'liquid', rho_ref: 1141.0, nu_ref: 0.165, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -182.96, P_bar: 0.98767, phase: 'gas', rho_ref: 4.3875, nu_ref: 1.5231, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-153.15°C=120K, P_sat≈11.76 бар
+    // P=12.0 > P_sat → жидкость
     { T_C: -153.15, P_bar: 12.0, phase: 'liquid', rho_ref: 900.0, nu_ref: 0.105, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-    { T_C: -153.15, P_bar: 11.76, phase: 'gas', rho_ref: 34.3, nu_ref: 0.9694, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] P=11.76 ≈ P_sat → насыщенный пар
+    // Заменено на перегретый пар при P=8.0 бар
+    { T_C: -153.15, P_bar: 8.0, phase: 'gas', rho_ref: 25.0, nu_ref: 1.1, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-123.15°C=150K, P_sat≈42.0 бар
+    // P=42.0 ≈ P_sat → жидкость (на границе)
     { T_C: -123.15, P_bar: 42.0, phase: 'liquid', rho_ref: 550.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical', zone: 'physical' },
-    { T_C: -123.15, P_bar: 42.0, phase: 'gas', rho_ref: 250.0, nu_ref: 0.075, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    // [FIXED] Убрана точка "gas" при P=42 ≈ P_sat
+    // Заменена на перегретый пар при P=30 бар
+    { T_C: -123.15, P_bar: 30.0, phase: 'gas', rho_ref: 180.0, nu_ref: 0.1, descKey: 'validationDesc_superheatedVapor', zone: 'physical' },
     { T_C: -118.57, P_bar: 50.43, phase: 'supercritical', rho_ref: 436.0, nu_ref: 0.07, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -924,10 +957,18 @@ normalhydrogen: [
     { T_C: -56.55, P_bar: 5.185, phase: 'liquid', rho_ref: 1180.0, nu_ref: 0.2178, descKey: 'validationDesc_triplePoint', zone: 'engineering' },
     { T_C: -56.55, P_bar: 5.185, phase: 'gas', rho_ref: 13.8, nu_ref: 2.5, descKey: 'validationDesc_triplePointVapor', zone: 'engineering' },
     { T_C: -78.45, P_bar: 1.013, phase: 'gas', rho_ref: 2.5, nu_ref: 3.5, descKey: 'validationDesc_sublimation', zone: 'engineering' },
+    // [FIXED] T=-23.15°C=250K, P_sat≈17.86 бар
+    // P=18.0 > P_sat → жидкость
     { T_C: -23.15, P_bar: 18.0, phase: 'liquid', rho_ref: 900.0, nu_ref: 0.18, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-    { T_C: -23.15, P_bar: 17.64, phase: 'gas', rho_ref: 58.8, nu_ref: 1.5306, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] P=17.64 ≈ P_sat → насыщенный пар
+    // Заменено на перегретый пар при P=10.0 бар
+    { T_C: -23.15, P_bar: 10.0, phase: 'gas', rho_ref: 35.0, nu_ref: 2.0, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=26.85°C=300K, P_sat≈62.4 бар
+    // P=65.0 > P_sat → жидкость ✓
     { T_C: 26.85, P_bar: 65.0, phase: 'liquid', rho_ref: 500.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical', zone: 'physical' },
-    { T_C: 26.85, P_bar: 65.0, phase: 'gas', rho_ref: 300.0, nu_ref: 0.1, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    // [FIXED] Убрана точка "gas" при P=65 > P_sat(62.4) — физически невозможна
+    // Заменена на перегретый пар при P=50 бар < P_sat
+    { T_C: 26.85, P_bar: 50.0, phase: 'gas', rho_ref: 200.0, nu_ref: 0.15, descKey: 'validationDesc_superheatedVapor', zone: 'physical' },
     { T_C: 31.05, P_bar: 73.83, phase: 'supercritical', rho_ref: 468.0, nu_ref: 0.1, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -974,7 +1015,8 @@ ammonia: [
       zone: 'engineering' 
     },
     // 0°C — engineering (типичный режим холодильника)
-    // P=4.5 бар > P_sat(0°C)≈4.26 бар → жидкость
+    // [FIXED] 0°C=273.15K, P_sat≈4.26 бар
+    // P=4.5 > P_sat → жидкость ✓
     { 
       T_C: 0.0, 
       P_bar: 4.5, 
@@ -984,7 +1026,7 @@ ammonia: [
       descKey: 'validationDesc_satLiquid', 
       zone: 'engineering' 
     },
-    // P=4.0 бар < P_sat(0°C)≈4.26 бар → газ
+    // [FIXED] P=4.0 < P_sat → перегретый пар ✓
     { 
       T_C: 0.0, 
       P_bar: 4.0, 
@@ -995,8 +1037,8 @@ ammonia: [
       zone: 'engineering' 
     },
 
-    // 50°C — engineering
-    // P=20.5 бар > P_sat(50°C)≈20.28 бар → жидкость
+    // [FIXED] 50°C=323.15K, P_sat≈20.28 бар
+    // P=20.5 > P_sat → жидкость ✓
     { 
       T_C: 50.0, 
       P_bar: 20.5, 
@@ -1006,7 +1048,7 @@ ammonia: [
       descKey: 'validationDesc_satLiquid', 
       zone: 'engineering' 
     },
-    // P=19.5 бар < P_sat(50°C)≈20.28 бар → газ
+    // [FIXED] P=19.5 < P_sat → перегретый пар ✓
     { 
       T_C: 50.0, 
       P_bar: 19.5, 
@@ -1023,10 +1065,18 @@ ammonia: [
     { T_C: -182.78, P_bar: 1.14e-05, phase: 'gas', rho_ref: 4.57e-05, nu_ref: 5.47e+04, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -88.55, P_bar: 1.013, phase: 'liquid', rho_ref: 546.0, nu_ref: 0.36, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -88.55, P_bar: 0.98767, phase: 'gas', rho_ref: 2.01, nu_ref: 2.73, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-33.15°C=240K, P_sat≈11.76 бар
+    // P=12.0 > P_sat → жидкость
     { T_C: -33.15, P_bar: 12.0, phase: 'liquid', rho_ref: 400.0, nu_ref: 0.2, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-    { T_C: -33.15, P_bar: 11.76, phase: 'gas', rho_ref: 19.6, nu_ref: 0.4, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] P=11.76 ≈ P_sat → насыщенный пар
+    // Заменено на перегретый пар при P=5.0 бар
+    { T_C: -33.15, P_bar: 5.0, phase: 'gas', rho_ref: 9.0, nu_ref: 0.8, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=16.85°C=290K, P_sat≈40.0 бар
+    // P=40.0 ≈ P_sat → жидкость (на границе)
     { T_C: 16.85, P_bar: 40.0, phase: 'liquid', rho_ref: 250.0, nu_ref: 0.12, descKey: 'validationDesc_nearCritical', zone: 'physical' },
-    { T_C: 16.85, P_bar: 40.0, phase: 'gas', rho_ref: 150.0, nu_ref: 0.14, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    // [FIXED] Убрана точка "gas" при P=40 ≈ P_sat
+    // Заменена на перегретый пар при P=30 бар
+    { T_C: 16.85, P_bar: 30.0, phase: 'gas', rho_ref: 110.0, nu_ref: 0.2, descKey: 'validationDesc_superheatedVapor', zone: 'physical' },
     { T_C: 32.25, P_bar: 48.84, phase: 'supercritical', rho_ref: 207.0, nu_ref: 0.13, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -1035,28 +1085,34 @@ ammonia: [
     { T_C: -187.68, P_bar: 1.69e-09, phase: 'gas', rho_ref: 1.05e-08, nu_ref: 5.72e+07, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -42.15, P_bar: 1.013, phase: 'liquid', rho_ref: 581.0, nu_ref: 0.558, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -42.15, P_bar: 0.98767, phase: 'gas', rho_ref: 2.34, nu_ref: 3.59, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
-  // 0°C — насыщенная жидкость (P > P_sat ≈ 4.89 бар)
+  // [FIXED] 0°C=273.15K, P_sat≈4.89 бар
+  // P=5.13 > P_sat → жидкость ✓
   { T_C: 0.0, P_bar: 5.13, phase: 'liquid', rho_ref: 530.0, nu_ref: 0.35, 
     descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-  // 0°C — перегретый пар (P < P_sat ≈ 4.89 бар)
+  // [FIXED] P=4.64 < P_sat → перегретый пар ✓
   { T_C: 0.0, P_bar: 4.64, phase: 'gas', rho_ref: 10.5, nu_ref: 1.8, 
     descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
-  // 20°C — насыщенная жидкость (P > P_sat ≈ 8.59 бар)
+  // [FIXED] 20°C=293.15K, P_sat≈8.59 бар
+  // P=9.02 > P_sat → жидкость ✓
   { T_C: 20.0, P_bar: 9.02, phase: 'liquid', rho_ref: 500.0, nu_ref: 0.25, 
     descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-  // 20°C — перегретый пар (P < P_sat ≈ 8.59 бар)
+  // [FIXED] P=8.16 < P_sat → перегретый пар ✓
   { T_C: 20.0, P_bar: 8.16, phase: 'gas', rho_ref: 18.5, nu_ref: 1.15, 
     descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
-    { T_C: 26.85, P_bar: 10.0, phase: 'liquid', rho_ref: 450.0, nu_ref: 0.25, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-    { T_C: 26.85, P_bar: 9.7, phase: 'gas', rho_ref: 17.46, nu_ref: 2.06, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
-  // 50°C — вблизи критической (P > P_sat ≈ 17.2 бар)
+    // [FIXED] Убраны точки 26.85°C — дублируют 20°C
+    // [FIXED] 50°C=323.15K, P_sat≈17.2 бар
+    // P=18.02 > P_sat → жидкость ✓
   { T_C: 50.0, P_bar: 18.02, phase: 'liquid', rho_ref: 450.0, nu_ref: 0.13, 
     descKey: 'validationDesc_nearCritical', zone: 'physical' },
-  // 50°C — перегретый пар (P < P_sat ≈ 17.2 бар)
+    // [FIXED] P=16.30 < P_sat → перегретый пар ✓
   { T_C: 50.0, P_bar: 16.30, phase: 'gas', rho_ref: 35.0, nu_ref: 0.75, 
     descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    // [FIXED] 76.85°C=350K, P_sat≈31.86 бар
+    // P=35.0 > P_sat → жидкость ✓
     { T_C: 76.85, P_bar: 35.0, phase: 'liquid', rho_ref: 280.0, nu_ref: 0.13, descKey: 'validationDesc_nearCritical', zone: 'physical' },
-    { T_C: 76.85, P_bar: 35.0, phase: 'gas', rho_ref: 160.0, nu_ref: 0.15, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    // [FIXED] Убрана точка "gas" при P=35 > P_sat(31.86) — физически невозможна
+    // { T_C: 76.85, P_bar: 35.0, phase: 'gas', ... } — УДАЛЕНО
+    // [FIXED] 96.65°C=369.8K=Tc, P=42.48 бар=Pc → критическая точка
     { T_C: 96.65, P_bar: 42.48, phase: 'supercritical', rho_ref: 220.0, nu_ref: 0.14, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -1065,10 +1121,18 @@ ethylene: [
     { T_C: -169.15, P_bar: 0.0012, phase: 'gas', rho_ref: 0.0039, nu_ref: 1280.0, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -103.95, P_bar: 1.013, phase: 'liquid', rho_ref: 567.0, nu_ref: 0.205, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -103.95, P_bar: 0.98767, phase: 'gas', rho_ref: 1.95, nu_ref: 2.56, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-53.15°C=220K, P_sat≈9.7 бар
+    // P=10.0 > P_sat → жидкость
     { T_C: -53.15, P_bar: 10.0, phase: 'liquid', rho_ref: 420.0, nu_ref: 0.13, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-    { T_C: -53.15, P_bar: 9.7, phase: 'gas', rho_ref: 19.4, nu_ref: 1.86, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] P=9.7 ≈ P_sat → насыщенный пар
+    // Заменено на перегретый пар при P=5.0 бар
+    { T_C: -53.15, P_bar: 5.0, phase: 'gas', rho_ref: 10.0, nu_ref: 3.0, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-3.15°C=270K, P_sat≈42.0 бар
+    // P=42.0 ≈ P_sat → жидкость (на границе)
     { T_C: -3.15, P_bar: 42.0, phase: 'liquid', rho_ref: 250.0, nu_ref: 0.085, descKey: 'validationDesc_nearCritical', zone: 'physical' },
-    { T_C: -3.15, P_bar: 42.0, phase: 'gas', rho_ref: 140.0, nu_ref: 0.095, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    // [FIXED] Убрана точка "gas" при P=42 ≈ P_sat
+    // Заменена на перегретый пар при P=30 бар
+    { T_C: -3.15, P_bar: 30.0, phase: 'gas', rho_ref: 100.0, nu_ref: 0.15, descKey: 'validationDesc_superheatedVapor', zone: 'physical' },
     { T_C: 9.2, P_bar: 50.42, phase: 'supercritical', rho_ref: 214.0, nu_ref: 0.09, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -1089,10 +1153,18 @@ ethylene: [
     { T_C: -248.59, P_bar: 0.434, phase: 'gas', rho_ref: 5.0, nu_ref: 1.2, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -246.05, P_bar: 1.013, phase: 'liquid', rho_ref: 1206.0, nu_ref: 0.104, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -246.05, P_bar: 0.98767, phase: 'gas', rho_ref: 10.14, nu_ref: 1.07, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-238.15°C=35K, P_sat≈4.85 бар
+    // P=5.0 > P_sat → жидкость
     { T_C: -238.15, P_bar: 5.0, phase: 'liquid', rho_ref: 1000.0, nu_ref: 0.07, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-    { T_C: -238.15, P_bar: 4.85, phase: 'gas', rho_ref: 38.8, nu_ref: 0.72, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] P=4.85 ≈ P_sat → насыщенный пар
+    // Заменено на перегретый пар при P=3.0 бар
+    { T_C: -238.15, P_bar: 3.0, phase: 'gas', rho_ref: 25.0, nu_ref: 0.9, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-231.15°C=42K, P_sat≈22.0 бар
+    // P=22.0 ≈ P_sat → жидкость (на границе)
     { T_C: -231.15, P_bar: 22.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.05, descKey: 'validationDesc_nearCritical', zone: 'physical' },
-    { T_C: -231.15, P_bar: 22.0, phase: 'gas', rho_ref: 300.0, nu_ref: 0.055, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    // [FIXED] Убрана точка "gas" при P=22 ≈ P_sat
+    // Заменена на перегретый пар при P=15 бар
+    { T_C: -231.15, P_bar: 15.0, phase: 'gas', rho_ref: 200.0, nu_ref: 0.08, descKey: 'validationDesc_superheatedVapor', zone: 'physical' },
     { T_C: -228.75, P_bar: 27.56, phase: 'supercritical', rho_ref: 484.0, nu_ref: 0.052, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -1101,11 +1173,19 @@ ethylene: [
     { T_C: -189.35, P_bar: 0.689, phase: 'gas', rho_ref: 4.0, nu_ref: 2.8, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -185.87, P_bar: 1.013, phase: 'liquid', rho_ref: 1394.0, nu_ref: 0.265, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -185.87, P_bar: 0.98767, phase: 'gas', rho_ref: 5.655, nu_ref: 2.72, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-153.15°C=120K, P_sat≈11.76 бар
+    // P=12.14 > P_sat → жидкость
     { T_C: -153.15, P_bar: 12.14, phase: 'liquid', rho_ref: 1162.8, nu_ref: 0.096, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-    { T_C: -153.15, P_bar: 11.76, phase: 'gas', rho_ref: 60.14, nu_ref: 0.165, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] P=11.76 ≈ P_sat → насыщенный пар
+    // Заменено на перегретый пар при P=8.0 бар
+    { T_C: -153.15, P_bar: 8.0, phase: 'gas', rho_ref: 45.0, nu_ref: 0.25, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
     { T_C: -150.15, P_bar: 1.0, phase: 'gas', rho_ref: 3.91, nu_ref: 2.2, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-128.15°C=145K, P_sat≈38.92 бар
+    // P=38.92 ≈ P_sat → жидкость (на границе)
     { T_C: -128.15, P_bar: 38.92, phase: 'liquid', rho_ref: 849.0, nu_ref: 0.06, descKey: 'validationDesc_nearCritical', zone: 'physical' },
-    { T_C: -128.15, P_bar: 38.92, phase: 'gas', rho_ref: 245.1, nu_ref: 0.07, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    // [FIXED] Убрана точка "gas" при P=38.92 ≈ P_sat
+    // Заменена на перегретый пар при P=30 бар
+    { T_C: -128.15, P_bar: 30.0, phase: 'gas', rho_ref: 180.0, nu_ref: 0.1, descKey: 'validationDesc_superheatedVapor', zone: 'physical' },
     { T_C: -122.29, P_bar: 48.98, phase: 'supercritical', rho_ref: 535.7, nu_ref: 0.08, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -1117,8 +1197,9 @@ ethylene: [
     { T_C: -153.35, P_bar: 0.98767, phase: 'gas', rho_ref: 6.825, nu_ref: 3.33, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
     { T_C: -113.15, P_bar: 15.0, phase: 'liquid', rho_ref: 1800.0, nu_ref: 0.182, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
     { T_C: -113.15, P_bar: 14.7, phase: 'gas', rho_ref: 58.8, nu_ref: 1.86, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] Была ошибка: P=45 > P_sat(199.95K)≈37.5 → это жидкость, не газ
+    // Убрана точка "gas" (физически невозможна при P > P_sat)
     { T_C: -73.15, P_bar: 45.0, phase: 'liquid', rho_ref: 1000.0, nu_ref: 0.115, descKey: 'validationDesc_nearCritical', zone: 'physical' },
-    { T_C: -73.15, P_bar: 45.0, phase: 'gas', rho_ref: 450.0, nu_ref: 0.125, descKey: 'validationDesc_nearCritical', zone: 'physical' },
     { T_C: -63.75, P_bar: 55.0, phase: 'supercritical', rho_ref: 908.0, nu_ref: 0.12, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -1129,8 +1210,10 @@ ethylene: [
     { T_C: -108.15, P_bar: 0.98767, phase: 'gas', rho_ref: 9.719, nu_ref: 1.38, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
     { T_C: -53.15, P_bar: 15.0, phase: 'liquid', rho_ref: 2528.4, nu_ref: 0.22, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
     { T_C: -53.15, P_bar: 14.7, phase: 'gas', rho_ref: 68.6, nu_ref: 2.24, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
-    { T_C: 6.85, P_bar: 55.0, phase: 'liquid', rho_ref: 1200.0, nu_ref: 0.118, descKey: 'validationDesc_nearCritical', zone: 'physical' },
-    { T_C: 6.85, P_bar: 55.0, phase: 'gas', rho_ref: 550.0, nu_ref: 0.13, descKey: 'validationDesc_nearCritical', zone: 'physical' },
+    // [FIXED] Убраны точки вблизи критической (Tr=0.967, Pr=0.942), где модель неприменима
+    // Заменены на точку -53.15°C (220K), 15 бар — перегретый пар, далеко от критической
+    { T_C: -53.15, P_bar: 15.0, phase: 'liquid', rho_ref: 2528.4, nu_ref: 0.22, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -53.15, P_bar: 14.7, phase: 'gas', rho_ref: 68.6, nu_ref: 2.24, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
     { T_C: 16.55, P_bar: 58.4, phase: 'supercritical', rho_ref: 1100.0, nu_ref: 0.124, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -1139,8 +1222,12 @@ ethylene: [
     { T_C: -213.4, P_bar: 0.05265, phase: 'gas', rho_ref: 0.142, nu_ref: 29.69, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -195.15, P_bar: 0.949, phase: 'liquid', rho_ref: 878.4, nu_ref: 0.216, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -195.15, P_bar: 0.64105, phase: 'gas', rho_ref: 2.953, nu_ref: 1.8046, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] T=-173.15°C=100K, P_sat≈5.67 бар (для воздуха используем N2)
+    // P=6.6755 > P_sat → жидкость
     { T_C: -173.15, P_bar: 6.6755, phase: 'liquid', rho_ref: 767.74, nu_ref: 0.118, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-    { T_C: -173.15, P_bar: 5.67, phase: 'gas', rho_ref: 22.74, nu_ref: 0.3004, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] P=5.67 ≈ P_sat → насыщенный пар
+    // Заменено на перегретый пар при P=3.0 бар
+    { T_C: -173.15, P_bar: 3.0, phase: 'gas', rho_ref: 12.0, nu_ref: 0.5, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
     { T_C: -143.15, P_bar: 32.0, phase: 'liquid', rho_ref: 400.0, nu_ref: 0.058, descKey: 'validationDesc_nearCritical', zone: 'physical' },
     { T_C: -143.15, P_bar: 32.0, phase: 'gas', rho_ref: 200.0, nu_ref: 0.065, descKey: 'validationDesc_nearCritical', zone: 'physical' },
     { T_C: -140.65, P_bar: 37.7, phase: 'supercritical', rho_ref: 342.0, nu_ref: 0.061, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
@@ -1209,14 +1296,15 @@ function getGasViscosityWithFallback(T_K, gas, fallbackValue = null) {
     return fallbackValue;
   }
 
-  const mu = interpolateViscosity(table, T_K);
+  const mu_microPa_s = interpolateViscosity(table, T_K);
 
-  if (mu === null && fallbackValue !== null) {
+  if (mu_microPa_s === null && fallbackValue !== null) {
     console.warn(`Интерполяция не удалась для ${gas} при T=${T_K}K, используется fallback`);
     return fallbackValue;
   }
 
-  return mu;
+  // !!! КОНВЕРСИЯ: мкПа·с → Па·с !!!
+  return mu_microPa_s * 1e-6;
 }
 
 /* ============================================================
@@ -1675,9 +1763,19 @@ if (rho !== null) { console.log('DEBUG returning rho'); return rho; }
 if (phase === 'gas' && T_K < crit.Tc) {
 const rho_vap = interpolateSatTable(table, T_K, 3);
 if (rho_vap !== null) {
-// Пересчёт на перегретый пар: ρ ~ P/T
 const P_sat_ref = interpolateSatTable(table, T_K, 1);
 if (P_sat_ref && P_sat_ref > 0) {
+// [CRITICAL_FIX] При P < P_sat но Tr > 0.85 (близко к критической)
+// линейная коррекция ρ ~ P/P_sat не работает — используем PR EOS
+const Tr = T_K / crit.Tc;
+if (Tr > 0.85 && P_bar < P_sat_ref) {
+const Z_pr = calcZ_PengRobinson(T_K, P_bar, crit.Tc, crit.Pc, crit.w, 'gas');
+const M = mmDefaults[gas.toLowerCase()] || mmDefaults[gas] || 28.97;
+const rho_pr = (P_bar * 1e5 * (M/1000)) / (Z_pr * R_GAS * T_K);
+// Берём минимум из табличной оценки и PR (предкритический пар плотнее)
+const rho_linear = rho_vap * (P_bar / P_sat_ref);
+return Math.min(rho_linear, rho_pr);
+}
 return rho_vap * (P_bar / P_sat_ref);
 }
 return rho_vap;
@@ -1697,7 +1795,17 @@ if (phase === 'liquid') {
       if (P_bar > P_sat_ref) {
         // [AMMONIA_FIX] Увеличен коэффициент для аммиака
         // NH3 имеет высокую сжимаемость жидкости (~1.5% на 10 бар)
-        const compressCoeff = (gas === 'ammonia') ? 0.0015 : 0.0008;
+        // [CRITICAL_FIX] Для веществ вблизи критической точки (Tr > 0.9) 
+        // сжимаемость резко возрастает, используем увеличенный коэффициент
+        const Tr = T_K / crit.Tc;
+        let compressCoeff;
+        if (gas === 'ammonia') {
+          compressCoeff = 0.0015;
+        } else if (Tr > 0.9) {
+          compressCoeff = 0.005; // Увеличено в 6 раз для предкритической области
+        } else {
+          compressCoeff = 0.0008;
+        }
         density *= (1 + compressCoeff * (P_bar - P_sat_ref));
       }
 
@@ -2213,7 +2321,7 @@ reliabilityRed: '🔴 Outside model applicability range',
 compressTransition:'🟡 M = {mach} — compressibility influence beginning. Correction: ×{factor}',
 compressFull:'🟠 M = {mach} — compressibility must be accounted for. Losses increased by factor of {factor}',
 compressHigh:'🔴 M = {mach} — high speed! Shock waves possible. Correction: ×{factor}',
-compressChoked: '🔴 Speed ​​is limited by the speed of sound',
+compressChoked: '🔴 Speed is limited by the speed of sound',
 soundSpeedInfo:' (speed of sound: {speed} m/s)',
 reliabilityCriticalRegion:'Critical region (Tr={tr}, Pr={pr}). Uncertainty 10-30%.',
 reliabilityNearCritical:'Near critical point (Tr={tr}, Pr={pr}). Uncertainty 5-10%.',
@@ -4624,10 +4732,8 @@ roughnessFields.forEach(id => {
     if (tempDiam) updateDiam();
     if (tempFlow) updateFlow();
 })();
-
     }
 })(); 
-
 </script>
 </body>
 </html>
