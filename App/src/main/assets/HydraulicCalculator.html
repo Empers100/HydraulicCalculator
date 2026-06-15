@@ -2158,6 +2158,7 @@ lblMediumFlow: 'Среда:',
 lblTempDiam: 'Температура (°C):',
 lblTempFlow: 'Температура (°C):',
 realCapabilitiesTitle: 'Реальные возможности модели',
+viscosityNISTtableNote: '⚠ Вязкость по таблицам NIST (лог. интерполяция).',
 helpContent: `
 <h3>Режимы расчёта</h3>
 <p><b>Упрощённый</b> — гидравлика с фиксированной вязкостью ν = 1.0·10⁻⁶ м²/с (вода 20°C). Быстрая оценка для предварительных расчётов. Для газов плотность вводится вручную, сжимаемость не учитывается.</p>
@@ -2390,7 +2391,8 @@ lblMediumDiam: 'Medium:',
 lblMediumFlow: 'Medium:',
 lblTempDiam: 'Temperature (°C):',
 lblTempFlow: 'Temperature (°C):',
-realCapabilitiesTitle: 'Real Model Capabilities', 
+realCapabilitiesTitle: 'Real Model Capabilities',
+viscosityNISTtableNote: '⚠ Viscosity from NIST tables (log interpolation).', 
 helpContent: `
 <h3>Calculation modes</h3>
 <p><b>Simplified</b> — hydraulics with fixed viscosity ν = 1.0·10⁻⁶ m²/s (water at 20°C). Quick estimate for preliminary calculations. For gases, density is entered manually; compressibility is not accounted for.</p>
@@ -2619,6 +2621,7 @@ lblMediumFlow: '介质:',
 lblTempDiam: '温度 (°C):',
 lblTempFlow: '温度 (°C):',
 realCapabilities: `...中文...`,
+viscosityNISTtableNote: '⚠ 粘度来自NIST表格（对数插值）。',
 helpContent: `
 <h3>计算模式</h3>
 <p><b>简化模式</b> — 水力学计算，固定运动粘度 ν = 1.0·10⁻⁶ m²/s（水，20°C）。快速估算，用于初步计算。气体需手动输入密度，不考虑压缩性。</p>
@@ -3857,25 +3860,45 @@ menuToggle.addEventListener('click',e=>{e.stopPropagation();settingsMenu.classLi
 document.addEventListener('click',e=>{ if(!settingsMenu.contains(e.target)&&e.target!==menuToggle)settingsMenu.classList.remove('show'); });
 langSelect.value=currentLang;
 
-
 function updateInfoPanel(){
-  const preset=presetSelect.value;
-  if(preset==='lng'){infoPanel.textContent=t('infoPanelLng');return;}
-  if(mediumSelect.value==='gas'){
-    let text=t('infoPanelGas');const limits=gasLimits[preset];
-    if(limits)text+=' '+t('limitInfo').replace('{tmin}',(limits.Tmin-273.15).toFixed(1)).replace('{tmax}',(limits.Tmax-273.15).toFixed(1)).replace('{pmin}',limits.Pmin.toFixed(4)).replace('{pmax}',limits.Pmax.toFixed(1));
-    else text+=' '+t('noLimitInfo');
-    const info=window._lastPhaseInfo;if(info&&info.phase==='liquid')text+=t('infoPanelSaturatedLiquid');
-    infoPanel.textContent=text;
-  }else{
-    let text=t('infoPanelLiquid');const liq=liquidLimits[preset];
-    if(liq)text+=' '+t('liquidDensityRange').replace('{min}',liq.densityMin).replace('{max}',liq.densityMax)+' '+t('liquidViscosityRange').replace('{min}',liq.viscosityMin).replace('{max}',liq.viscosityMax);
-    if(preset!=='water'&&preset!=='oil')text+=' '+t('liquidPressureNote');
-    // Добавляем информацию о табличных данных
-    if (liquidViscosityTables[preset]) {
-      text += ' ⚠ Вязкость по таблицам NIST (лог. интерполяция).';
+  const preset = presetSelect.value;
+  if (preset === 'lng') {
+    infoPanel.textContent = t('infoPanelLng');
+    return;
+  }
+  if (mediumSelect.value === 'gas') {
+    let text = t('infoPanelGas');
+    const limits = gasLimits[preset];
+    if (limits) {
+      text += ' ' + t('limitInfo')
+        .replace('{tmin}', (limits.Tmin - 273.15).toFixed(1))
+        .replace('{tmax}', (limits.Tmax - 273.15).toFixed(1))
+        .replace('{pmin}', limits.Pmin.toFixed(4))
+        .replace('{pmax}', limits.Pmax.toFixed(1));
+    } else {
+      text += ' ' + t('noLimitInfo');
     }
-    infoPanel.textContent=text;
+    const info = window._lastPhaseInfo;
+    if (info && info.phase === 'liquid') text += t('infoPanelSaturatedLiquid');
+    infoPanel.textContent = text;
+  } else {
+    let text = t('infoPanelLiquid');
+    const liq = liquidLimits[preset];
+    if (liq) {
+      text += ' ' + t('liquidDensityRange')
+        .replace('{min}', liq.densityMin)
+        .replace('{max}', liq.densityMax) +
+        ' ' + t('liquidViscosityRange')
+        .replace('{min}', liq.viscosityMin)
+        .replace('{max}', liq.viscosityMax);
+    }
+    if (preset !== 'water' && preset !== 'oil') {
+      text += ' ' + t('liquidPressureNote');
+    }
+    if (liquidViscosityTables[preset]) {
+      text += ' ' + t('viscosityNISTtableNote');
+    }
+    infoPanel.textContent = text;
   }
 }
 
@@ -4169,12 +4192,76 @@ function buildReport(){
   return r;
 }
 
-shareBtn.addEventListener('click',()=>{
-  const u='https://github.com/Empers100/HydraulicCalculator',txt=(lastResult.velocity>0)?buildReport():t('shareText');
-  if(typeof AndroidShare!=='undefined'&&AndroidShare.shareText)AndroidShare.shareText(t('title'),txt,u);
-  else if(navigator.share)navigator.share({title:t('title'),text:txt,url:u}).catch(()=>{});
+shareBtn.addEventListener('click', () => {
+  const u = 'https://github.com/Empers100/HydraulicCalculator';
+  const txt = (lastResult.velocity > 0) ? buildReport() : t('shareText');
+
+  // 1. Android WebView (мобильное приложение)
+  if (typeof AndroidShare !== 'undefined' && AndroidShare.shareText) {
+    AndroidShare.shareText(t('title'), txt, u);
+    settingsMenu.classList.remove('show');
+    return;
+  }
+
+  // 2. Web Share API (Chrome, Edge, Safari — мобильные и десктоп)
+  if (navigator.share) {
+    navigator.share({ title: t('title'), text: txt, url: u })
+      .then(() => {
+        settingsMenu.classList.remove('show');
+      })
+      .catch((err) => {
+        // Пользователь отменил или ошибка — fallback на копирование
+        if (err.name !== 'AbortError') {
+          fallbackShare(txt + '\n\n' + u);
+        }
+        settingsMenu.classList.remove('show');
+      });
+    return;
+  }
+
+  // 3. Fallback для Firefox Desktop и других браузеров без Web Share API
+  fallbackShare(txt + '\n\n' + u);
   settingsMenu.classList.remove('show');
 });
+
+// Функция fallback: копирование в буфер обмена
+function fallbackShare(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(() => alert(t('shareFallback')))
+      .catch(() => {
+        // Если clipboard недоступен (например, при file:// протоколе),
+        // используем устаревший метод
+        legacyCopy(text);
+      });
+  } else {
+    legacyCopy(text);
+  }
+}
+
+// Устаревший fallback для очень старых браузеров или file:// протокола
+function legacyCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  ta.style.top = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    const success = document.execCommand('copy');
+    if (success) {
+      alert(t('shareFallback'));
+    } else {
+      // Если execCommand не сработал — показываем текст пользователю
+      prompt(t('shareFallback') + '\n' + t('copyLink'), text);
+    }
+  } catch (e) {
+    prompt(t('shareFallback') + '\n' + t('copyLink'), text);
+  }
+  document.body.removeChild(ta);
+}
 
 document.querySelectorAll('input[type="number"]').forEach(input=>{
   // Разрешаем ввод минуса для поля перепада высот и температуры
