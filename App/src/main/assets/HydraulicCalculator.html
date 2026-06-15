@@ -335,6 +335,22 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 </style>
 </head>
 <body>
+<script>
+(function() {
+  // Определяем предпочтительный язык браузера/системы
+  const browserLang = (navigator.language || navigator.userLanguage || 'ru').toLowerCase();
+  let titleText = 'Гидравлический калькулятор'; // русский по умолчанию
+
+  if (browserLang.startsWith('en')) {
+    titleText = 'Hydraulic Calculator';
+  } else if (browserLang.startsWith('zh')) {
+    titleText = '液压管道计算器';
+  }
+  // Для всех остальных (ru, uk, de, fr и т.д.) оставляем русский
+
+  document.title = titleText;
+})();
+</script>
 <div class="container">
 <div class="header">
 <button class="menu-btn" id="menuToggle">⋮</button>
@@ -2738,7 +2754,6 @@ locales.ru.compressChokedZ = '🔴 Критическое истечение (M=
 locales.en.compressChokedZ = '🔴 Critical flow (M={mach}, Z={z}). ΔP limited by sonic velocity at outlet: {actual} bar (max {max} bar)';
 locales.zh.compressChokedZ = '🔴 临界流 (M={mach}, Z={z})。出口声速限制ΔP：{actual} 巴 (最大 {max} 巴)';
 
-
 let currentLang = localStorage.getItem('calc_hyd_lang') || 'ru';
 function t(key, fallbackLang) {
   const primary = locales[currentLang]?.[key];
@@ -4617,6 +4632,8 @@ mediumSelects.forEach(id => {
         select.options[1].textContent = t('presetOil');
     }
 });
+  // Обновляем заголовок страницы
+  document.title = t('title'); // предполагается, что в locales есть ключ 'title'
 updateAllWarnings();
 }
 
