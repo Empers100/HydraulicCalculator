@@ -3172,105 +3172,107 @@ function calcCompressibilityCorrection(v, dP0) {
     if (modeSelect.value === 'simple' || mediumSelect.value !== 'gas') {
         return { factor: 1, mach: 0, regime: 'incompressible', dP_corrected: dP0, isChoked: false };
     }
+
+    // При ручном вводе — несжимаемая модель
+    if (presetSelect.value === 'choose') {
+        return { factor: 1, mach: 0, regime: 'incompressible', dP_corrected: dP0, isChoked: false };
+    }
+
     const a = calcSoundSpeed();
     if (!a || a <= 0) {
         return { factor: 1, mach: 0, regime: 'incompressible', dP_corrected: dP0, isChoked: false };
     }
+
     const M = v / a;
     const P_abs = parseFloat(document.getElementById('pressure').value) * 1e5;
     const g = getGammaDetailed(presetSelect.value);
 
+    // Критическое отношение давлений для choked flow
     const criticalRatio = Math.pow(2 / (g + 1), g / (g - 1));
     const P_critical = P_abs * criticalRatio;
     const maxDP = P_abs - P_critical;
 
+    // Несжимаемый режим (M < 0.1) — без сообщений
     if (M < 0.1) {
         return { factor: 1, mach: M, regime: 'incompressible', dP_corrected: dP0, isChoked: false };
     }
 
-    let P2 = P_abs - dP0;
-    const isChokedByPressure = P2 <= P_critical || dP0 >= maxDP * 0.99;
-    const isSupersonic = M >= 0.99;
+    // === МОДЕЛЬ ДЛЯ ТРУБ: изотермическое течение с трением ===
+    // Источник: Crane TP-410, Chapter 1-6, Eq. 1-8
+    // Для труб с преобладающим трением (K >> 1) используем изотермическую аппроксимацию:
+    // ΔP_compressible = ΔP_incompressible * Y^2
+    // где Y = 1 - 0.41 * (ΔP/P1) * (M/0.3)^2 для M < 0.3
+    // и Y из политропической формулы для M >= 0.3
 
-    let dP0_effective = dP0;
-    if (isSupersonic) {
-        dP0_effective = dP0 * (a / v) * (a / v);
+    const K = window._lastTotalZeta || 1;
+    const dP_ratio = Math.min(dP0 / P_abs, 0.99);
+
+    let Y = 1.0;
+
+    if (M < 0.3) {
+        // Дозвуковое течение: линейная коррекция по Маху и перепаду давления
+        // Эмпирическая формула для труб (Crane TP-410, Fig. 1-8)
+        const machEffect = Math.pow(M / 0.3, 2);
+        const pressureEffect = dP_ratio;
+        Y = 1.0 - 0.41 * pressureEffect * machEffect;
+        Y = Math.max(0.5, Math.min(Y, 1.0));
+    } else {
+        // 0.3 <= M < 1: политропическая аппроксимация Kirkland
+        const c = 1 + 1.8 * dP_ratio * (g - 1) / (K + 1);
+        if (dP_ratio >= 0.01) {
+            const term1 = Math.pow(1 - dP_ratio, (c + 1) / c);
+            const numerator = (c / (c + 1)) * dP_ratio * (term1 - 1);
+            const denominator = (2 / (c * K)) * Math.log(1 / (1 - dP_ratio));
+            if (denominator > 0 && numerator < 0) {
+                Y = Math.sqrt(Math.abs(numerator / denominator));
+                Y = Math.max(0.1, Math.min(Y, 1.0));
+            }
+        }
     }
-    P2 = P_abs - dP0_effective;
 
-    // M < 0.3 и не choked: переходный режим
-    if (M < 0.3 && !isChokedByPressure) {
-        const t = (M - 0.1) / 0.2;
-        const fc = (P_abs / P2 + 1) / 2;
-        const factor = 1 + (fc - 1) * t;
+    // Choked flow или сверхзвук
+    if (M >= 1 || dP0 >= maxDP * 0.99) {
         return {
-            factor: factor,
+            factor: maxDP / dP0,
             mach: M,
-            regime: 'transition',
-            dP_corrected: dP0_effective * factor,
-            isChoked: false,
-            isSupersonic: false,
+            regime: 'choked',
+            dP_corrected: maxDP,
+            isChoked: true,
+            isSupersonic: M >= 1,
             maxDP: maxDP,
             P_critical: P_critical
         };
     }
 
-    // M >= 0.3 или choked
-    let P2_safe = P2;
-    if (P2_safe <= 0) P2_safe = P_critical * 0.001;
-    const pressureRatio = P_abs / P2_safe;
-    const safeRatio = Math.min(pressureRatio, 1000);
+    // Дозвуковое течение
+    const dP_corrected = dP0 * Y * Y;
+    const factor = Y * Y;
 
-    let fc;
-    if (safeRatio > 2) {
-        fc = (safeRatio - 1) / Math.log(safeRatio);
-    } else {
-        fc = (safeRatio + 1) / 2;
+    // Определяем режим для сообщения
+    // Скрываем сообщение, если поправка < 5% (factor > 0.95)
+    if (factor > 0.95) {
+        return {
+            factor: factor,
+            mach: M,
+            regime: 'incompressible', // Скрываем сообщение
+            dP_corrected: dP_corrected,
+            isChoked: false
+        };
     }
 
-    if (isSupersonic) {
-        const machFactor = Math.min(M, 3.0);
-        fc = 0.037 / machFactor;   // эмпирическая сверхзвуковая поправка
-    } else {
-        fc = Math.min(fc, 100);
-    }
-
-    let dP_corrected = dP0_effective * fc;
-    let regime = 'compressible';
-    if (M > 0.7) regime = 'high-subsonic';
-    if (isSupersonic) regime = 'supersonic-warning';
-
-    if (isChokedByPressure && !isSupersonic) {
-        if (dP_corrected > maxDP) {
-            dP_corrected = maxDP;
-            regime = 'choked';
-        }
-    }
-
-    // Вычисляем коэффициент сжимаемости Z для отображения
-    const T_K = parseFloat(document.getElementById('temperature').value) + 273.15;
-    const crit = gasCritical[presetSelect.value.toLowerCase()] || gasCritical[presetSelect.value];
-    let Z = 1.0;
-    if (crit) {
-        Z = calcZ_PengRobinson(T_K, P_abs/1e5, crit.Tc, crit.Pc, crit.w, 'gas');
-    }
+    const regime = (M < 0.3) ? 'transition' : 'compressible';
 
     return {
-        factor: dP_corrected / dP0,
+        factor: factor,
         mach: M,
         regime: regime,
         dP_corrected: dP_corrected,
-        isChoked: isChokedByPressure && !isSupersonic,
-        isSupersonic: isSupersonic,
-        maxDP: maxDP,
-        P_critical: P_critical,
-        Z: Z
+        isChoked: false
     };
 }
 
-function updateCompressNoteFromCorr(c) { 
-    const n = document.getElementById('compressNote'); 
-    // Скрываем для несжимаемого режима и при M < 0.1 без choked
+function updateCompressNoteFromCorr(c) {
+    const n = document.getElementById('compressNote');
     if (!c || (c.mach < 0.1 && !c.isChoked) || modeSelect.value === 'simple' || mediumSelect.value !== 'gas') {
         n.textContent = '';
         n.classList.remove('show');
@@ -3285,24 +3287,21 @@ function updateCompressNoteFromCorr(c) {
     const soundInfo = a ? ' ' + t('soundSpeedInfo').replace('{speed}', a.toFixed(0)) : '';
 
     if (c.regime === 'transition') {
+        // 0.1 < M < 0.3: начинается влияние сжимаемости
         msg = t('compressTransition').replace('{mach}', M).replace('{factor}', f);
     } else if (c.regime === 'compressible') {
+        // 0.3 <= M < 1: необходим учёт сжимаемости
         msg = t('compressFull').replace('{mach}', M).replace('{factor}', f);
-    } else if (c.regime === 'high-subsonic') {
-        msg = t('compressHigh').replace('{mach}', M).replace('{factor}', f);
-    } else if (c.regime === 'supersonic-warning') {
-        // Исправлено: сверхзвук – используем compressHigh с множителем
-        msg = t('compressHigh').replace('{mach}', M).replace('{factor}', f);
     } else if (c.regime === 'choked') {
-        // Критическое истечение с Z
-        const Z = c.Z ? c.Z.toFixed(3) : '?';
+        // M >= 1 или choked flow
+        const Z = 1.0; // Z не используется в старом ключе, но нужен для шаблона
         const dP_actual_bar = (c.dP_corrected / 1e5).toFixed(3);
         const maxDP_bar = (c.maxDP / 1e5).toFixed(3);
         msg = t('compressChokedZ')
             .replace('{mach}', M)
             .replace('{actual}', dP_actual_bar)
             .replace('{max}', maxDP_bar)
-            .replace('{z}', Z);
+            .replace('{z}', Z.toFixed(3));
     }
 
     if (msg) {
@@ -4135,7 +4134,7 @@ calculateBtn.addEventListener('click', () => {
                 + contractions * 0.5
                 + expansions * 1.0
                 + orifices * 2.0;
-
+            window._lastTotalZeta = totalZeta;
             let dP_fric = totalZeta * density * velocity * velocity / 2;
 
 if (medium == 'gas') {
