@@ -1940,8 +1940,6 @@ return Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
 // [AMMONIA_FIX] Специальная обработка для аммиака
   if (gas === 'ammonia') {
     const T_K = Math.round((T_C + 273.15) * 1000) / 1000;
-
-    if (gas === 'ammonia') {
     const table = gasViscosityTables[gas];
     let mu_microPa = null;
 
@@ -1958,7 +1956,6 @@ return Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
     if (mu_microPa !== null) {
         return mu_microPa * 1e-6;
     }
-}
 
     // Поправка на плотность (для высоких давлений)
     const rho = calcRealGasDensity(T_C, P_bar, gas, phase);
