@@ -1672,9 +1672,6 @@ if (P_sat === null) {
     if (crit && P_bar < crit.Pc * 0.5) return 'gas';
     return 'liquid';
   }
-  // [FIX] Для остальных газов: при низком давлении — газ
-  const crit = gasCritical[gas.toLowerCase()] || gasCritical[gas];
-  if (crit && P_bar < crit.Pc * 0.3) return 'gas';
   return 'liquid';
 }
 const eps = 0.005;
@@ -1837,7 +1834,7 @@ if (phase === 'liquid') {
     const rackett = rackettParams[gas.toLowerCase()] || rackettParams[gas];
     if (rackett && T_K < crit.Tc) {
       const Tr = T_K / crit.Tc;
-      const Vsat = rackett.Vc * Math.pow(rackett.Zra, 1 + Math.pow(1 - Tr, 2/7));
+      const Vsat = rackett.Vc * Math.pow(rackett.Zra, Math.pow(1 - Tr, 0.2857));
       let density = (M / 1000) / Vsat;
 
       // Поправка на давление для жидкости (сжимаемость)
@@ -1959,9 +1956,6 @@ return Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
     if (mu_microPa !== null) {
         return mu_microPa * 1e-6;
     }
-
-    // [FIX] Fallback: вязкость нулевой плотности + поправка на плотность
-    const mu0 = calcAmmoniaViscosityExtended(T_K, 0.1) || 1e-5;
 
     // Поправка на плотность (для высоких давлений)
     const rho = calcRealGasDensity(T_C, P_bar, gas, phase);
@@ -4134,11 +4128,7 @@ calculateBtn.addEventListener('click', () => {
     }
     const zeta_local = bends * 0.3 + valves * 3.0;
     const dP_fric = (lambda_simple * length * 1000 / innerD + zeta_local) * density * velocity * velocity / 2;
-    // [FIX] Геодезический напор: для газов пренебрежимо мал
-    const geodeticDP = (modeSelect.value === 'engineer' && mediumSelect.value === 'gas') 
-        ? 0 
-        : density * 9.81 * geodetic;
-    deltaP = dP_fric + geodeticDP;
+    deltaP = dP_fric + density * 9.81 * geodetic;
     lastResult.mode = 'simple';
     } else {
             // ИНЖЕНЕРНЫЙ РЕЖИМ – ВСЕ 15 КОЭФФИЦИЕНТОВ
