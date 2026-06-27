@@ -507,7 +507,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <!-- ===== ПОДБОР ДИАМЕТРА ===== -->
 <div class="tab-content" id="tab-diam">
 <div class="display-container">
-<div class="formula-display" id="formulaDisplayDiam">ПодборвнутреннегодиаметрапоΔP</div>
+<div class="formula-display" id="formulaDisplayDiam">Подбор внутреннего диаметра по ΔP</div>
 <div class="main-display-row">
 <label id="lblResultDiam">Результат:</label>
 <input type="text" class="main-display" id="mainDisplayDiam" value="---" readonly>
@@ -515,13 +515,13 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 </div>
 
 <div class="inverse-section">
-<h4 id="targetTitleDiam">Целевыепараметры</h4>
-<div class="target-row"><label id="lblTargetDeltaPDiam">ПерепадΔP (Па):</label><input type="number" id="targetDeltaPDiam" value="5000" min="0.001" step="any"></div>
-<div class="target-row"><label id="lblTargetMassFlowDiam">Массовыйрасход (кг/ч):</label><input type="number" id="targetMassFlowDiam" value="5000" min="0.001" step="any"></div>
+<h4 id="targetTitleDiam">Целевые параметры</h4>
+<div class="target-row"><label id="lblTargetDeltaPDiam">Перепад ΔP (Па):</label><input type="number" id="targetDeltaPDiam" value="5000" min="0.001" step="any"></div>
+<div class="target-row"><label id="lblTargetMassFlowDiam">Массовый расход (кг/ч):</label><input type="number" id="targetMassFlowDiam" value="5000" min="0.001" step="any"></div>
 </div>
 
 <div class="field-row"><label id="lblLengthDiam">Длина (м):</label><input type="number" id="lengthDiam" value="100" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblWallDiam">Толщинастенки (мм):</label><input type="number" id="wallDiam" value="3.5" min="0" step="any"></div>
+<div class="field-row"><label id="lblWallDiam">Толщина стенки (мм):</label><input type="number" id="wallDiam" value="3.5" min="0" step="any"></div>
 
 <!-- Выбор среды с температурой -->
 <div class="field-row">
@@ -549,7 +549,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <div class="field-row"><label id="lblValvesDiam">Клапанов:</label><input type="number" id="valvesDiam" value="0" min="0" step="1"></div>
 
 <div class="btn-row">
-<button class="calc-btn" id="calcDiamBtn">Подобратьдиаметр</button>
+<button class="calc-btn" id="calcDiamBtn">Подобрать диаметр</button>
 </div>
 <div class="inverse-result" id="resultDiam"></div>
 </div>
@@ -557,7 +557,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <!-- ===== ПОДБОР РАСХОДА ===== -->
 <div class="tab-content" id="tab-flow">
 <div class="display-container">
-<div class="formula-display" id="formulaDisplayFlow">ПодборрасходапоΔP</div>
+<div class="formula-display" id="formulaDisplayFlow">Подбор расхода по ΔP</div>
 <div class="main-display-row">
 <label id="lblResultFlow">Результат:</label>
 <input type="text" class="main-display" id="mainDisplayFlow" value="---" readonly>
@@ -565,12 +565,12 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 </div>
 
 <div class="inverse-section">
-<h4 id="targetTitleFlow">Целевыепараметры</h4>
-<div class="target-row"><label id="lblTargetDeltaPFlow">ПерепадΔP (Па):</label><input type="number" id="targetDeltaPFlow" value="5000" min="0.001" step="any"></div>
+<h4 id="targetTitleFlow">Целевые параметры</h4>
+<div class="target-row"><label id="lblTargetDeltaPFlow">Перепад ΔP (Па):</label><input type="number" id="targetDeltaPFlow" value="5000" min="0.001" step="any"></div>
 </div>
 
-<div class="field-row"><label id="lblOuterDiamFlow">Наружныйдиаметр (мм):</label><input type="number" id="outerDiamFlow" value="57" min="0.1" step="any"></div>
-<div class="field-row"><label id="lblWallFlow">Толщинастенки (мм):</label><input type="number" id="wallFlow" value="3.5" min="0" step="any"></div>
+<div class="field-row"><label id="lblOuterDiamFlow">Наружный диаметр (мм):</label><input type="number" id="outerDiamFlow" value="57" min="0.1" step="any"></div>
+<div class="field-row"><label id="lblWallFlow">Толщина стенки (мм):</label><input type="number" id="wallFlow" value="3.5" min="0" step="any"></div>
 <div class="field-row"><label id="lblLengthFlow">Длина (м):</label><input type="number" id="lengthFlow" value="100" min="0.001" step="any"></div>
 
 <!-- Выбор среды с температурой -->
@@ -1285,7 +1285,7 @@ ethylene: [
 ФУНКЦИИ ИНТЕРПОЛЯЦИИ
 ============================================================ */
 
-function interpolateViscosity(table, T_K) {
+function interpolateViscosity(table, T_K, density_kg_m3) {
   // Проверка на существование таблицы
   if (!table || table.length === 0) {
     console.warn('interpolateViscosity: таблица не найдена для T=', T_K);
@@ -1306,7 +1306,14 @@ function interpolateViscosity(table, T_K) {
     if (T_K >= table[i][0] && T_K <= table[i+1][0]) {
       const t = (T_K - table[i][0]) / (table[i+1][0] - table[i][0]);
       // Логарифмическая интерполяция (для жидкостей — Arrhenius-like)
-      return Math.exp(Math.log(table[i][1]) + t * (Math.log(table[i+1][1]) - Math.log(table[i][1])));
+      const mu_Pas = Math.exp(Math.log(table[i][1]) + t * (Math.log(table[i+1][1]) - Math.log(table[i][1])));
+
+      // [FIX] Конвертация динамической вязкости (Па•с) → кинематической (сСт)
+      // ν [сСт] = μ [Па•с] / ρ [кг/м³] × 1e6
+      if (density_kg_m3 && density_kg_m3 > 0) {
+        return (mu_Pas / density_kg_m3) * 1e6;
+      }
+      return mu_Pas; // Fallback: если плотность неизвестна, возвращаем как есть
     }
   }
 
@@ -1662,18 +1669,19 @@ function getSaturationPressure(T_K, gas) {
 }
 
 function determinePhase(P_bar, P_sat, T_K, Tc, gas) {
-if (T_K >= Tc) return 'supercritical';
-if (P_sat === null) {
-  // [AMMONIA_FIX] Если нет Antoine — оцениваем фазу эвристически
-  if (gas === 'ammonia') {
-    // При T < Tc и P < 0.5*Pc считаем перегретый пар (газ)
-    // При P > 0.5*Pc — консервативно жидкость
-    const crit = gasCritical['ammonia'];
-    if (crit && P_bar < crit.Pc * 0.5) return 'gas';
-    return 'liquid';
-  }
-  return 'liquid';
-}
+    if (T_K >= Tc) return 'supercritical';
+    if (P_sat === null) {
+        // [AMMONIA_FIX] Если нет Antoine — оцениваем фазу эвристически
+        if (gas === 'ammonia') {
+            const crit = gasCritical['ammonia'];
+            if (crit && P_bar < crit.Pc * 0.5) return 'gas';
+            return 'liquid';
+        }
+        // [FIX] Для остальных газов: при низком давлении — газ
+        const crit = gasCritical[gas.toLowerCase()] || gasCritical[gas];
+        if (crit && P_bar < crit.Pc * 0.3) return 'gas';
+        return 'liquid';
+    }
 const eps = 0.005;
 if (P_bar < P_sat * (1 - eps)) return 'gas';
 return 'liquid';
@@ -1834,7 +1842,7 @@ if (phase === 'liquid') {
     const rackett = rackettParams[gas.toLowerCase()] || rackettParams[gas];
     if (rackett && T_K < crit.Tc) {
       const Tr = T_K / crit.Tc;
-      const Vsat = rackett.Vc * Math.pow(rackett.Zra, Math.pow(1 - Tr, 0.2857));
+      const Vsat = rackett.Vc * Math.pow(rackett.Zra, 1 + Math.pow(1 - Tr, 2/7));
       let density = (M / 1000) / Vsat;
 
       // Поправка на давление для жидкости (сжимаемость)
@@ -1923,7 +1931,8 @@ const phase = forcedPhase || determinePhase(P_bar, P_sat, T_K, Tc);
 if (phase === 'liquid' || phase === 'two-phase') {
 const table = liquidViscosityTables[gas];
 if (table) {
-const mu_table = interpolateViscosity(table, T_K);
+const density = calcRealGasDensity(T_C, P_bar, gas, phase);
+const mu_table = interpolateViscosity(table, T_K, density);
 if (mu_table !== null) {
 // Reduced pressure effect for liquid viscosity
 const pressureFactor = 1 + 0.05 * Math.max(0, P_bar / Pc - 1);
@@ -1938,43 +1947,44 @@ return Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
 }
 
 // [AMMONIA_FIX] Специальная обработка для аммиака
-  if (gas === 'ammonia') {
-    const T_K = Math.round((T_C + 273.15) * 1000) / 1000;
-    const table = gasViscosityTables[gas];
-    let mu_microPa = null;
+    if (gas === 'ammonia') {
+        const T_K = Math.round((T_C + 273.15) * 1000) / 1000;
+        const table = gasViscosityTables[gas];
+        let mu_microPa = null;
 
-    // Пробуем таблицу
-    if (table) {
-        mu_microPa = interpolateViscosity(table, T_K);
+        // Пробуем таблицу
+        if (table) {
+            mu_microPa = interpolateViscosity(table, T_K);
+        }
+
+        // Если таблица не покрывает — корреляция
+        if (mu_microPa === null || T_K > 700) {
+            mu_microPa = calcAmmoniaViscosityExtended(T_K, P_bar) * 1e6;
+        }
+
+        if (mu_microPa !== null) {
+            return mu_microPa * 1e-6;
+        }
+
+        // [FIX] Fallback: вязкость нулевой плотности + поправка на плотность
+        const mu0 = calcAmmoniaViscosityExtended(T_K, 0.1) || 1e-5;
+        const rho = calcRealGasDensity(T_C, P_bar, gas, phase);
+        const rho_molar = rho / (M / 1000);
+        const Vc = 0.27 * R_GAS * Tc / (Pc * 1e5);
+        const rho_r = rho_molar * Vc;
+
+        if (rho_r > 0.001) {
+            const poly = [1.023, 0.23364, 0.58533, -0.40758, 0.093324];
+            let sum = 0;
+            for (let i = 0; i < poly.length; i++) {
+                sum += poly[i] * Math.pow(rho_r, i);
+            }
+            const xi = (mu0 * 1e7) * Math.pow(Tc, 1/6) / (Math.pow(M, 0.5) * Math.pow(Pc, 2/3));
+            return mu0 * (1 + (Math.pow(sum, 4) - 1) / xi);
+        }
+
+        return Math.max(mu0, 1e-6);
     }
-
-    // Если таблица не покрывает — корреляция
-    if (mu_microPa === null || T_K > 700) {
-        mu_microPa = calcAmmoniaViscosityExtended(T_K, P_bar) * 1e6;
-    }
-
-    if (mu_microPa !== null) {
-        return mu_microPa * 1e-6;
-    }
-
-    // Поправка на плотность (для высоких давлений)
-    const rho = calcRealGasDensity(T_C, P_bar, gas, phase);
-    const rho_molar = rho / (M / 1000);
-    const Vc = 0.27 * R_GAS * Tc / (Pc * 1e5);
-    const rho_r = rho_molar * Vc;
-
-    if (rho_r > 0.001) {
-      const poly = [1.023, 0.23364, 0.58533, -0.40758, 0.093324];
-      let sum = 0;
-      for (let i = 0; i < poly.length; i++) {
-        sum += poly[i] * Math.pow(rho_r, i);
-      }
-      const xi = (mu0 * 1e7) * Math.pow(Tc, 1/6) / (Math.pow(M, 0.5) * Math.pow(Pc, 2/3));
-      return mu0 * (1 + (Math.pow(sum, 4) - 1) / xi);
-    }
-
-    return Math.max(mu0, 1e-6);
-  }
 
 // ========== ГАЗ ==========
 const isQuantum = (gas === 'helium4' || gas === 'parahydrogen' || gas === 'normalhydrogen');
@@ -3975,31 +3985,97 @@ function updatePropertiesForState(p){
   r.value=0.05;
   if(p=='water'){
     const props = waterProperties(20);
-    d.value = props.rho;   // 997.05
-    v.value = props.nu;    // 1.004
+    d.value = props.rho;
+    v.value = props.nu;
     r.value = 0.1;
-}else if(p=='oil'){
+  }else if(p=='oil'){
     const props = oilProperties(20);
-    d.value = props.rho;   // 900
-    v.value = props.nu;    // 50.0
+    d.value = props.rho;
+    v.value = props.nu;
     r.value = 0.1;
-}else if(p=='air'){if(isL){d.value=870;v.value=0.17}else{d.value=1.20;v.value=15.0;m.value=28.97}}
-  else if(p=='nitrogen'){if(isL){d.value=808;v.value=0.16}else{d.value=1.165;v.value=15.1;m.value=28.01}}
-  else if(p=='oxygen'){if(isL){d.value=1140;v.value=0.19}else{d.value=1.33;v.value=15.7;m.value=32.00}}
-  else if(p=='methane'){if(isL){d.value=422;v.value=0.12}else{d.value=0.66;v.value=11.0;m.value=16.04}}
-  else if(p=='co2'){if(isL){d.value=1100;v.value=0.08}else{d.value=1.84;v.value=8.0;m.value=44.01}}
-  else if(p=='parahydrogen'){if(isL){d.value=70.8;v.value=0.13}else{d.value=0.084;v.value=105.0;m.value=2.016}}
-  else if(p=='normalhydrogen'){if(isL){d.value=70.8;v.value=0.13}else{d.value=0.084;v.value=105.0;m.value=2.016}}
-  else if(p=='helium4'){if(isL){d.value=125;v.value=0.028}else{d.value=0.166;v.value=120.0;m.value=4.0026}}
-  else if(p=='neon'){if(isL){d.value=1206;v.value=0.12}else{d.value=0.84;v.value=37.8;m.value=20.18}}
-  else if(p=='argon'){if(isL){d.value=1394;v.value=0.27}else{d.value=1.66;v.value=13.6;m.value=39.95}}
-  else if(p=='krypton'){if(isL){d.value=2413;v.value=0.22}else{d.value=3.5;v.value=7.3;m.value=83.80}}
-  else if(p=='xenon'){if(isL){d.value=3057;v.value=0.22}else{d.value=5.5;v.value=4.45;m.value=131.29}}
-  else if(p=='ammonia'){if(isL){d.value=682;v.value=0.25}else{d.value=0.73;v.value=13.5;m.value=17.03}}
-  else if(p=='ethane'){if(isL){d.value=546;v.value=0.3}else{d.value=1.26;v.value=7.5;m.value=30.07}}
-  else if(p=='ethylene'){if(isL){d.value=567;v.value=0.2}else{d.value=1.18;v.value=9.5;m.value=28.05}}
-  else if(p=='propane'){if(isL){d.value=493;v.value=0.2}else{d.value=1.88;v.value=4.4;m.value=44.1}}
-  else if(p=='freon22'){if(isL){d.value=1194;v.value=0.2}else{d.value=3.5;v.value=0.3;m.value=86.47}}
+  }else if(p=='air'){
+    if(isL){d.value=870;v.value=0.17}else{d.value=1.20;v.value=15.0;m.value=28.97}
+  }else if(p=='nitrogen'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.199e-3 Па•с при 77K, ρ=808 → ν=0.246 сСт
+      d.value=808;v.value=0.25;m.value=28.01
+    }else{d.value=1.165;v.value=15.1;m.value=28.01}
+  }else if(p=='oxygen'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.165e-3 Па•с при 90.19K, ρ=1141 → ν=0.145 сСт
+      d.value=1141;v.value=0.15;m.value=32.00
+    }else{d.value=1.33;v.value=15.7;m.value=32.00}
+  }else if(p=='methane'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.277e-3 Па•с при 111.67K, ρ=422 → ν=0.657 сСт
+      d.value=422;v.value=0.66;m.value=16.04
+    }else{d.value=0.66;v.value=11.0;m.value=16.04}
+  }else if(p=='co2'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.2178e-3 Па•с при 216.55K, ρ=1180 → ν=0.184 сСт
+      d.value=1180;v.value=0.18;m.value=44.01
+    }else{d.value=1.84;v.value=8.0;m.value=44.01}
+  }else if(p=='parahydrogen'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.1757e-3 Па•с при 20.27K, ρ=70.7 → ν=2.48 сСт
+      d.value=70.7;v.value=2.48;m.value=2.016
+    }else{d.value=0.084;v.value=105.0;m.value=2.016}
+  }else if(p=='normalhydrogen'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.1836e-3 Па•с при 20.27K, ρ=70.8 → ν=2.59 сСт
+      d.value=70.8;v.value=2.59;m.value=2.016
+    }else{d.value=0.084;v.value=105.0;m.value=2.016}
+  }else if(p=='helium4'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.01693e-3 Па•с при 4.2K, ρ=124.87 → ν=0.136 сСт
+      d.value=124.87;v.value=0.14;m.value=4.0026
+    }else{d.value=0.166;v.value=120.0;m.value=4.0026}
+  }else if(p=='neon'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.104e-3 Па•с при 27.1K, ρ=1206 → ν=0.086 сСт
+      d.value=1206;v.value=0.09;m.value=20.18
+    }else{d.value=0.84;v.value=37.8;m.value=20.18}
+  }else if(p=='argon'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.265e-3 Па•с при 87.3K, ρ=1394 → ν=0.19 сСт
+      d.value=1394;v.value=0.19;m.value=39.95
+    }else{d.value=1.66;v.value=13.6;m.value=39.95}
+  }else if(p=='krypton'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.36e-3 Па•с при 119.78K, ρ=2373 → ν=0.152 сСт
+      d.value=2373;v.value=0.15;m.value=83.80
+    }else{d.value=3.5;v.value=7.3;m.value=83.80}
+  }else if(p=='xenon'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.161e-3 Па•с при 165.05K, ρ=2941.2 → ν=0.055 сСт
+      d.value=2941.2;v.value=0.06;m.value=131.29
+    }else{d.value=5.5;v.value=4.45;m.value=131.29}
+  }else if(p=='ammonia'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.368e-3 Па•с при 239.65K, ρ=682 → ν=0.54 сСт
+      d.value=682;v.value=0.54;m.value=17.03
+    }else{d.value=0.73;v.value=13.5;m.value=17.03}
+  }else if(p=='ethane'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.36e-3 Па•с при 184.6K, ρ=546 → ν=0.659 сСт
+      d.value=546;v.value=0.66;m.value=30.07
+    }else{d.value=1.26;v.value=7.5;m.value=30.07}
+  }else if(p=='ethylene'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.205e-3 Па•с при 169.2K, ρ=567 → ν=0.362 сСт
+      d.value=567;v.value=0.36;m.value=28.05
+    }else{d.value=1.18;v.value=9.5;m.value=28.05}
+  }else if(p=='propane'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.558e-3 Па•с при 231K, ρ=493 → ν=1.13 сСт
+      d.value=493;v.value=1.13;m.value=44.1
+    }else{d.value=1.88;v.value=4.4;m.value=44.1}
+  }else if(p=='freon22'){
+    if(isL){
+      // [FIX] Вязкость из таблицы: μ=0.24e-3 Па•с при 233K, ρ=1400 → ν=0.171 сСт
+      d.value=1400;v.value=0.17;m.value=86.47
+    }else{d.value=3.5;v.value=0.3;m.value=86.47}
+  }
 }
 
 function applyPreset(p){
@@ -4128,7 +4204,12 @@ calculateBtn.addEventListener('click', () => {
     }
     const zeta_local = bends * 0.3 + valves * 3.0;
     const dP_fric = (lambda_simple * length * 1000 / innerD + zeta_local) * density * velocity * velocity / 2;
-    deltaP = dP_fric + density * 9.81 * geodetic;
+    // [FIX] Геодезический напор: для газов пренебрежимо мал
+    const geodeticDP = (modeSelect.value === 'engineer' && mediumSelect.value === 'gas') 
+    ? 0 
+    : density * 9.81 * geodetic;
+    deltaP = dP_fric + geodeticDP;
+
     lastResult.mode = 'simple';
     } else {
             // ИНЖЕНЕРНЫЙ РЕЖИМ – ВСЕ 15 КОЭФФИЦИЕНТОВ
@@ -4187,7 +4268,12 @@ if (medium == 'gas') {
         if (note) { note.textContent = ''; note.classList.remove('show'); note.style.display = 'none'; }
         }
 
-            deltaP = dP_fric + density * 9.81 * geodetic;
+    // [FIX] Геодезический напор: для газов пренебрежимо мал
+    const geodeticDP = (modeSelect.value === 'engineer' && mediumSelect.value === 'gas') 
+    ? 0 
+    : density * 9.81 * geodetic;
+    deltaP = dP_fric + geodeticDP;
+
             lastResult.re = re;
             lastResult.lambda = lambda;
         }
@@ -4319,35 +4405,82 @@ document.querySelectorAll('input[type="number"]').forEach(input=>{
     });
   } else {
     // Для geodetic и temperature запрещаем только +, e, E (минус разрешён)
-    input.addEventListener('keydown', e => {
-      if(e.key === '+' || e.key === 'e' || e.key === 'E') {
+   // [FIX] Разрешаем e/E для scientific notation, минус для отрицательных чисел
+input.addEventListener('keydown', e => {
+  // Разрешаем служебные клавиши
+  const allowed = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','Enter'];
+  if (allowed.includes(e.key)) return;
+
+  // Разрешаем цифры
+  if (e.key >= '0' && e.key <= '9') return;
+
+  // Разрешаем точку/запятую (только одну)
+  if (e.key === '.' || e.key === ',') {
+    if (input.value.includes('.') || input.value.includes(',')) e.preventDefault();
+    return;
+  }
+
+  // Разрешаем минус только в начале
+if (e.key === '-') {
+    // Разрешаем минус в начале строки ИЛИ сразу после e/E (для экспоненты)
+    const val = input.value, cursor = input.selectionStart;
+    const prevChar = cursor > 0 ? val[cursor - 1] : '';
+    const isExponentMinus = prevChar === 'e' || prevChar === 'E';
+    if ((cursor !== 0 && !isExponentMinus) || (input.value.includes('-') && !isExponentMinus)) {
         e.preventDefault();
-      }
-    });
+    }
+    return;
+}
+
+  // Разрешаем e/E для scientific notation (после цифры, не повторно)
+  if (e.key === 'e' || e.key === 'E') {
+    const val = input.value, cursor = input.selectionStart;
+    if (cursor === 0 || /[eE]/.test(val) || !/\d/.test(val[cursor-1])) e.preventDefault();
+    return;
+  }
+
+  // Всё остальное блокируем
+  e.preventDefault();
+});
   }
 
   // Обработчик input: заменяем запятую на точку, но не удаляем минус в начале
   input.addEventListener('input', function() {
-    let val = this.value;
-    // Заменяем запятую на точку
-    val = val.replace(',', '.');
-    // Удаляем всё, кроме цифр, точки и минуса в начале
-    val = val.replace(/[^\d.-]/g, '');
-    // Обрабатываем случай, когда минус не в начале
-    if (val.indexOf('-') > 0) {
-      val = val.replace(/-/g, '');
-    }
-    // Если первый символ минус, сохраняем его, а остальные минусы удаляем
-    if (val.startsWith('-')) {
-      val = '-' + val.slice(1).replace(/-/g, '');
-    }
-    // Ограничиваем только одну десятичную точку
-    const parts = val.split('.');
+  let val = this.value;
+
+  // [FIX] Заменяем запятую на точку
+  val = val.replace(/,/g, '.');
+
+  // [FIX] Корректно обрабатываем scientific notation
+  // Формат: [+-]?\d*\.?\d*([eE][+-]?\d+)?
+  const sciMatch = val.match(/^([+-]?)(\d*\.?\d*)(([eE][+-]?)(\d*))?$/);
+  if (sciMatch) {
+    const sign = sciMatch[1];
+    let mantissa = sciMatch[2];
+    const expPart = sciMatch[3] || '';
+
+    // Ограничиваем до одной точки в мантиссе
+    const parts = mantissa.split('.');
     if (parts.length > 2) {
-      val = parts[0] + '.' + parts.slice(1).join('');
+      mantissa = parts[0] + '.' + parts.slice(1).join('');
+      val = sign + mantissa + expPart;
     }
-    this.value = val;
-  });
+  } else {
+    // Некорректный ввод — очищаем
+    val = val.replace(/[^\d.eE+-]/g, '');
+    const firstE = val.search(/[eE]/);
+    if (firstE >= 0) {
+      val = val.slice(0, firstE + 1) + val.slice(firstE + 1).replace(/[eE]/g, '');
+    }
+  }
+
+  // Убираем минус не в начале
+  if (val.indexOf('-') > 0) {
+    val = val.slice(0, val.indexOf('-')) + val.slice(val.indexOf('-') + 1);
+  }
+
+  this.value = val;
+});
 
   // Обработчик blur: проверка на допустимые значения
   input.addEventListener('blur', function() {
