@@ -507,7 +507,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <!-- ===== ПОДБОР ДИАМЕТРА ===== -->
 <div class="tab-content" id="tab-diam">
 <div class="display-container">
-<div class="formula-display" id="formulaDisplayDiam">ПодборвнутреннегодиаметрапоΔP</div>
+<div class="formula-display" id="formulaDisplayDiam">Подбор внутреннего диаметра по ΔP</div>
 <div class="main-display-row">
 <label id="lblResultDiam">Результат:</label>
 <input type="text" class="main-display" id="mainDisplayDiam" value="---" readonly>
@@ -515,13 +515,13 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 </div>
 
 <div class="inverse-section">
-<h4 id="targetTitleDiam">Целевыепараметры</h4>
-<div class="target-row"><label id="lblTargetDeltaPDiam">ПерепадΔP (Па):</label><input type="number" id="targetDeltaPDiam" value="5000" min="0.001" step="any"></div>
-<div class="target-row"><label id="lblTargetMassFlowDiam">Массовыйрасход (кг/ч):</label><input type="number" id="targetMassFlowDiam" value="5000" min="0.001" step="any"></div>
+<h4 id="targetTitleDiam">Целевые параметры</h4>
+<div class="target-row"><label id="lblTargetDeltaPDiam">Перепад ΔP (Па):</label><input type="number" id="targetDeltaPDiam" value="5000" min="0.001" step="any"></div>
+<div class="target-row"><label id="lblTargetMassFlowDiam">Массовый расход (кг/ч):</label><input type="number" id="targetMassFlowDiam" value="5000" min="0.001" step="any"></div>
 </div>
 
 <div class="field-row"><label id="lblLengthDiam">Длина (м):</label><input type="number" id="lengthDiam" value="100" min="0.001" step="any"></div>
-<div class="field-row"><label id="lblWallDiam">Толщинастенки (мм):</label><input type="number" id="wallDiam" value="3.5" min="0" step="any"></div>
+<div class="field-row"><label id="lblWallDiam">Толщина стенки (мм):</label><input type="number" id="wallDiam" value="3.5" min="0" step="any"></div>
 
 <!-- Выбор среды с температурой -->
 <div class="field-row">
@@ -549,7 +549,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <div class="field-row"><label id="lblValvesDiam">Клапанов:</label><input type="number" id="valvesDiam" value="0" min="0" step="1"></div>
 
 <div class="btn-row">
-<button class="calc-btn" id="calcDiamBtn">Подобратьдиаметр</button>
+<button class="calc-btn" id="calcDiamBtn">Подобрать диаметр</button>
 </div>
 <div class="inverse-result" id="resultDiam"></div>
 </div>
@@ -557,7 +557,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <!-- ===== ПОДБОР РАСХОДА ===== -->
 <div class="tab-content" id="tab-flow">
 <div class="display-container">
-<div class="formula-display" id="formulaDisplayFlow">ПодборрасходапоΔP</div>
+<div class="formula-display" id="formulaDisplayFlow">Подбор расхода по ΔP</div>
 <div class="main-display-row">
 <label id="lblResultFlow">Результат:</label>
 <input type="text" class="main-display" id="mainDisplayFlow" value="---" readonly>
@@ -565,12 +565,12 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 </div>
 
 <div class="inverse-section">
-<h4 id="targetTitleFlow">Целевыепараметры</h4>
-<div class="target-row"><label id="lblTargetDeltaPFlow">ПерепадΔP (Па):</label><input type="number" id="targetDeltaPFlow" value="5000" min="0.001" step="any"></div>
+<h4 id="targetTitleFlow">Целевые параметры</h4>
+<div class="target-row"><label id="lblTargetDeltaPFlow">Перепад ΔP (Па):</label><input type="number" id="targetDeltaPFlow" value="5000" min="0.001" step="any"></div>
 </div>
 
-<div class="field-row"><label id="lblOuterDiamFlow">Наружныйдиаметр (мм):</label><input type="number" id="outerDiamFlow" value="57" min="0.1" step="any"></div>
-<div class="field-row"><label id="lblWallFlow">Толщинастенки (мм):</label><input type="number" id="wallFlow" value="3.5" min="0" step="any"></div>
+<div class="field-row"><label id="lblOuterDiamFlow">Наружный диаметр (мм):</label><input type="number" id="outerDiamFlow" value="57" min="0.1" step="any"></div>
+<div class="field-row"><label id="lblWallFlow">Толщина стенки (мм):</label><input type="number" id="wallFlow" value="3.5" min="0" step="any"></div>
 <div class="field-row"><label id="lblLengthFlow">Длина (м):</label><input type="number" id="lengthFlow" value="100" min="0.001" step="any"></div>
 
 <!-- Выбор среды с температурой -->
@@ -599,7 +599,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <div class="field-row"><label id="lblValvesFlow">Клапанов:</label><input type="number" id="valvesFlow" value="0" min="0" step="1"></div>
 
 <div class="btn-row">
-<button class="calc-btn" id="calcFlowBtn">Подобратьрасход</button>
+<button class="calc-btn" id="calcFlowBtn">Подобрать расход</button>
 </div>
 <div class="inverse-result" id="resultFlow"></div>
 </div>
@@ -1672,6 +1672,9 @@ if (P_sat === null) {
     if (crit && P_bar < crit.Pc * 0.5) return 'gas';
     return 'liquid';
   }
+  // [FIX] Для остальных газов: при низком давлении — газ
+  const crit = gasCritical[gas.toLowerCase()] || gasCritical[gas];
+  if (crit && P_bar < crit.Pc * 0.3) return 'gas';
   return 'liquid';
 }
 const eps = 0.005;
@@ -1834,7 +1837,7 @@ if (phase === 'liquid') {
     const rackett = rackettParams[gas.toLowerCase()] || rackettParams[gas];
     if (rackett && T_K < crit.Tc) {
       const Tr = T_K / crit.Tc;
-      const Vsat = rackett.Vc * Math.pow(rackett.Zra, Math.pow(1 - Tr, 0.2857));
+      const Vsat = rackett.Vc * Math.pow(rackett.Zra, 1 + Math.pow(1 - Tr, 2/7));
       let density = (M / 1000) / Vsat;
 
       // Поправка на давление для жидкости (сжимаемость)
@@ -1956,6 +1959,9 @@ return Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
     if (mu_microPa !== null) {
         return mu_microPa * 1e-6;
     }
+
+    // [FIX] Fallback: вязкость нулевой плотности + поправка на плотность
+    const mu0 = calcAmmoniaViscosityExtended(T_K, 0.1) || 1e-5;
 
     // Поправка на плотность (для высоких давлений)
     const rho = calcRealGasDensity(T_C, P_bar, gas, phase);
@@ -4128,7 +4134,11 @@ calculateBtn.addEventListener('click', () => {
     }
     const zeta_local = bends * 0.3 + valves * 3.0;
     const dP_fric = (lambda_simple * length * 1000 / innerD + zeta_local) * density * velocity * velocity / 2;
-    deltaP = dP_fric + density * 9.81 * geodetic;
+    // [FIX] Геодезический напор: для газов пренебрежимо мал
+    const geodeticDP = (modeSelect.value === 'engineer' && mediumSelect.value === 'gas') 
+        ? 0 
+        : density * 9.81 * geodetic;
+    deltaP = dP_fric + geodeticDP;
     lastResult.mode = 'simple';
     } else {
             // ИНЖЕНЕРНЫЙ РЕЖИМ – ВСЕ 15 КОЭФФИЦИЕНТОВ
