@@ -611,6 +611,29 @@ const T_K_DEFAULT = 293.15;
 const R_GAS = 8.314462618;
 
 /* ============================================================
+   БЕЗОПАСНАЯ ОБЁРТКА ДЛЯ localStorage (приватный режим Safari)
+   ============================================================ */
+const safeStorage = {
+  get: function(key, defaultValue) {
+    try {
+      const val = localStorage.getItem(key);
+      return val !== null ? val : defaultValue;
+    } catch (e) {
+      return defaultValue;
+    }
+  },
+  set: function(key, value) {
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (e) {
+      console.warn('localStorage недоступен (приватный режим?):', e.message);
+      return false;
+    }
+  }
+};
+
+/* ============================================================
 ТАБЛИЦЫ ДИНАМИЧЕСКОЙ ВЯЗКОСТИ ЖИДКОСТЕЙ (Па•с)
 ============================================================ */
 
@@ -1189,7 +1212,7 @@ ethylene: [
 { T_C: -41.15, P_bar: 1.013, phase: 'liquid', rho_ref: 1400.0, nu_ref: 0.24, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
 { T_C: -41.15, P_bar: 0.98767, phase: 'gas', rho_ref: 4.3875, nu_ref: 2.8718, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
 { T_C: 26.85, P_bar: 10.0, phase: 'liquid', rho_ref: 1200.0, nu_ref: 0.15, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-{ T_C: 26.85, P_bar: 9.7, phase: 'gas', rho_ref: 33.95, nu_ref: 1.5464, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+{ T_C: 26.85, P_bar: 8.0, phase: 'gas', rho_ref: 33.95, nu_ref: 1.5464, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
 { T_C: 76.85, P_bar: 42.0, phase: 'liquid', rho_ref: 700.0, nu_ref: 0.08, descKey: 'validationDesc_nearCritical', zone: 'physical' },
 { T_C: 76.85, P_bar: 42.0, phase: 'gas', rho_ref: 400.0, nu_ref: 0.09, descKey: 'validationDesc_nearCritical', zone: 'physical' },
 { T_C: 96.15, P_bar: 49.86, phase: 'supercritical', rho_ref: 525.0, nu_ref: 0.085, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
@@ -1255,10 +1278,6 @@ ethylene: [
     { T_C: -111.745, P_bar: 0.8177, phase: 'gas', rho_ref: 9.0, nu_ref: 1.55, descKey: 'validationDesc_triplePointVapor', zone: 'extreme' },
     { T_C: -108.15, P_bar: 1.011, phase: 'liquid', rho_ref: 2941.2, nu_ref: 0.161, descKey: 'validationDesc_boilingPoint', zone: 'engineering' },
     { T_C: -108.15, P_bar: 0.98767, phase: 'gas', rho_ref: 9.719, nu_ref: 1.38, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
-    { T_C: -53.15, P_bar: 15.0, phase: 'liquid', rho_ref: 2528.4, nu_ref: 0.22, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
-    { T_C: -53.15, P_bar: 14.7, phase: 'gas', rho_ref: 68.6, nu_ref: 2.24, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
-    // [FIXED] Убраны точки вблизи критической (Tr=0.967, Pr=0.942), где модель неприменима
-    // Заменены на точку -53.15°C (220K), 15 бар — перегретый пар, далеко от критической
     { T_C: -53.15, P_bar: 15.0, phase: 'liquid', rho_ref: 2528.4, nu_ref: 0.22, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
     { T_C: -53.15, P_bar: 14.7, phase: 'gas', rho_ref: 68.6, nu_ref: 2.24, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
     { T_C: 16.55, P_bar: 58.4, phase: 'supercritical', rho_ref: 1100.0, nu_ref: 0.124, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
@@ -1350,7 +1369,7 @@ function getGasViscosityWithFallback(T_K, gas, fallbackValue = null) {
     return fallbackValue;
   }
 
-  // !!! КОНВЕРСИЯ: мкПа·с → Па·с !!!
+  // !!! КОНВЕРСИЯ: мкПа•с → Па•с !!!
   return mu_microPa_s * 1e-6;
 }
 
@@ -1922,24 +1941,31 @@ const phase = forcedPhase || determinePhase(P_bar, P_sat, T_K, Tc);
 // ========== ЖИДКОСТЬ ==========
 if (phase === 'liquid' || phase === 'two-phase') {
 const table = liquidViscosityTables[gas];
+let mu_liquid = null;
 if (table) {
 const mu_table = interpolateViscosity(table, T_K);
 if (mu_table !== null) {
 // Reduced pressure effect for liquid viscosity
 const pressureFactor = 1 + 0.05 * Math.max(0, P_bar / Pc - 1);
-return mu_table * pressureFactor;
+mu_liquid = mu_table * pressureFactor;
 }
 }
+if (mu_liquid === null) {
 const Tr = T_K / Tc;
 const mu_boil = 0.025 * Math.pow(M, 0.5) * Math.pow(Tc, -0.5) * 1e-3;
 const tempFactor = Math.exp(2.5 * (1 - Tr));
 const pressureFactor = 1 + 0.5 * Math.max(0, P_bar / Pc - 1);
-return Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
+mu_liquid = Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
+}
+// Для кинематической вязкости нужна плотность
+const rho_liquid = calcRealGasDensity(T_C, P_bar, gas, 'liquid');
+window._lastLiquidDensity = rho_liquid;
+return mu_liquid;
 }
 
 // [AMMONIA_FIX] Специальная обработка для аммиака
   if (gas === 'ammonia') {
-    const T_K = Math.round((T_C + 273.15) * 1000) / 1000;
+    // T_K уже объявлена выше, не переопределяем
     const table = gasViscosityTables[gas];
     let mu_microPa = null;
 
@@ -1957,6 +1983,13 @@ return Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
         return mu_microPa * 1e-6;
     }
 
+    // Fallback: расчёт по Chapman-Enskog с параметрами аммиака
+    const sigma_nh3 = 2.900;
+    const eps_k_nh3 = 558.3;
+    const Tstar_nh3 = T_K / eps_k_nh3;
+    const Omega_nh3 = 1.16145 * Math.pow(Tstar_nh3, -0.14874) + 0.52487 * Math.exp(-0.77320 * Tstar_nh3) + 2.16178 * Math.exp(-2.43787 * Tstar_nh3);
+    const mu0_base = 2.6693e-6 * Math.sqrt(M * T_K) / (sigma_nh3 * sigma_nh3 * Omega_nh3);
+
     // Поправка на плотность (для высоких давлений)
     const rho = calcRealGasDensity(T_C, P_bar, gas, phase);
     const rho_molar = rho / (M / 1000);
@@ -1969,11 +2002,11 @@ return Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
       for (let i = 0; i < poly.length; i++) {
         sum += poly[i] * Math.pow(rho_r, i);
       }
-      const xi = (mu0 * 1e7) * Math.pow(Tc, 1/6) / (Math.pow(M, 0.5) * Math.pow(Pc, 2/3));
-      return mu0 * (1 + (Math.pow(sum, 4) - 1) / xi);
+      const xi = (mu0_base * 1e7) * Math.pow(Tc, 1/6) / (Math.pow(M, 0.5) * Math.pow(Pc, 2/3));
+      return mu0_base * (1 + (Math.pow(sum, 4) - 1) / xi);
     }
 
-    return Math.max(mu0, 1e-6);
+    return Math.max(mu0_base, 1e-6);
   }
 
 // ========== ГАЗ ==========
@@ -2063,7 +2096,7 @@ return {Tc,Pc,w,M,Vc,Zra,Tmin,Tmax,Pmin,Pmax};
 
 function calcLngSaturationPressure(T_C) { const p=calcLngPseudoCritical(); const T_K=T_C+273.15; if(T_K>=p.Tc)return null; if(T_K<p.Tc*0.35)return null; const A=3.9+0.5*p.w,B=400+300*p.w,C=-20-30*p.w; return Math.pow(10,A-B/(T_K+C)); }
 
-function determineLngPhase(T_C,P_bar) { const p=calcLngPseudoCritical(); const T_K=T_C+273.15; const Pr=P_bar/p.Pc; if(Pr<<0.3)return'gas'; if(T_K>=p.Tc)return'supercritical'; const P_sat=calcLngSaturationPressure(T_C); if(P_sat===null)return(T_K<p.Tc*0.85)?'liquid':'gas'; const tol=0.001; if(P_bar<P_sat*(1-tol))return'gas'; if(P_bar>P_sat*(1+tol))return'liquid'; return'two-phase'; }
+function determineLngPhase(T_C,P_bar) { const p=calcLngPseudoCritical(); const T_K=T_C+273.15; const Pr=P_bar/p.Pc; if(Pr < 0.3)return'gas'; if(T_K>=p.Tc)return'supercritical'; const P_sat=calcLngSaturationPressure(T_C); if(P_sat===null)return(T_K<p.Tc*0.85)?'liquid':'gas'; const tol=0.001; if(P_bar<P_sat*(1-tol))return'gas'; if(P_bar>P_sat*(1+tol))return'liquid'; return'two-phase'; }
 
 function calcLngDensity(T_C,P_bar){ const p=calcLngPseudoCritical(); const T_K=T_C+273.15; const Tr=T_K/p.Tc; if(Tr>=1.0){const Z=calcZ_PengRobinson(T_K,P_bar,p.Tc,p.Pc,p.w,'supercritical');return Math.max((P_bar*1e5*(p.M/1000))/(Z*R_GAS*T_K),0.5);} const phase=determineLngPhase(T_C,P_bar); if(phase==='gas'||phase==='supercritical'){const Z=calcZ_PengRobinson(T_K,P_bar,p.Tc,p.Pc,p.w,'gas');return Math.max((P_bar*1e5*(p.M/1000))/(Z*R_GAS*T_K),0.001);} const Vsat=p.Vc*Math.pow(p.Zra,Math.pow(1-Tr,2/7)); let density=(p.M/1000)/Vsat; const Pr=P_bar/p.Pc; if(Pr>0.1)density*=(1+0.01*Pr); return Math.max(density,0.5); }
 
@@ -2202,7 +2235,7 @@ realCapabilitiesTitle: 'Реальные возможности модели',
 viscosityNISTtableNote: '⚠ Вязкость по таблицам NIST (лог. интерполяция).',
 helpContent: `
 <h3>Режимы расчёта</h3>
-<p><b>Упрощённый</b> — гидравлика с фиксированной вязкостью ν = 1.0·10⁻⁶ м²/с (вода 20°C). Быстрая оценка для предварительных расчётов. Для газов плотность вводится вручную, сжимаемость не учитывается.</p>
+<p><b>Упрощённый</b> — гидравлика с фиксированной вязкостью ν = 1.0•10⁻⁶ м²/с (вода 20°C). Быстрая оценка для предварительных расчётов. Для газов плотность вводится вручную, сжимаемость не учитывается.</p>
 <p><b>Инженерный</b> — полный расчёт с учётом реальных свойств газа/жидкости, сжимаемости и фазового состояния.</p>
 <h3>Зоны применимости моделей</h3>
 <p>Модели разделены на три зоны в зависимости от термодинамических условий:</p>
@@ -2435,7 +2468,7 @@ realCapabilitiesTitle: 'Real Model Capabilities',
 viscosityNISTtableNote: '⚠ Viscosity from NIST tables (log interpolation).', 
 helpContent: `
 <h3>Calculation modes</h3>
-<p><b>Simplified</b> — hydraulics with fixed viscosity ν = 1.0·10⁻⁶ m²/s (water at 20°C). Quick estimate for preliminary calculations. For gases, density is entered manually; compressibility is not accounted for.</p>
+<p><b>Simplified</b> — hydraulics with fixed viscosity ν = 1.0•10⁻⁶ m²/s (water at 20°C). Quick estimate for preliminary calculations. For gases, density is entered manually; compressibility is not accounted for.</p>
 <p><b>Engineering</b> — full calculation with real gas/liquid properties, compressibility, and phase state.</p>
 <h3>Applicability zones</h3>
 <p>Models are divided into three zones depending on thermodynamic conditions:</p>
@@ -2663,7 +2696,7 @@ realCapabilities: `...中文...`,
 viscosityNISTtableNote: '⚠ 粘度来自NIST表格（对数插值）。',
 helpContent: `
 <h3>计算模式</h3>
-<p><b>简化模式</b> — 水力学计算，固定运动粘度 ν = 1.0·10⁻⁶ m²/s（水，20°C）。快速估算，用于初步计算。气体需手动输入密度，不考虑压缩性。</p>
+<p><b>简化模式</b> — 水力学计算，固定运动粘度 ν = 1.0•10⁻⁶ m²/s（水，20°C）。快速估算，用于初步计算。气体需手动输入密度，不考虑压缩性。</p>
 <p><b>工程模式</b> — 完整计算，包含实际气体/液体性质、压缩性和相态。</p>
 <h3>模型适用范围分区</h3>
 <p>根据热力学条件，模型分为三个区域：</p>
@@ -2777,7 +2810,8 @@ locales.ru.compressChokedZ = '🔴 Критическое истечение (M=
 locales.en.compressChokedZ = '🔴 Critical flow (M={mach}, Z={z}). ΔP limited by sonic velocity at outlet: {actual} bar (max {max} bar)';
 locales.zh.compressChokedZ = '🔴 临界流 (M={mach}, Z={z})。出口声速限制ΔP：{actual} 巴 (最大 {max} 巴)';
 
-let currentLang = localStorage.getItem('calc_hyd_lang') || 'ru';
+let currentLang = 'ru';
+currentLang = safeStorage.get('calc_hyd_lang', 'ru');
 function t(key, fallbackLang) {
   const primary = locales[currentLang]?.[key];
   if (primary) return primary;
@@ -3890,8 +3924,8 @@ function updateFieldBorders(){
 }
 
 function updateThemeLabel(){ themeLabel.textContent=document.body.classList.contains('dark')?t('themeDark'):t('themeLight'); }
-function applyTheme(dark){ document.body.classList.toggle('dark',dark); localStorage.setItem('calc_hyd_theme',dark?'dark':'light'); updateThemeLabel(); }
-if(localStorage.getItem('calc_hyd_theme')==='dark')applyTheme(true);else applyTheme(false);
+function applyTheme(dark){ document.body.classList.toggle('dark',dark); safeStorage.set('calc_hyd_theme', dark ? 'dark' : 'light'); updateThemeLabel(); }
+applyTheme(safeStorage.get('calc_hyd_theme', 'light') === 'dark');
 themeToggle.addEventListener('click',()=>applyTheme(!document.body.classList.contains('dark')));
 menuToggle.addEventListener('click',e=>{e.stopPropagation();settingsMenu.classList.toggle('show');});
 document.addEventListener('click',e=>{ if(!settingsMenu.contains(e.target)&&e.target!==menuToggle)settingsMenu.classList.remove('show'); });
@@ -4317,12 +4351,20 @@ document.querySelectorAll('input[type="number"]').forEach(input=>{
         e.preventDefault();
       }
     });
-  } else {
-    // Для geodetic и temperature запрещаем только +, e, E (минус разрешён)
+  } else if (input.id === 'geodetic') {
+    // Для geodetic запрещаем +, e, E (минус разрешён)
     input.addEventListener('keydown', e => {
       if(e.key === '+' || e.key === 'e' || e.key === 'E') {
         e.preventDefault();
       }
+    });
+  } else if (input.id === 'temperature') {
+    // Для temperature разрешаем e, E (научная нотация), но не +
+    input.addEventListener('keydown', e => {
+      if(e.key === '+') {
+        e.preventDefault();
+      }
+      // e, E разрешены для научной нотации
     });
   }
 
@@ -4331,15 +4373,22 @@ document.querySelectorAll('input[type="number"]').forEach(input=>{
     let val = this.value;
     // Заменяем запятую на точку
     val = val.replace(',', '.');
-    // Удаляем всё, кроме цифр, точки и минуса в начале
-    val = val.replace(/[^\d.-]/g, '');
-    // Обрабатываем случай, когда минус не в начале
-    if (val.indexOf('-') > 0) {
-      val = val.replace(/-/g, '');
-    }
-    // Если первый символ минус, сохраняем его, а остальные минусы удаляем
-    if (val.startsWith('-')) {
-      val = '-' + val.slice(1).replace(/-/g, '');
+    // Для temperature разрешаем e/E (научная нотация)
+    if (this.id === 'temperature') {
+      val = val.replace(/[^\d.eE-]/g, '');
+      // Обрабатываем минус: только в начале или после e/E
+      val = val.replace(/(?!^|e|E)-/g, '');
+    } else {
+      // Удаляем всё, кроме цифр, точки и минуса
+      val = val.replace(/[^\d.-]/g, '');
+      // Обрабатываем случай, когда минус не в начале
+      if (val.indexOf('-') > 0) {
+        val = val.replace(/-/g, '');
+      }
+      // Если первый символ минус, сохраняем его, а остальные минусы удаляем
+      if (val.startsWith('-')) {
+        val = '-' + val.slice(1).replace(/-/g, '');
+      }
     }
     // Ограничиваем только одну десятичную точку
     const parts = val.split('.');
@@ -4668,7 +4717,7 @@ mediumSelects.forEach(id => {
 updateAllWarnings();
 }
 
-langSelect.addEventListener('change',()=>{currentLang=langSelect.value;localStorage.setItem('calc_hyd_lang',currentLang);applyLanguage()});
+langSelect.addEventListener('change',()=>{currentLang=langSelect.value;safeStorage.set('calc_hyd_lang', currentLang); applyLanguage()});
 applyLanguage();updateEngineerVisibility();buildLngComposition();
 })();
 
@@ -4726,12 +4775,6 @@ function oilProperties(T_C) {
 
 // Обновление свойств для вкладки диаметра
 function updateMediumDiam() {
-    const tempDiamEl = document.getElementById('tempDiam');
-    if (tempDiamEl) {
-        tempDiamEl.addEventListener('blur', function() {
-            updateMediumDiam();
-        });
-    }
     const select = document.getElementById('mediumSelectDiam');
     let temp = parseFloat(document.getElementById('tempDiam').value);
     if (isNaN(temp)) temp = 20;
@@ -4756,12 +4799,6 @@ function updateMediumDiam() {
 
 // То же для вкладки расхода
 function updateMediumFlow() {
-    const tempFlowEl = document.getElementById('tempFlow');
-    if (tempFlowEl) {
-        tempFlowEl.addEventListener('blur', function() {
-            updateMediumFlow();
-        });
-    }
     const select = document.getElementById('mediumSelectFlow');
     let temp = parseFloat(document.getElementById('tempFlow').value);
     if (isNaN(temp)) temp = 20;
@@ -4872,7 +4909,7 @@ roughnessFields.forEach(id => {
     if (tempFlow) updateFlow();
 })();
     }
-})(); 
+})();
 </script>
 </body>
 </html>
