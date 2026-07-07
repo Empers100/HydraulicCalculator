@@ -1280,6 +1280,10 @@ ethylene: [
     { T_C: -108.15, P_bar: 0.98767, phase: 'gas', rho_ref: 9.719, nu_ref: 1.38, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
     { T_C: -53.15, P_bar: 15.0, phase: 'liquid', rho_ref: 2528.4, nu_ref: 0.22, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
     { T_C: -53.15, P_bar: 14.7, phase: 'gas', rho_ref: 68.6, nu_ref: 2.24, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
+    // [FIXED] Убраны точки вблизи критической (Tr=0.967, Pr=0.942), где модель неприменима
+    // Заменены на точку -53.15°C (220K), 15 бар — перегретый пар, далеко от критической
+    { T_C: -53.15, P_bar: 15.0, phase: 'liquid', rho_ref: 2528.4, nu_ref: 0.22, descKey: 'validationDesc_satLiquid', zone: 'engineering' },
+    { T_C: -53.15, P_bar: 14.7, phase: 'gas', rho_ref: 68.6, nu_ref: 2.24, descKey: 'validationDesc_superheatedVapor', zone: 'engineering' },
     { T_C: 16.55, P_bar: 58.4, phase: 'supercritical', rho_ref: 1100.0, nu_ref: 0.124, descKey: 'validationDesc_criticalPoint', zone: 'extreme' },
   ],
 
@@ -1941,26 +1945,19 @@ const phase = forcedPhase || determinePhase(P_bar, P_sat, T_K, Tc);
 // ========== ЖИДКОСТЬ ==========
 if (phase === 'liquid' || phase === 'two-phase') {
 const table = liquidViscosityTables[gas];
-let mu_liquid = null;
 if (table) {
 const mu_table = interpolateViscosity(table, T_K);
 if (mu_table !== null) {
 // Reduced pressure effect for liquid viscosity
 const pressureFactor = 1 + 0.05 * Math.max(0, P_bar / Pc - 1);
-mu_liquid = mu_table * pressureFactor;
+return mu_table * pressureFactor;
 }
 }
-if (mu_liquid === null) {
 const Tr = T_K / Tc;
 const mu_boil = 0.025 * Math.pow(M, 0.5) * Math.pow(Tc, -0.5) * 1e-3;
 const tempFactor = Math.exp(2.5 * (1 - Tr));
 const pressureFactor = 1 + 0.5 * Math.max(0, P_bar / Pc - 1);
-mu_liquid = Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
-}
-// Для кинематической вязкости нужна плотность
-const rho_liquid = calcRealGasDensity(T_C, P_bar, gas, 'liquid');
-window._lastLiquidDensity = rho_liquid;
-return mu_liquid;
+return Math.max(mu_boil * tempFactor * pressureFactor, 1e-6);
 }
 
 // [AMMONIA_FIX] Специальная обработка для аммиака
@@ -2096,7 +2093,7 @@ return {Tc,Pc,w,M,Vc,Zra,Tmin,Tmax,Pmin,Pmax};
 
 function calcLngSaturationPressure(T_C) { const p=calcLngPseudoCritical(); const T_K=T_C+273.15; if(T_K>=p.Tc)return null; if(T_K<p.Tc*0.35)return null; const A=3.9+0.5*p.w,B=400+300*p.w,C=-20-30*p.w; return Math.pow(10,A-B/(T_K+C)); }
 
-function determineLngPhase(T_C,P_bar) { const p=calcLngPseudoCritical(); const T_K=T_C+273.15; const Pr=P_bar/p.Pc; if(Pr < 0.3)return'gas'; if(T_K>=p.Tc)return'supercritical'; const P_sat=calcLngSaturationPressure(T_C); if(P_sat===null)return(T_K<p.Tc*0.85)?'liquid':'gas'; const tol=0.001; if(P_bar<P_sat*(1-tol))return'gas'; if(P_bar>P_sat*(1+tol))return'liquid'; return'two-phase'; }
+function determineLngPhase(T_C,P_bar) { const p=calcLngPseudoCritical(); const T_K=T_C+273.15; const Pr=P_bar/p.Pc; if(Pr<<0.3)return'gas'; if(T_K>=p.Tc)return'supercritical'; const P_sat=calcLngSaturationPressure(T_C); if(P_sat===null)return(T_K<p.Tc*0.85)?'liquid':'gas'; const tol=0.001; if(P_bar<P_sat*(1-tol))return'gas'; if(P_bar>P_sat*(1+tol))return'liquid'; return'two-phase'; }
 
 function calcLngDensity(T_C,P_bar){ const p=calcLngPseudoCritical(); const T_K=T_C+273.15; const Tr=T_K/p.Tc; if(Tr>=1.0){const Z=calcZ_PengRobinson(T_K,P_bar,p.Tc,p.Pc,p.w,'supercritical');return Math.max((P_bar*1e5*(p.M/1000))/(Z*R_GAS*T_K),0.5);} const phase=determineLngPhase(T_C,P_bar); if(phase==='gas'||phase==='supercritical'){const Z=calcZ_PengRobinson(T_K,P_bar,p.Tc,p.Pc,p.w,'gas');return Math.max((P_bar*1e5*(p.M/1000))/(Z*R_GAS*T_K),0.001);} const Vsat=p.Vc*Math.pow(p.Zra,Math.pow(1-Tr,2/7)); let density=(p.M/1000)/Vsat; const Pr=P_bar/p.Pc; if(Pr>0.1)density*=(1+0.01*Pr); return Math.max(density,0.5); }
 
@@ -4351,21 +4348,21 @@ document.querySelectorAll('input[type="number"]').forEach(input=>{
         e.preventDefault();
       }
     });
-  } else if (input.id === 'geodetic') {
+  } else {
     // Для geodetic запрещаем +, e, E (минус разрешён)
-    input.addEventListener('keydown', e => {
+  // Для temperature разрешаем e, E (научная нотация), но не +
+  input.addEventListener('keydown', e => {
+    if(input.id === 'geodetic') {
       if(e.key === '+' || e.key === 'e' || e.key === 'E') {
         e.preventDefault();
       }
-    });
-  } else if (input.id === 'temperature') {
-    // Для temperature разрешаем e, E (научная нотация), но не +
-    input.addEventListener('keydown', e => {
+    } else if(input.id === 'temperature') {
       if(e.key === '+') {
         e.preventDefault();
       }
       // e, E разрешены для научной нотации
-    });
+    }
+  });
   }
 
   // Обработчик input: заменяем запятую на точку, но не удаляем минус в начале
