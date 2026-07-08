@@ -2095,7 +2095,7 @@ function calcLngSaturationPressure(T_C) { const p=calcLngPseudoCritical(); const
 
 function determineLngPhase(T_C,P_bar) { const p=calcLngPseudoCritical(); const T_K=T_C+273.15; const Pr=P_bar/p.Pc; if(Pr<<0.3)return'gas'; if(T_K>=p.Tc)return'supercritical'; const P_sat=calcLngSaturationPressure(T_C); if(P_sat===null)return(T_K<p.Tc*0.85)?'liquid':'gas'; const tol=0.001; if(P_bar<P_sat*(1-tol))return'gas'; if(P_bar>P_sat*(1+tol))return'liquid'; return'two-phase'; }
 
-function calcLngDensity(T_C,P_bar){ const p=calcLngPseudoCritical(); const T_K=T_C+273.15; const Tr=T_K/p.Tc; if(Tr>=1.0){const Z=calcZ_PengRobinson(T_K,P_bar,p.Tc,p.Pc,p.w,'supercritical');return Math.max((P_bar*1e5*(p.M/1000))/(Z*R_GAS*T_K),0.5);} const phase=determineLngPhase(T_C,P_bar); if(phase==='gas'||phase==='supercritical'){const Z=calcZ_PengRobinson(T_K,P_bar,p.Tc,p.Pc,p.w,'gas');return Math.max((P_bar*1e5*(p.M/1000))/(Z*R_GAS*T_K),0.001);} const Vsat=p.Vc*Math.pow(p.Zra,Math.pow(1-Tr,2/7)); let density=(p.M/1000)/Vsat; const Pr=P_bar/p.Pc; if(Pr>0.1)density*=(1+0.01*Pr); return Math.max(density,0.5); }
+function calcLngDensity(T_C,P_bar){ const p=calcLngPseudoCritical(); const T_K=T_C+273.15; const Tr=T_K/p.Tc; if(Tr>=1.0){const Z=calcZ_PengRobinson(T_K,P_bar,p.Tc,p.Pc,p.w,'supercritical');return Math.max((P_bar*1e5*(p.M/1000))/(Z*R_GAS*T_K),0.001);} const phase=determineLngPhase(T_C,P_bar); if(phase==='gas'||phase==='supercritical'){const Z=calcZ_PengRobinson(T_K,P_bar,p.Tc,p.Pc,p.w,'gas');return Math.max((P_bar*1e5*(p.M/1000))/(Z*R_GAS*T_K),0.001);} const Vsat=p.Vc*Math.pow(p.Zra,Math.pow(1-Tr,2/7)); let density=(p.M/1000)/Vsat; const Pr=P_bar/p.Pc; if(Pr>0.1)density*=(1+0.01*Pr); return Math.max(density,0.5); }
 
 function calcLngViscosity(T_C,P_bar){ const p=calcLngPseudoCritical(); const T_K=T_C+273.15; const Tr=T_K/p.Tc; const phase=determineLngPhase(T_C,P_bar); if(phase==='gas'||phase==='supercritical'){const sigma=2.44*Math.pow(p.Tc/p.Pc,1/3); const Tstar=T_K/(p.Tc*0.77); const Omega=1.16145*Math.pow(Tstar,-0.14874)+0.52487*Math.exp(-0.77320*Tstar)+2.16178*Math.exp(-2.43787*Tstar); const mu0=2.6693e-6*Math.sqrt(p.M*T_K)/(sigma*sigma*Omega); return Math.max(mu0,1e-6);} const mu_ref=0.12,temp_factor=Math.exp(2.0*(1-Tr)); let viscosity=mu_ref*temp_factor; const Pr=P_bar/p.Pc; if(Pr>0.1)viscosity*=(1+0.3*Math.max(0,Pr-0.1)); return Math.max(viscosity*1e-3,5e-5); }
 
@@ -4017,7 +4017,7 @@ function updatePropertiesForState(p){
 }else if(p=='air'){if(isL){d.value=870;v.value=0.17}else{d.value=1.20;v.value=15.0;m.value=28.97}}
   else if(p=='nitrogen'){if(isL){d.value=808;v.value=0.16}else{d.value=1.165;v.value=15.1;m.value=28.01}}
   else if(p=='oxygen'){if(isL){d.value=1140;v.value=0.19}else{d.value=1.33;v.value=15.7;m.value=32.00}}
-  else if(p=='methane'){if(isL){d.value=422;v.value=0.12}else{d.value=0.66;v.value=11.0;m.value=16.04}}
+  else if(p=='methane'){if(isL){d.value=422;v.value=0.28}else{d.value=0.66;v.value=16.5;m.value=16.04}}
   else if(p=='co2'){if(isL){d.value=1100;v.value=0.08}else{d.value=1.84;v.value=8.0;m.value=44.01}}
   else if(p=='parahydrogen'){if(isL){d.value=70.8;v.value=0.13}else{d.value=0.084;v.value=105.0;m.value=2.016}}
   else if(p=='normalhydrogen'){if(isL){d.value=70.8;v.value=0.13}else{d.value=0.084;v.value=105.0;m.value=2.016}}
