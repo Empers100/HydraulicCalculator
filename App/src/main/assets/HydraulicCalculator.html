@@ -294,8 +294,22 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 }
 
 @media (max-width: 640px) {
-  #targetDeltaPDiam, #targetDeltaPFlow { margin-left: 8px }
-}
+     .target-row {
+       flex-wrap: wrap;
+       gap: 4px;
+     }
+     .target-row label,
+     .target-row input {
+       flex: 1 1 100%;
+       text-align: left;
+     }
+     .target-row input {
+       text-align: right;
+     }
+     /* старое правило можно оставить, но оно уже не нужно */
+     #targetDeltaPDiam, #targetDeltaPFlow { margin-left: 0; }
+   }
+
 .warning-item { word-break: break-word; line-height: 1.4; }
 .error-border { animation: errorPulse 0.3s ease; }
 @keyframes errorPulse {
@@ -2112,7 +2126,7 @@ formulaDiam:'Подбор внутреннего диаметра по ΔP',
 formulaFlow:'Подбор расхода по ΔP',
 targetParams:'Целевые параметры',
 resultLabel:'Результат:',
-targetDeltaP:'Перепад-- ΔP (Па):', targetMassFlow:'Массовый расход (кг/ч):',
+targetDeltaP:'Перепад давления ΔP (Па):', targetMassFlow:'Массовый расход (кг/ч):',
 calcDiam:'Подобрать диаметр', calcFlow:'Подобрать расход',
 resultDiam:'Внутренний диаметр: {diam} мм\nНаружный диаметр: {outer} мм\nСкорость: {vel} м/с\nRe: {re}\nλ: {lambda}',
 resultFlow:'Массовый расход: {flow} кг/ч\nОбъёмный расход: {vol} м³/ч\nСкорость: {vel} м/с\nRe: {re}\nλ: {lambda}',
