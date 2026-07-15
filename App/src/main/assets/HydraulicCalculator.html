@@ -621,6 +621,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 <script>
 (function() {
 'use strict';
+
 const T_K_DEFAULT = 293.15;
 const R_GAS = 8.314462618;
 
@@ -669,7 +670,7 @@ parahydrogen: [
 [32.0, 4.81e-6], [32.94, 3.51e-6]
 ],
 helium4: [[1.5,0.50e-6],[2.0,3.27e-6],[2.18,3.37e-6],[2.5,3.48e-6],[3.0,3.54e-6],[3.5,3.53e-6],[4.0,3.50e-6],[4.2,3.48e-6],[4.5,3.46e-6],[5.0,3.35e-6],[5.19,2.984e-6]],
-methane: [[90.7,9.00e-5],[95.0,8.50e-5],[100.0,8.00e-5],[105.0,7.50e-5],[110.0,7.00e-5],[111.5,6.80e-5],[111.67,6.75e-5],[115.0,6.40e-5],[120.0,5.90e-5],[125.0,5.40e-5],[130.0,4.90e-5],[140.0,4.10e-5],[150.0,3.40e-5],[160.0,2.80e-5],[170.0,2.30e-5],[180.0,1.90e-5],[190.0,1.55e-5],[190.6,1.50e-5]],
+methane: [[90.694,204.5e-6],[95.0,180.0e-6],[100.0,155.8e-6],[105.0,138.0e-6],[110.0,121.3e-6],[111.5,117.2e-6],[115.0,108.0e-6],[120.0,97.43e-6],[125.0,88.0e-6],[130.0,79.87e-6],[140.0,66.33e-6],[150.0,55.44e-6],[160.0,46.27e-6],[170.0,38.12e-6],[180.0,30.19e-6],[190.0,22.0e-6],[190.6,20.0e-6]],
 nitrogen: [[63.15,2.90e-4],[65.9,2.73e-4],[70.0,2.2175e-4],[75.0,1.7575e-4],[77.0,1.61e-4],[77.36,1.59e-4],[80.0,1.43e-4],[85.0,1.19e-4],[90.0,1.01e-4],[100.0,7.46e-5],[110.0,5.52e-5],[120.0,3.78e-5],[126.2,2.26e-5]],
 oxygen: [[54.36,6.80e-4],[55.0,6.69e-4],[60.0,5.30e-4],[65.0,4.27e-4],[70.0,3.51e-4],[75.0,2.945e-4],[80.0,2.514e-4],[85.0,2.18e-4],[90.0,1.91e-4],[90.19,1.90e-4],[95.0,1.69e-4],[100.0,1.51e-4],[110.0,1.22e-4],[120.0,9.86e-5],[130.0,7.91e-5],[140.0,6.15e-5],[150.0,4.31e-5],[154.58,2.43e-5]],
 CO2: [[216.6,3.50e-4],[220.0,3.20e-4],[230.0,2.60e-4],[240.0,2.15e-4],[250.0,1.80e-4],[260.0,1.52e-4],[270.0,1.30e-4],[280.0,1.12e-4],[290.0,9.80e-5],[300.0,8.60e-5],[304.2,7.80e-5]],
@@ -790,9 +791,9 @@ oxygen: [
 [150.0, 15.0], [154.6, 24.3]
 ],
 methane: [
-[90.7, 3.5], [100.0, 3.8], [110.0, 4.06], [111.5, 4.1055], [120.0, 4.4],
-[130.0, 4.8], [140.0, 5.3], [150.0, 5.95], [160.0, 6.76], [170.0, 7.8],
-[180.0, 9.3], [190.0, 12.85]
+[90.694, 3.639], [100.0, 3.998], [110.0, 4.396], [111.5, 4.327], [120.0, 4.812],
+[130.0, 5.252], [140.0, 5.725], [150.0, 6.253], [160.0, 6.869], [170.0, 7.652],
+[180.0, 8.825], [190.0, 12.0]
 ],
 ethane: [
   [90.4, 2.8],      // тройная точка (оценка по низкому давлению)
@@ -1698,22 +1699,28 @@ function getSaturationPressure(T_K, gas) {
   return null;
 }
 
-function determinePhase(P_bar, P_sat, T_K, Tc, gas) {
+function determinePhase(P_bar, P_sat, T_K, Tc, Pc, gas) {
 if (T_K >= Tc) return 'supercritical';
-if (P_sat === null) {
-  // [AMMONIA_FIX] Если нет Antoine — оцениваем фазу эвристически
-  if (gas === 'ammonia') {
-    // При T < Tc и P < 0.5*Pc считаем перегретый пар (газ)
-    // При P > 0.5*Pc — консервативно жидкость
-    const crit = gasCritical['ammonia'];
-    if (crit && P_bar < crit.Pc * 0.5) return 'gas';
-    return 'liquid';
-  }
+if (P_sat !== null) {
+  const eps = 0.005;
+  if (P_bar < P_sat * (1 - eps)) return 'gas';
   return 'liquid';
 }
-const eps = 0.005;
-if (P_bar < P_sat * (1 - eps)) return 'gas';
-return 'liquid';
+// No Antoine data — use heuristic based on reduced parameters
+if (gas === 'ammonia') {
+  const crit = gasCritical['ammonia'];
+  if (crit && P_bar < crit.Pc * 0.5) return 'gas';
+  return 'liquid';
+}
+const Tr = T_K / Tc;
+const Pr = P_bar / Pc;
+// Above normal boiling point (Tr > 0.60) and low pressure -> gas
+if (Tr > 0.60 && Pr < 0.3) return 'gas';
+// Below typical boiling point -> liquid
+if (Tr < 0.55) return 'liquid';
+// Intermediate: high pressure -> liquid, else gas
+if (Pr > 0.5) return 'liquid';
+return 'gas';
 }
 
 function alphaTwu(Tr, w) {
@@ -1822,7 +1829,7 @@ const T_K = Math.round((T_C + 273.15) * 1000) / 1000;
 const crit = gasCritical[gas.toLowerCase()] || gasCritical[gas];
 if (!crit) return (P_bar * 1e5 * (M/1000)) / (R_GAS * T_K);
 const P_sat = getSaturationPressure(T_K, gas);
-const phase = forcedPhase || determinePhase(P_bar, P_sat, T_K, crit.Tc, gas);
+const phase = forcedPhase || determinePhase(P_bar, P_sat, T_K, crit.Tc, crit.Pc, gas);
 window._lastPhaseInfo = { phase, P_sat, gas, T_K, P_bar };
 console.log('DEBUG phase info:', { phase, gas, T_K, P_bar, P_sat });
 const isQuantum = (gas === 'helium4' || gas === 'parahydrogen' || gas === 'normalhydrogen');
@@ -1954,7 +1961,7 @@ const mmDefaultsV = { normalhydrogen: 2.016, parahydrogen: 2.016, helium4: 4.002
 const T_K = Math.round((T_C + 273.15) * 1000) / 1000;
 const Tc = crit.Tc, Pc = crit.Pc;
 const P_sat = getSaturationPressure(T_K, gas);
-const phase = forcedPhase || determinePhase(P_bar, P_sat, T_K, Tc);
+const phase = forcedPhase || determinePhase(P_bar, P_sat, T_K, Tc, Pc, gas);
 
 // ========== ЖИДКОСТЬ ==========
 if (phase === 'liquid' || phase === 'two-phase') {
@@ -3430,7 +3437,7 @@ function determineCurrentZone(preset, mode, mediumType, T_C, P_bar) {
 
     const T_K = T_C + 273.15;
     const P_sat = getSaturationPressure(T_K, preset);
-    const phase = determinePhase(P_bar, P_sat, T_K, crit.Tc, preset);
+    const phase = determinePhase(P_bar, P_sat, T_K, crit.Tc, crit.Pc, preset);
 
     return classifyValidationZone(T_C, P_bar, preset, phase);
 }
@@ -3606,7 +3613,7 @@ function getAllMessages() {
             const Tr = T_K / crit.Tc;
             const Pr = P / crit.Pc;
             const P_sat = getSaturationPressure(T_K, preset);
-            const phase = determinePhase(P, P_sat, T_K, crit.Tc);
+            const phase = determinePhase(P, P_sat, T_K, crit.Tc, crit.Pc, preset);
 
             // Критическая область
             if (T_K < crit.Tc && Tr > 0.95 && Pr > 0.8) {
@@ -4026,7 +4033,7 @@ function updatePropertiesForState(p){
 }else if(p=='oil'){
     const props = oilProperties(20);
     d.value = props.rho;   // 900
-    v.value = props.nu;    // 50.0
+    v.value = props.nu;    // ~39.5 cSt at 20°C (ISO VG 20)
     r.value = 0.1;
 }else if(p=='air'){if(isL){d.value=870;v.value=0.17}else{d.value=1.20;v.value=15.0;m.value=28.97}}
   else if(p=='nitrogen'){if(isL){d.value=808;v.value=0.16}else{d.value=1.165;v.value=15.1;m.value=28.01}}
@@ -4354,54 +4361,60 @@ function legacyCopy(text) {
   document.body.removeChild(ta);
 }
 
-document.querySelectorAll('input[type="number"]').forEach(input=>{
-  // Разрешаем ввод минуса для поля перепада высот и температуры
-  if(input.id !== 'geodetic' && input.id !== 'temperature') {
-    input.addEventListener('keydown', e => {
-      if(e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
-        e.preventDefault();
-      }
-    });
-  } else {
-    // Для geodetic запрещаем +, e, E (минус разрешён)
-  // Для temperature разрешаем e, E (научная нотация), но не +
+document.querySelectorAll('input[type="number"]').forEach(input => {
+  // Обработчик keydown
   input.addEventListener('keydown', e => {
-    if(input.id === 'geodetic') {
-      if(e.key === '+' || e.key === 'e' || e.key === 'E') {
+    // Для temperature: разрешаем e/E/+/- для научной нотации
+    if (input.id === 'temperature') {
+      const allowed = ['0','1','2','3','4','5','6','7','8','9','.','-','e','E','+',
+                       'Backspace','Delete','ArrowLeft','ArrowRight','Tab','Enter','Escape'];
+      if (!allowed.includes(e.key) && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
       }
-    } else if(input.id === 'temperature') {
-      if(e.key === '+') {
+      // Минус только в начале или после e/E
+      if (e.key === '-' && input.selectionStart > 0) {
+        const before = input.value.slice(0, input.selectionStart);
+        if (!/[eE]$/.test(before)) {
+          e.preventDefault();
+        }
+      }
+      // Плюс только после e/E
+      if (e.key === '+' && input.selectionStart > 0) {
+        const before = input.value.slice(0, input.selectionStart);
+        if (!/[eE]$/.test(before)) {
+          e.preventDefault();
+        }
+      }
+    } else if (input.id === 'geodetic') {
+      // Для geodetic: минус разрешен, e/E/+ запрещены
+      if (e.key === '+' || e.key === 'e' || e.key === 'E') {
         e.preventDefault();
       }
-      // e, E разрешены для научной нотации
+    } else {
+      // Для остальных: только цифры, точка, минус
+      if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+        e.preventDefault();
+      }
     }
   });
-  }
 
-  // Обработчик input: заменяем запятую на точку, но не удаляем минус в начале
+  // Обработчик input
   input.addEventListener('input', function() {
     let val = this.value;
-    // Заменяем запятую на точку
     val = val.replace(',', '.');
-    // Для temperature разрешаем e/E (научная нотация)
     if (this.id === 'temperature') {
-      val = val.replace(/[^\d.eE-]/g, '');
-      // Обрабатываем минус: только в начале или после e/E
+      val = val.replace(/[^\d.eE+-]/g, '');
       val = val.replace(/(?!^|e|E)-/g, '');
+      val = val.replace(/(?!e|E)[+]/g, '');
     } else {
-      // Удаляем всё, кроме цифр, точки и минуса
       val = val.replace(/[^\d.-]/g, '');
-      // Обрабатываем случай, когда минус не в начале
       if (val.indexOf('-') > 0) {
         val = val.replace(/-/g, '');
       }
-      // Если первый символ минус, сохраняем его, а остальные минусы удаляем
       if (val.startsWith('-')) {
         val = '-' + val.slice(1).replace(/-/g, '');
       }
     }
-    // Ограничиваем только одну десятичную точку
     const parts = val.split('.');
     if (parts.length > 2) {
       val = parts[0] + '.' + parts.slice(1).join('');
@@ -4409,7 +4422,7 @@ document.querySelectorAll('input[type="number"]').forEach(input=>{
     this.value = val;
   });
 
-  // Обработчик blur: проверка на допустимые значения
+  // Обработчик blur
   input.addEventListener('blur', function() {
     if (this.id === 'bends' || this.id === 'valves' || this.id === 'bends45' || this.id === 'teesStraight' ||
         this.id === 'teesTurn' || this.id === 'checkValves' || this.id === 'gateValves' ||
@@ -4431,13 +4444,11 @@ document.querySelectorAll('input[type="number"]').forEach(input=>{
     if (this.id === 'geodetic') {
       let val = parseFloat(this.value);
       if (isNaN(val)) val = 0;
-      // Отрицательные значения разрешены
       this.value = val;
     }
     if (this.value.endsWith('.')) this.value = this.value.slice(0, -1);
   });
 });
-
 function updateEngineerVisibility(){
   const eng=modeSelect.value==='engineer';
   engineerBlock.classList.toggle('show',eng);
@@ -4732,38 +4743,6 @@ langSelect.addEventListener('change',()=>{currentLang=langSelect.value;safeStora
 applyLanguage();updateEngineerVisibility();buildLngComposition();
 })();
 
-// Синхронизация выбора среды для вкладки "Подбор диаметра"
-const mediumSelectDiam = document.getElementById('mediumSelectDiam');
-if (mediumSelectDiam) {
-    mediumSelectDiam.addEventListener('change', function() {
-        const densityInput = document.getElementById('densityDiam');
-        const viscosityInput = document.getElementById('viscosityDiam');
-        if (this.value === 'water') {
-            densityInput.value = '1000';
-            viscosityInput.value = '1.0';
-        } else if (this.value === 'oil') {
-            densityInput.value = '900';
-            viscosityInput.value = '50.0';
-        }
-    });
-}
-
-// Синхронизация для вкладки "Подбор расхода"
-const mediumSelectFlow = document.getElementById('mediumSelectFlow');
-if (mediumSelectFlow) {
-    mediumSelectFlow.addEventListener('change', function() {
-        const densityInput = document.getElementById('densityFlow');
-        const viscosityInput = document.getElementById('viscosityFlow');
-        if (this.value === 'water') {
-            densityInput.value = '1000';
-            viscosityInput.value = '1.0';
-        } else if (this.value === 'oil') {
-            densityInput.value = '900';
-            viscosityInput.value = '50.0';
-        }
-    });
-}
-
 // Свойства воды от температуры
 function waterProperties(T_C) {
     const T = Math.min(100, Math.max(0, T_C));
@@ -4779,7 +4758,8 @@ function waterProperties(T_C) {
 function oilProperties(T_C) {
     const T = Math.min(80, Math.max(0, T_C));
     const rho = 900 - 0.7 * (T - 20);
-    let nu = 50 * Math.exp(-0.034 * (T - 20));
+    // ISO VG 20: 20 cSt at 40°C -> ν = 39.5 * exp(-0.034*(T-20))
+    let nu = 39.5 * Math.exp(-0.034 * (T - 20));
     nu = Math.max(nu, 5);
     return { rho: parseFloat(rho.toFixed(2)), nu: parseFloat(nu.toFixed(2)) };
 }
@@ -4864,7 +4844,9 @@ roughnessFields.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
         el.addEventListener('blur', function() { clampRoughness(this); });
-        // также можно на 'input', но лучше на blur, чтобы не мешать вводу
+    }
+});
+
 // ===== ИСПРАВЛЕНИЕ ВВОДА ТЕМПЕРАТУРЫ ДЛЯ ПОДБОРА ДИАМЕТРА И РАСХОДА =====
 (function fixTemperatureInputs() {
     var tempDiam = document.getElementById('tempDiam');
@@ -4887,7 +4869,6 @@ roughnessFields.forEach(id => {
         var max = medDiam.value === 'water' ? 100 : 80;
         var val = clamp(tempDiam.value, max);
         if (tempDiam.value != val) tempDiam.value = val;
-        // Вызываем существующую функцию обновления свойств
         if (typeof updateMediumDiam === 'function') updateMediumDiam();
     }
 
@@ -4899,7 +4880,6 @@ roughnessFields.forEach(id => {
         if (typeof updateMediumFlow === 'function') updateMediumFlow();
     }
 
-    // Устанавливаем атрибуты для свободного ввода
     if (tempDiam) {
         tempDiam.setAttribute('step', 'any');
         tempDiam.removeAttribute('min');
@@ -4915,11 +4895,8 @@ roughnessFields.forEach(id => {
         if (medFlow) medFlow.addEventListener('change', updateFlow);
     }
 
-    // Принудительно обновляем один раз
     if (tempDiam) updateDiam();
     if (tempFlow) updateFlow();
-})();
-    }
 })();
 </script>
 </body>
