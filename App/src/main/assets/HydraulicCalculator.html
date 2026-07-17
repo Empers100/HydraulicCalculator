@@ -466,7 +466,7 @@ body.dark .flow-turbulent { background: #1a2d44; color: #7ec8ff; }
 
 <div class="field-row"><label id="lblRoughness">Шероховатость ε (мм):</label><input type="number" id="roughness" value="0.1" min="0.0001" max="10.0" step="0.001"></div>
 <div class="field-row" id="gasPropsRow"><label id="lblPressure">Абс. давление (бар):</label><input type="number" id="pressure" value="1.0" min="0.001" step="any"></div>
-<div class="field-row" id="tempRow"><label id="lblTemperature">Температура (°C):</label><input type="number" id="temperature" value="20.0" min="-273.14" step="any"></div>
+<div class="field-row" id="tempRow"><label id="lblTemperature">Температура (°C):</label><input type="text" inputmode="decimal" id="temperature" value="20.0"></div>
 <div class="field-row" id="molarRow"><label id="lblMolarMass">Молярная масса<br>(г/моль):</label><input type="number" id="molarMass" value="28.97" min="2" max="300" step="any"></div>
 </div>
 
@@ -4100,7 +4100,7 @@ function updateResultLabels(){
 
 function updateDisplayWithResult(){
   const u=lastResult.pressureUnit,pf=formatPressure(lastResult.deltaP,u);
-  formulaDisplay.textContent=t('resultSummary').replace('{velocity}',lastResult.velocity.toFixed(3)).replace('{pressure}',pf.split('')[0]).replace('{unit}',(locales[currentLang].units[u]||u));
+  formulaDisplay.textContent=t('resultSummary').replace('{velocity}',lastResult.velocity.toFixed(3)).replace('{pressure}',pf.split(/[^\d.]/)[0]).replace('{unit}',(locales[currentLang].units[u]||u));
   mainDisplay.value=lastResult.velocity.toFixed(3);
 }
 
@@ -4363,7 +4363,7 @@ function legacyCopy(text) {
   document.body.removeChild(ta);
 }
 
-document.querySelectorAll('input[type="number"]').forEach(input => {
+document.querySelectorAll('input[type="number"], #temperature').forEach(input => {
   // Обработчик keydown
   input.addEventListener('keydown', e => {
     // Базовые управляющие клавиши всегда разрешены
@@ -4374,7 +4374,7 @@ document.querySelectorAll('input[type="number"]').forEach(input => {
 
     // Для temperature: разрешаем e/E/+/-/. для научной нотации
     if (input.id === 'temperature') {
-      const allowed = ['0','1','2','3','4','5','6','7','8','9','.','-','e','E','+'];
+      const allowed = ['0','1','2','3','4','5','6','7','8','9','.',',','-','e','E','+'];
       if (!allowed.includes(e.key)) {
         e.preventDefault();
         return;
@@ -4414,7 +4414,7 @@ document.querySelectorAll('input[type="number"]').forEach(input => {
       }
     } else if (input.id === 'geodetic') {
       // Для geodetic: минус и точка разрешены, e/E/+ запрещены
-      const allowed = ['0','1','2','3','4','5','6','7','8','9','.','-'];
+      const allowed = ['0','1','2','3','4','5','6','7','8','9','.',',','-'];
       if (!allowed.includes(e.key)) {
         e.preventDefault();
       }
@@ -4422,13 +4422,13 @@ document.querySelectorAll('input[type="number"]').forEach(input => {
       if (e.key === '-'&& input.selectionStart > 0) {
         e.preventDefault();
       }
-      // Точка только одна
-      if (e.key === '.'&& input.value.includes('.')) {
+      // Точка/запятая только одна
+      if ((e.key === '.' || e.key === ',') && (input.value.includes('.') || input.value.includes(','))) {
         e.preventDefault();
       }
     } else {
       // Для остальных: цифры, точка, минус
-      const allowed = ['0','1','2','3','4','5','6','7','8','9','.','-'];
+      const allowed = ['0','1','2','3','4','5','6','7','8','9','.',',','-'];
       if (!allowed.includes(e.key)) {
         e.preventDefault();
       }
@@ -4436,8 +4436,8 @@ document.querySelectorAll('input[type="number"]').forEach(input => {
       if (e.key === '-'&& input.selectionStart > 0) {
         e.preventDefault();
       }
-      // Точка только одна
-      if (e.key === '.'&& input.value.includes('.')) {
+      // Точка/запятая только одна
+      if ((e.key === '.' || e.key === ',') && (input.value.includes('.') || input.value.includes(','))) {
         e.preventDefault();
       }
     }
@@ -4448,11 +4448,13 @@ document.querySelectorAll('input[type="number"]').forEach(input => {
     let val = this.value;
     val = val.replace(',', '.');
     if (this.id === 'temperature') {
-      val = val.replace(/[^\d.eE+-]/g, '');
+      val = val.replace(/[^\d.,eE+-]/g, '');
+      val = val.replace(/,/g, '.');
       val = val.replace(/(?!^|e|E)-/g, '');
       val = val.replace(/(?!e|E)[+]/g, '');
     } else {
-      val = val.replace(/[^\d.-]/g, '');
+      val = val.replace(/[^\d.,-]/g, '');
+      val = val.replace(/,/g, '.');
       if (val.indexOf('-') > 0) {
         val = val.replace(/-/g, '');
       }
